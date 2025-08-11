@@ -813,13 +813,13 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 
-#
-#
-#
+#########
 # custom
-
-distrobox.ini
+#########
 
 # claude
 CLAUDE.local.md
 .claude/settings.local.json
+
+distrobox.ini
+.pnpm-store
