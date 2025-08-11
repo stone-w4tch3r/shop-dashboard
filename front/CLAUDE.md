@@ -577,18 +577,68 @@ export function ProductForm({ productId, onSuccess, onCancel }: ProductFormProps
 ### Development Commands
 ```bash
 # Development server
-npm run dev
+pnpm run dev
 
 # Production build
-npm run build
+pnpm run build
 
 # Code quality
-npm run lint
-npm run lint:fix
+pnpm run lint
+pnpm run lint:fix
 
-# Type checking
-npm run type-check
+# Type checking (via Next.js build)
+pnpm run build
 ```
+
+### Testing Commands
+```bash
+# Component & Integration Tests (Vitest)
+pnpm test                    # Run all tests once  
+pnpm test:watch             # Watch mode for development
+pnpm test:ui                # Run with Vitest UI
+pnpm test:coverage          # Generate coverage reports
+
+# E2E Tests (Playwright) - Requires backend running
+pnpm test:e2e               # Run e2e tests headless
+pnpm test:e2e:ui            # Run with Playwright UI
+```
+
+## TDD Testing Infrastructure ⚡
+
+### Three-Level Testing Pyramid
+1. **Component Tests** (Vitest + React Testing Library + MSW)
+2. **Integration Tests** (Vitest + MSW with full store workflows)  
+3. **E2E Tests** (Playwright with real backend)
+
+### Test File Organization
+```
+src/test/
+├── setup.ts                # Global test configuration
+├── test-utils.tsx          # Custom render with providers
+├── mocks/
+│   ├── handlers.ts         # MSW API mock handlers  
+│   └── server.ts           # MSW server setup
+└── e2e/
+    └── *.spec.ts           # Playwright end-to-end tests
+
+src/features/{domain}/
+├── __tests__/              # Integration tests
+├── components/__tests__/   # Component unit tests
+└── stores/__tests__/       # Store unit tests
+```
+
+### TDD Workflow (Red-Green-Refactor)
+1. **🔴 Write failing test** first (component, integration, or e2e)
+2. **🟢 Write minimal code** to pass the test
+3. **🔵 Refactor** while keeping tests green
+4. **🔄 Repeat** for next feature
+
+**Key Testing Features**:
+- **MSW API Mocking**: Realistic backend simulation for integration tests
+- **Custom Test Utils**: Pre-configured render with all providers
+- **Global Mocks**: matchMedia, IntersectionObserver, ResizeObserver
+- **Multi-browser E2E**: Chromium, Firefox, Safari support
+- **Auto Dev Server**: E2E tests automatically start/stop dev server
 
 ## Implementation Strategy
 
