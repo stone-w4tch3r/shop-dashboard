@@ -819,3 +819,7 @@ vite.config.ts.timestamp-*
 # custom
 
 distrobox.ini
+
+# claude
+CLAUDE.local.md
+.claude/settings.local.json
