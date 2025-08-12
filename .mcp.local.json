@@ -1,9 +1,8 @@
 {
   "mcpServers": {
     "playwright": {
-      "type": "stdio",
-      "command": "npx",
-      "args": ["@playwright/mcp@latest"]
+      "type": "http",
+      "url": "http://localhost:8931/mcp" 
     },
     "Context7": {
       "command": "npx",
