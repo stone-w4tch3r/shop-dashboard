@@ -221,6 +221,26 @@ cd back
 - Maintain consistency across components and features
 - Document new patterns as they emerge
 
+### Clerk Authentication Setup (Development Mode)
+
+The template uses Clerk's **test mode** for keyless development authentication:
+
+**For New Users (First Time Setup):**
+1. Navigate to sign-up page: `http://localhost:3000/auth/sign-up`
+2. Use test email: `your_mail+clerk_test@example.com` (default in form)
+3. Use test password: `your_mail+clerk_test@example.com` (same as email)
+4. Email verification code: `424242` (special test code)
+
+**For Returning Users:**
+- Reuse the same test credentials on sign-in page
+- Email: `your_mail+clerk_test@example.com`
+- Password: `your_mail+clerk_test@example.com`
+
+**How It Works:**
+- Clerk's test mode recognizes `+clerk_test` email format
+- No real emails sent - uses hardcoded verification code `424242`
+- Works with empty `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` in development
+
 ---
 
 *This document serves as the project's north star, coordinating development efforts across frontend and backend components while maintaining focus on delivery goals.*
