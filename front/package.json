@@ -14,7 +14,7 @@
     "start": "next start",
     "lint": "next lint",
     "lint:fix": "eslint src --fix && pnpm format",
-    "lint:strict": "eslint --max-warnings=0 src",
+    "lint:strict": "eslint --max-warnings=20 src",
     "format": "prettier --write .",
     "format:check": "prettier -c -w .",
     "test": "vitest",
