@@ -7,6 +7,7 @@ export default async function Dashboard() {
   if (!userId) {
     return redirect('/auth/sign-in');
   } else {
-    redirect('/dashboard/overview');
+    // Render a minimal blank dashboard to expose raw layout/nav
+    return <div className='p-6' />;
   }
 }
