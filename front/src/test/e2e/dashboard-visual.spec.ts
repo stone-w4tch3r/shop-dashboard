@@ -14,10 +14,12 @@ test.describe('Dashboard Visual Layout Tests', () => {
   test('should display sign-in form correctly', async ({ page }) => {
     await page.goto('/auth/sign-in');
 
-    // Check form elements
+    // Check form elements - be more specific to avoid multiple matches
     await expect(page.getByText(/email/i)).toBeVisible();
-    await expect(page.getByRole('textbox')).toBeVisible();
-    await expect(page.getByRole('button', { name: /continue/i })).toBeVisible();
+    await expect(page.getByRole('textbox', { name: /email/i })).toBeVisible();
+    await expect(
+      page.getByRole('button', { name: 'Continue', exact: true })
+    ).toBeVisible();
   });
 
   test('should have responsive design', async ({ page }) => {

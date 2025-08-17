@@ -9,7 +9,7 @@
   },
   "scripts": {
     "preinstall": "npx only-allow pnpm",
-    "dev": "next dev",
+    "dev": "DISABLE_INSTRUMENTATION=true next dev --turbopack",
     "dev-full": "next dev --turbopack",
     "build": "next build",
     "start": "next start",

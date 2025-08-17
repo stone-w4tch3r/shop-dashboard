@@ -18,6 +18,11 @@ const sentryOptions: Sentry.NodeOptions | Sentry.EdgeOptions = {
 };
 
 export async function register() {
+  // Allow complete instrumentation disable for testing
+  if (process.env.DISABLE_INSTRUMENTATION === 'true') {
+    return;
+  }
+
   if (!process.env.NEXT_PUBLIC_SENTRY_DISABLED) {
     if (process.env.NEXT_RUNTIME === 'nodejs') {
       // Node.js Sentry configuration
