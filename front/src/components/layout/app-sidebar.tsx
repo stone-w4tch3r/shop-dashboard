@@ -59,7 +59,7 @@ const tenants = [
   { id: '3', name: 'Gamma Ltd' }
 ];
 
-export default function AppSidebar() {
+function AppSidebar() {
   const pathname = usePathname();
   const { isOpen } = useMediaQuery();
   const { user } = useUser();
@@ -211,3 +211,6 @@ export default function AppSidebar() {
     </Sidebar>
   );
 }
+
+export { AppSidebar };
+export default AppSidebar;

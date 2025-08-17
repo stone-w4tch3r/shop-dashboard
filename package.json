@@ -7,6 +7,7 @@
     "doc": "docs"
   },
   "scripts": {
+    "preinstall": "npx only-allow pnpm",
     "test": "echo \"Error: no test specified\" && exit 1",
     "prepare": "husky"
   },
@@ -19,7 +20,9 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/node": "^24.3.0",
     "husky": "^9.1.7",
     "lint-staged": "^16.1.5"
-  }
+  },
+  "packageManager": "pnpm@9.0.0"
 }
