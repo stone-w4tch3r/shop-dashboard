@@ -47,7 +47,8 @@ setup('authenticate and save state', async ({ page }) => {
     });
 
     // Navigate to dashboard to ensure we can access protected routes
-    await page.goto('/dashboard');
+    // /dashboard redirects to /dashboard/overview, so we navigate there directly
+    await page.goto('/dashboard/overview');
     await page.waitForSelector('nav, [role="navigation"]', { timeout: 15000 });
 
     // Save the authenticated state

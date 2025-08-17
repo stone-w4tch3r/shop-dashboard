@@ -234,27 +234,190 @@ src/stores/
 ### Result Pattern Types
 
 ```typescript
-// Core Result pattern for error handling
-type Result<T, E = Error> =
+// Core Result pattern (generic)
+export type Result<T, E> =
   | { success: true; data: T }
   | { success: false; error: E };
 
-// Operation results
-type ValidationResult = Result<void, string[]>;
-type ApiResult<T> = Result<T, ApiError>;
-type BusinessResult<T> = Result<T, BusinessError>;
+// Discriminated union errors (recommended): explicit, type-safe error codes
+// Define codes per domain/module (example below for API + Product domain)
+export type ApiErrorCode =
+  | 'NETWORK'
+  | 'TIMEOUT'
+  | 'UNAUTHORIZED'
+  | 'NOT_FOUND'
+  | 'SERVER'
+  | 'RATE_LIMITED';
 
-interface ApiError {
+export type ApiError = {
+  kind: 'api';
+  code: ApiErrorCode;
   message: string;
   status?: number;
-  code?: string;
-}
+};
 
-interface BusinessError {
+// Example product/business domain error codes
+export type ProductErrorCode =
+  | 'VALIDATION'
+  | 'POSTCONDITION'
+  | 'CONTRACT'
+  | 'SVC1'
+  | 'SVC1_DATA'
+  | 'SVC2';
+
+export type BusinessError = {
+  kind: 'business';
+  code: ProductErrorCode; // Use per-module unions to keep codes local and meaningful
   message: string;
   field?: string;
-  code: string;
+};
+
+// Validation error as a distinct kind
+export type ValidationError = {
+  kind: 'validation';
+  issues: string[];
+};
+
+// Operation results (with discriminated error types)
+export type ValidationResult = Result<void, ValidationError>;
+export type ApiResult<T> = Result<T, ApiError>;
+export type BusinessResult<T> = Result<T, BusinessError>;
+
+// Alternative (simple) variant without codes, when codes add no value
+export type SimpleError = { message: string; cause?: unknown };
+export type SimpleResult<T> = Result<T, SimpleError>;
+```
+
+### Fail Fast, Stepwise Guarded Flow, and Contracts
+
+These principles complement the existing Result pattern and Zod validation.
+
+1) Fail Fast (guards, early return, pre/postconditions)
+
+```typescript
+// src/features/products/stores/product-store.ts (excerpt)
+type GuardResult = Result<void, string>;
+
+const ensureNonEmptyTitle = (title: string): GuardResult =>
+  title.trim().length > 0
+    ? { success: true, data: undefined }
+    : { success: false, error: 'Title is required' };
+
+const ensureCommissionRange = (percent: number): GuardResult =>
+  percent >= 0 && percent <= 50
+    ? { success: true, data: undefined }
+    : { success: false, error: 'Commission must be 0-50%' };
+
+// Precondition checks + early returns prevent bad state from flowing further
+async function createProductSafe(dto: CreateProductDto): Promise<ApiResult<Product>> {
+  const t = ensureNonEmptyTitle(dto.title);
+  if (!t.success) {
+    return { success: false, error: { message: t.error, code: 'VALIDATION' } };
+  }
+
+  const c = ensureCommissionRange(dto.commissionPercent);
+  if (!c.success) {
+    return { success: false, error: { message: c.error, code: 'VALIDATION' } };
+  }
+
+  // ... proceed when preconditions hold
+  const res = await productsApi.create(dto);
+
+  // Postcondition (shape) check using zod to ensure API conforms
+  const parsed = productSchema.safeParse(res);
+  if (!parsed.success) {
+    return { success: false, error: { message: 'Invalid product from API', code: 'POSTCONDITION' } };
+  }
+
+  return { success: true, data: parsed.data };
 }
+```
+
+2) Stepwise Guarded Flow (simple, readable)
+
+```typescript
+// src/features/products/services/big-process.ts
+const inputSchema = z.object({ id: z.string(), amount: z.number().positive() });
+type Input = z.infer<typeof inputSchema>;
+
+interface Output { confirmationId: string }
+
+export async function doBigProcess(inputWrapped: unknown): Promise<Result<Output, BusinessError>> {
+  // Unwrap and auto-check input
+  const parsed = inputSchema.safeParse(inputWrapped);
+  if (!parsed.success) {
+    return { success: false, error: { message: 'Invalid input', code: 'INPUT' } };
+  }
+  const input: Input = parsed.data;
+
+  // Step 1: get required data
+  const requiredData1 = await service1.getRequiredData(input.id); // ApiResult<{ value: string }>
+  if (!requiredData1.success) {
+    return { success: false, error: { message: `service1 failed: ${requiredData1.error.message}`, code: 'SVC1' } };
+  }
+  if (requiredData1.data.value !== 'correct value') {
+    return { success: false, error: { message: 'Invalid requiredData1 value', code: 'SVC1_DATA' } };
+  }
+
+  // Step 2: perform action using validated data
+  const action = await service2.doAction({ id: input.id, amount: input.amount }); // BusinessResult<{ confirmationId: string }>
+  if (!action.success) {
+    return { success: false, error: { message: `service2 failed: ${action.error.message}`, code: 'SVC2' } };
+  }
+
+  // Success
+  return { success: true, data: { confirmationId: action.data.confirmationId } };
+}
+```
+
+3) Programming by Contract (types + Zod + tests)
+
+```typescript
+// Contract: Product coming from API
+export const productSchema = z.object({
+  _id: z.string(),
+  userId: z.string(),
+  title: z.string().min(1),
+  description: z.string(),
+  category: z.enum(['sports nutrition', 'equipment', 'clothing', 'gadgets']),
+  price: z.number().positive(),
+  commissionPercent: z.number().min(0).max(50),
+  referralLink: z.string().url(),
+  clicks: z.number().int().nonnegative(),
+  createdAt: z.string()
+});
+
+export type ProductContract = z.infer<typeof productSchema>;
+
+// Boundary enforcement
+async function getProduct(id: string): Promise<ApiResult<ProductContract>> {
+  const raw = await productsApi.getById(id);
+  const parsed = productSchema.safeParse(raw);
+  return parsed.success
+    ? { success: true, data: parsed.data }
+    : { success: false, error: { message: 'Contract violation', code: 'CONTRACT' } };
+}
+```
+
+Tests as contracts (specifying behavior and types):
+
+```typescript
+// src/features/products/__tests__/product-contract.spec.ts
+import { describe, it, expect } from 'vitest';
+import { productSchema } from '@/features/products/schemas/product';
+
+describe('Product contract', () => {
+  it('accepts valid payloads and rejects invalid ones', () => {
+    const valid = {
+      _id: 'p1', userId: 'u1', title: 'Name', description: 'desc',
+      category: 'equipment', price: 10, commissionPercent: 10,
+      referralLink: 'https://x.y', clicks: 0, createdAt: new Date().toISOString()
+    };
+
+    expect(productSchema.safeParse(valid).success).toBe(true);
+    expect(productSchema.safeParse({ ...valid, commissionPercent: 200 }).success).toBe(false);
+  });
+});
 ```
 
 ### Frontend Product Types
@@ -376,6 +539,9 @@ export const navItems: NavItem[] = [
 4. **Validation**: Use Zod schemas for all forms
 5. **Accessibility**: Follow WCAG guidelines
 6. **Performance**: Lazy load components when appropriate
+7. **Fail Fast**: Prefer early returns and pre/postcondition checks to avoid propagating invalid state
+8. **Stepwise Guarded Flow**: Use simple if-guards to short-circuit on failure and return Result values (no complex functional helpers needed)
+9. **Programming by Contract**: Define contracts via types and Zod; enforce at boundaries (props, API, store methods); tests also act as executable contracts
 
 ### Component Patterns
 
