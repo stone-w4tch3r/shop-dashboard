@@ -40,9 +40,69 @@ src/
 
 ## State Management Strategy
 
-### Primary Pattern: Zustand-First Architecture
+### Primary Pattern: Hybrid State Architecture
 
-**Why Zustand**: Backend-developer friendly, predictable state updates, built-in business logic support
+**Multiple patterns for different needs**: Zustand for business logic, React Context for framework-level concerns
+
+### When to Use Each Pattern
+
+| Pattern | Use Cases | Examples in Codebase |
+|---------|-----------|----------------------|
+| **Global Zustand Stores** | Business logic, CRUD operations, domain state | `useProductStore`, `useAnalyticsStore` |
+| **Atomic Zustand Stores** | Component state, local behavior, UI logic | `useProductCardStore`, `useSearchBoxStore` |
+| **React Context** | Framework integration, component tree state | `ActiveThemeProvider`, `KBarProvider` |
+| **3rd Party Providers** | External library integration | `ClerkProvider`, `ThemeProvider` (next-themes) |
+| **URL State (nuqs)** | Shareable/bookmarkable state | Pagination, filters, search |
+| **Form State (RHF)** | Form-specific validation and state | Product forms, settings |
+
+### 0. React Context Providers - Framework Integration
+
+**Use for**: Library integration, component tree configuration, SSR-safe state
+
+```typescript
+// Pattern: Custom Context for framework-level concerns
+interface ThemeContextType {
+  activeTheme: string;
+  setActiveTheme: (theme: string) => void;
+}
+
+const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
+
+export function ActiveThemeProvider({ children, initialTheme }: {
+  children: ReactNode;
+  initialTheme?: string;
+}) {
+  const [activeTheme, setActiveTheme] = useState<string>(
+    () => initialTheme || DEFAULT_THEME
+  );
+
+  useEffect(() => {
+    // Framework-level side effects: DOM manipulation, cookies
+    setThemeCookie(activeTheme);
+    document.body.classList.add(`theme-${activeTheme}`);
+  }, [activeTheme]);
+
+  return (
+    <ThemeContext.Provider value={{ activeTheme, setActiveTheme }}>
+      {children}
+    </ThemeContext.Provider>
+  );
+}
+
+export function useThemeConfig() {
+  const context = useContext(ThemeContext);
+  if (!context) {
+    throw new Error('useThemeConfig must be used within ActiveThemeProvider');
+  }
+  return context;
+}
+```
+
+**Provider Guidelines**:
+- **SSR Safety**: Initialize from server-provided props (`initialTheme`)
+- **Error Boundaries**: Always validate context exists
+- **Side Effects**: Handle DOM manipulation, cookies, external integrations
+- **Composition**: Nest providers in logical order (theme → auth → app-specific)
 
 ### 1. Feature-Level Stores - Zustand
 
@@ -87,22 +147,71 @@ export const useProductStore = create<ProductStore>((set, get) => ({
 
 ### 2. Global Stores - Zustand
 
-**Use for**: Cross-cutting concerns (auth, UI, notifications)
+**Use for**: Cross-cutting application state (not framework concerns - use Context for those)
 
 ```typescript
 // Pattern: Shared application state
-export const useUIStore = create<UIStore>()(
+export const useDummyAuthStore = create<DummyAuthStore>()(
   persist(
     (set) => ({
-      theme: 'light',
-      sidebarCollapsed: false,
-      toggleSidebar: () =>
-        set((state) => ({ sidebarCollapsed: !state.sidebarCollapsed }))
+      user: null,
+      setUser: (user) => set({ user }),
+      logout: () => set({ user: null }),
     }),
-    { name: 'ui-preferences' }
+    { name: 'dummy-auth-preferences' }
   )
 );
 ```
+
+### 2.5. Atomic Component Stores - Zustand
+
+**Use for**: Component-specific state, local behavior, avoiding complex useState chains
+
+```typescript
+// Pattern: Factory function for per-component stores
+function createProductCardStore(productId: string, deps: {
+  productsStore: ProductsStore;
+  cartStore: CartStore;
+}) {
+  return create<ProductCardState>((set, get) => ({
+    isExpanded: false,
+    isEditing: false,
+    localChanges: {},
+
+    toggleExpanded: () => set(state => ({ isExpanded: !state.isExpanded })),
+
+    addToCart: async () => {
+      const product = deps.productsStore.getState().products
+        .find(p => p.id === productId);
+      await deps.cartStore.getState().addItem(product);
+    },
+
+    saveChanges: async () => {
+      const { localChanges } = get();
+      await deps.productsStore.getState().updateProduct(productId, localChanges);
+      set({ isEditing: false, localChanges: {} });
+    }
+  }));
+}
+
+// Usage with dependency injection
+class StoreFactory {
+  createProductCard(productId: string) {
+    return createProductCardStore(productId, {
+      productsStore: useProductsStore.getState(),
+      cartStore: useCartStore.getState()
+    });
+  }
+}
+
+export const storeFactory = new StoreFactory();
+```
+
+**Atomic Store Guidelines**:
+- **Use when**: ≥3 related state pieces, complex transitions, testable logic needed
+- **Avoid when**: Simple toggles, one-off UI state, direct DOM manipulation
+- **Dependencies**: Inject global stores, never import atomic stores directly
+- **Communication**: Atomic → Global (delegate), Global → Atomic (subscribe)
 
 ### 3. URL State - Nuqs (Supplementary)
 
@@ -149,6 +258,32 @@ export const apiClient = axios.create({
 });
 ```
 
+### Store Composition & Dependencies
+
+**Store Hierarchy**: Global Stores → Atomic Stores → Components
+
+```typescript
+// Store responsibility layers
+// Layer 1: Global Domain Stores (data + business logic)
+useProductsStore     // Products CRUD, caching, business rules
+useCartStore         // Cart state, checkout logic
+
+// Layer 2: Atomic Component Stores (UI state + local behavior)
+useProductCardStore  // Expansion, editing, local validation
+useCartWidgetStore   // Dropdown state, animations
+
+// Layer 3: Cross-cutting Stores (framework concerns)
+useNotificationStore // Toast messages
+useUIStore          // Theme, modals, loading states
+```
+
+**Dependency Rules**:
+- ✅ Global stores are singletons, created once
+- ✅ Atomic stores inject global store dependencies
+- ✅ Communication: Atomic → Global (delegate), Global → Atomic (subscribe)
+- ❌ Never: Atomic → Atomic communication (use Global as mediator)
+- ❌ Never: Global → Atomic imports (circular dependency)
+
 ### Store Error Handling Pattern
 
 ```typescript
@@ -182,27 +317,32 @@ export const useProductStore = create<ProductStore>((set, get) => ({
 
 ```
 src/features/{domain}/
-├── stores/           # Feature-specific Zustand stores
-├── components/       # Domain-specific components
-├── api/              # API endpoints (pure HTTP calls)
-├── types/            # Domain TypeScript types
-└── schemas/          # Zod validation schemas
+├── stores/                     # Feature-specific Zustand stores
+│   ├── types/                  # Domain-specific store types
+│   ├── {domain}-store.ts       # Global domain store
+│   └── store-factory.ts        # Factory with dependency injection
+├── components/                 # Domain-specific components
+│   ├── ProductCard/
+│   │   ├── ProductCard.tsx
+│   │   └── product-card-store.ts    # Atomic store next to component
+│   └── SearchBox/
+│       ├── SearchBox.tsx
+│       └── search-box-store.ts      # Atomic store next to component
+├── api/                        # API endpoints (pure HTTP calls)
+├── types/                      # Domain TypeScript types
+└── schemas/                    # Zod validation schemas
 ```
 
 ### Store Organization Structure
 
 ```
 src/stores/
-├── global/
-│   ├── auth-store.ts        # User authentication
-│   ├── ui-store.ts          # Theme, sidebar, modals
-│   └── notification-store.ts # Toast messages, alerts
-├── features/
-│   ├── product-store.ts     # Product management
-│   ├── analytics-store.ts   # Dashboard statistics
-│   └── settings-store.ts    # User preferences
-└── types/
-    └── store-types.ts       # Store interfaces
+└── global/
+    ├── types/
+    │   └── {store}-types.ts       # Store interfaces
+    ├── auth-store.ts        # User authentication
+    ├── ui-store.ts          # Theme, sidebar, modals
+    └── notification-store.ts # Toast messages, alerts
 ```
 
 ### Component Organization Rules
@@ -215,11 +355,12 @@ src/stores/
 
 ### Store Development Rules
 
-1. **Feature stores** handle domain-specific state and business logic
-2. **Global stores** handle cross-cutting concerns only
-3. **Business logic** lives in store methods, not components
-4. **API calls** initiated from stores, not components directly
-5. **Store communication** via `getState()` calls between stores
+1. **Global stores** handle domain state, business logic, and API calls
+2. **Atomic stores** handle component UI state and local behavior
+3. **Dependency injection** via factory pattern prevents circular dependencies
+4. **Business logic** lives in store methods, not components
+5. **Store communication**: Atomic → Global (delegate), never Atomic → Atomic
+6. **Store selection**: Use atomic stores for ≥3 related state pieces, hooks for simple toggles
 
 ### File Naming Conventions
 
@@ -292,7 +433,7 @@ export type SimpleResult<T> = Result<T, SimpleError>;
 
 These principles complement the existing Result pattern and Zod validation.
 
-1) Fail Fast (guards, early return, pre/postconditions)
+1. Fail Fast (guards, early return, pre/postconditions)
 
 ```typescript
 // src/features/products/stores/product-store.ts (excerpt)
@@ -309,7 +450,9 @@ const ensureCommissionRange = (percent: number): GuardResult =>
     : { success: false, error: 'Commission must be 0-50%' };
 
 // Precondition checks + early returns prevent bad state from flowing further
-async function createProductSafe(dto: CreateProductDto): Promise<ApiResult<Product>> {
+async function createProductSafe(
+  dto: CreateProductDto
+): Promise<ApiResult<Product>> {
   const t = ensureNonEmptyTitle(dto.title);
   if (!t.success) {
     return { success: false, error: { message: t.error, code: 'VALIDATION' } };
@@ -326,51 +469,82 @@ async function createProductSafe(dto: CreateProductDto): Promise<ApiResult<Produ
   // Postcondition (shape) check using zod to ensure API conforms
   const parsed = productSchema.safeParse(res);
   if (!parsed.success) {
-    return { success: false, error: { message: 'Invalid product from API', code: 'POSTCONDITION' } };
+    return {
+      success: false,
+      error: { message: 'Invalid product from API', code: 'POSTCONDITION' }
+    };
   }
 
   return { success: true, data: parsed.data };
 }
 ```
 
-2) Stepwise Guarded Flow (simple, readable)
+2. Stepwise Guarded Flow (simple, readable)
 
 ```typescript
 // src/features/products/services/big-process.ts
 const inputSchema = z.object({ id: z.string(), amount: z.number().positive() });
 type Input = z.infer<typeof inputSchema>;
 
-interface Output { confirmationId: string }
+interface Output {
+  confirmationId: string;
+}
 
-export async function doBigProcess(inputWrapped: unknown): Promise<Result<Output, BusinessError>> {
+export async function doBigProcess(
+  inputWrapped: unknown
+): Promise<Result<Output, BusinessError>> {
   // Unwrap and auto-check input
   const parsed = inputSchema.safeParse(inputWrapped);
   if (!parsed.success) {
-    return { success: false, error: { message: 'Invalid input', code: 'INPUT' } };
+    return {
+      success: false,
+      error: { message: 'Invalid input', code: 'INPUT' }
+    };
   }
   const input: Input = parsed.data;
 
   // Step 1: get required data
   const requiredData1 = await service1.getRequiredData(input.id); // ApiResult<{ value: string }>
   if (!requiredData1.success) {
-    return { success: false, error: { message: `service1 failed: ${requiredData1.error.message}`, code: 'SVC1' } };
+    return {
+      success: false,
+      error: {
+        message: `service1 failed: ${requiredData1.error.message}`,
+        code: 'SVC1'
+      }
+    };
   }
   if (requiredData1.data.value !== 'correct value') {
-    return { success: false, error: { message: 'Invalid requiredData1 value', code: 'SVC1_DATA' } };
+    return {
+      success: false,
+      error: { message: 'Invalid requiredData1 value', code: 'SVC1_DATA' }
+    };
   }
 
   // Step 2: perform action using validated data
-  const action = await service2.doAction({ id: input.id, amount: input.amount }); // BusinessResult<{ confirmationId: string }>
+  const action = await service2.doAction({
+    id: input.id,
+    amount: input.amount
+  }); // BusinessResult<{ confirmationId: string }>
   if (!action.success) {
-    return { success: false, error: { message: `service2 failed: ${action.error.message}`, code: 'SVC2' } };
+    return {
+      success: false,
+      error: {
+        message: `service2 failed: ${action.error.message}`,
+        code: 'SVC2'
+      }
+    };
   }
 
   // Success
-  return { success: true, data: { confirmationId: action.data.confirmationId } };
+  return {
+    success: true,
+    data: { confirmationId: action.data.confirmationId }
+  };
 }
 ```
 
-3) Programming by Contract (types + Zod + tests)
+3. Programming by Contract (types + Zod + tests)
 
 ```typescript
 // Contract: Product coming from API
@@ -395,7 +569,10 @@ async function getProduct(id: string): Promise<ApiResult<ProductContract>> {
   const parsed = productSchema.safeParse(raw);
   return parsed.success
     ? { success: true, data: parsed.data }
-    : { success: false, error: { message: 'Contract violation', code: 'CONTRACT' } };
+    : {
+        success: false,
+        error: { message: 'Contract violation', code: 'CONTRACT' }
+      };
 }
 ```
 
@@ -409,13 +586,22 @@ import { productSchema } from '@/features/products/schemas/product';
 describe('Product contract', () => {
   it('accepts valid payloads and rejects invalid ones', () => {
     const valid = {
-      _id: 'p1', userId: 'u1', title: 'Name', description: 'desc',
-      category: 'equipment', price: 10, commissionPercent: 10,
-      referralLink: 'https://x.y', clicks: 0, createdAt: new Date().toISOString()
+      _id: 'p1',
+      userId: 'u1',
+      title: 'Name',
+      description: 'desc',
+      category: 'equipment',
+      price: 10,
+      commissionPercent: 10,
+      referralLink: 'https://x.y',
+      clicks: 0,
+      createdAt: new Date().toISOString()
     };
 
     expect(productSchema.safeParse(valid).success).toBe(true);
-    expect(productSchema.safeParse({ ...valid, commissionPercent: 200 }).success).toBe(false);
+    expect(
+      productSchema.safeParse({ ...valid, commissionPercent: 200 }).success
+    ).toBe(false);
   });
 });
 ```
@@ -517,6 +703,36 @@ src/app/dashboard/
     └── page.tsx          # User settings
 ```
 
+### App Directory Responsibility
+
+**App/ Should Only Handle**: Routing, layouts, metadata, suspense boundaries, parallel route composition
+
+**Clean App/ Pattern**:
+```typescript
+// ✅ GOOD: Thin routing logic only
+export const metadata = { title: 'Dashboard: Products' };
+
+export default async function Page(props: pageProps) {
+  const searchParams = await props.searchParams;
+  searchParamsCache.parse(searchParams);
+
+  return (
+    <Suspense fallback={<ProductsPageSkeleton />}>
+      <ProductsPageView searchParams={searchParams} />
+    </Suspense>
+  );
+}
+```
+
+**Move to Features/**:
+- UI component composition (`<Card>`, `<Button>`, etc.)
+- Hardcoded content and text
+- Business logic and data fetching
+- Complex layout structures
+- Form handling and validation
+
+**Enforcement**: ESLint rules prevent UI imports and limit file size in `app/` directory.
+
 ### Navigation Configuration
 
 ```typescript
@@ -540,7 +756,7 @@ export const navItems: NavItem[] = [
 5. **Accessibility**: Follow WCAG guidelines
 6. **Performance**: Lazy load components when appropriate
 7. **Fail Fast**: Prefer early returns and pre/postcondition checks to avoid propagating invalid state
-8. **Stepwise Guarded Flow**: Use simple if-guards to short-circuit on failure and return Result values (no complex functional helpers needed)
+8. **Stepwise Guarded Flow**: Use simple guards to short-circuit on failure and return Result values (no complex functional helpers needed)
 9. **Programming by Contract**: Define contracts via types and Zod; enforce at boundaries (props, API, store methods); tests also act as executable contracts
 
 ### Component Patterns
@@ -816,11 +1032,13 @@ pnpm test:unit:coverage     # Generate coverage reports
 ### Three-Level Testing Pyramid
 
 1. **Component Tests** (Vitest + React Testing Library)
+
    - Unit tests for individual components
    - Mock external dependencies and contexts
    - Fast execution (~10 seconds)
 
 2. **Integration Tests** (Vitest + MSW)
+
    - Feature workflows with mocked backend
    - Store integration and state management
    - API interaction testing
@@ -892,7 +1110,7 @@ We use an **"Islands Architecture"** approach to minimize risk and maximize prod
 
 **Phase 1: Foundation Setup (1 hour)**
 
-- [ ] Create store directory structure (`/stores/global/`, `/stores/features/`)
+- [ ] Create store directory structure (`/stores/global/`)
 - [ ] Add API client setup (`/lib/api-client.ts`)
 - [ ] Add Result pattern types (`/types/result.ts`)
 - [ ] Add notification store for error handling
@@ -931,8 +1149,10 @@ src/
 ├── features/
 │   ├── products/           # HYBRID: Existing + new store layer
 │   ├── analytics/          # NEW: Full modern architecture
+│   │   └── stores/         #      Internal stores
 │   └── settings/           # NEW: Full modern architecture
-├── stores/                 # NEW: Modern state management
+│       └── stores/         #      Internal stores
+├── stores/                 # NEW: Modern global state management
 ├── components/             # EXISTING: Keep shared components
 └── lib/
     └── api-client.ts       # NEW: Replace mock data
@@ -961,10 +1181,10 @@ CLERK_SECRET_KEY=your_secret
 
 ```bash
 # Install dependencies
-npm install
+pnpm install
 
 # Start development server
-npm run dev
+pnpm run dev
 
 # Frontend will be available at http://localhost:3000
 ```

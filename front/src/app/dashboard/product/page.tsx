@@ -1,7 +1,11 @@
 import PageContainer from '@/components/layout/page-container';
+// eslint-disable-next-line @typescript-eslint/no-restricted-imports -- Template mock file, will be refactored
 import { buttonVariants } from '@/components/ui/button';
+// eslint-disable-next-line @typescript-eslint/no-restricted-imports -- Template mock file, will be refactored
 import { Heading } from '@/components/ui/heading';
+// eslint-disable-next-line @typescript-eslint/no-restricted-imports -- Template mock file, will be refactored
 import { Separator } from '@/components/ui/separator';
+// eslint-disable-next-line @typescript-eslint/no-restricted-imports -- Template mock file, will be refactored
 import { DataTableSkeleton } from '@/components/ui/table/data-table-skeleton';
 import ProductListingPage from '@/features/products/components/product-listing';
 import { searchParamsCache, serialize } from '@/lib/searchparams';
