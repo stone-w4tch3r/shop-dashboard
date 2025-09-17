@@ -9,8 +9,12 @@
       "args": ["-y", "@upstash/context7-mcp"]
     },
     "ddg-search": {
-        "command": "uvx",
-        "args": ["duckduckgo-mcp-server"]
+      "command": "uvx",
+      "args": ["duckduckgo-mcp-server"]
+    },
+    "Framelink Figma MCP": {
+      "command": "npx",
+      "args": ["-y", "figma-developer-mcp", "--figma-api-key=YOUR-KEY", "--stdio"]
     }
   }
 }
