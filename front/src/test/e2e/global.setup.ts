@@ -1,54 +1,39 @@
-import { clerkSetup } from '@clerk/testing/playwright';
 import { test as setup } from '@playwright/test';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-// Configure Playwright with Clerk
+// Configure Playwright for mock auth
 setup.describe.configure({ mode: 'serial' });
 
 setup('global setup', async ({}) => {
-  await clerkSetup({
-    frontendApiUrl: process.env.E2E_CLERK_FRONTEND_API_URL || ''
-  });
-  if (!process.env.E2E_CLERK_FRONTEND_API_URL) {
-    throw new Error('E2E_CLERK_FRONTEND_API_URL is not set');
-  }
-  if (!process.env.E2E_CLERK_USER_USERNAME) {
-    throw new Error('E2E_CLERK_USER_USERNAME is not set');
-  }
-  if (!process.env.E2E_CLERK_USER_PASSWORD) {
-    throw new Error('E2E_CLERK_USER_PASSWORD is not set');
-  }
+  // Mock auth setup - no external services needed
+  console.log('Setting up mock authentication for E2E tests');
 });
 
 // Define the path to the storage file for authenticated tests
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const authFile = path.join(__dirname, '../../../playwright/.clerk/user.json');
+const authFile = path.join(
+  __dirname,
+  '../../../playwright/.mock-auth/user.json'
+);
 
 setup('authenticate and save state', async ({ page }) => {
   // Only run if we need authenticated tests
   if (!process.env.SKIP_AUTH_SETUP) {
-    const { clerk } = await import('@clerk/testing/playwright');
+    // Navigate to sign-in page
+    await page.goto('/auth/sign-in');
 
-    // Use setupClerkTestingToken for additional protection
-    const { setupClerkTestingToken } = await import(
-      '@clerk/testing/playwright'
-    );
-    await setupClerkTestingToken({ page });
+    // Fill in mock credentials
+    await page.fill('input[name="email"]', 'test@example.com');
+    await page.fill('input[name="password"]', 'password');
 
-    await page.goto('/');
-    await clerk.signIn({
-      page,
-      signInParams: {
-        strategy: 'password',
-        identifier: process.env.E2E_CLERK_USER_USERNAME || '',
-        password: process.env.E2E_CLERK_USER_PASSWORD || ''
-      }
-    });
+    // Submit the form
+    await page.click('button[type="submit"]');
 
-    // Navigate to dashboard to ensure we can access protected routes
-    // /dashboard redirects to /dashboard/overview, so we navigate there directly
-    await page.goto('/dashboard/overview');
+    // Wait for redirect to dashboard
+    await page.waitForURL('**/dashboard**', { timeout: 15000 });
+
+    // Verify we can access protected routes
     await page.waitForSelector('nav, [role="navigation"]', { timeout: 15000 });
 
     // Save the authenticated state

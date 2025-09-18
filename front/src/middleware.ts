@@ -1,11 +1,14 @@
-import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
-import { NextRequest } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
-const isProtectedRoute = createRouteMatcher(['/dashboard(.*)']);
+export default function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+  const isProtectedRoute = pathname.startsWith('/dashboard');
 
-export default clerkMiddleware(async (auth, req: NextRequest) => {
-  if (isProtectedRoute(req)) await auth.protect();
-});
+  if (isProtectedRoute && !request.cookies.get('mock-auth-session')) {
+    return NextResponse.redirect(new URL('/auth/sign-in', request.url));
+  }
+}
+
 export const config = {
   matcher: [
     // Skip Next.js internals and all static files, unless found in search params

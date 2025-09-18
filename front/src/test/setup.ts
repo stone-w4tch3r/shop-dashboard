@@ -1,5 +1,7 @@
 import '@testing-library/jest-dom';
+import { afterEach, beforeAll, afterAll, vi } from 'vitest';
 import { server } from './mocks/server';
+import React from 'react';
 
 // Setup MSW server
 beforeAll(() => server.listen({ onUnhandledRequest: 'error' }));
@@ -31,46 +33,77 @@ vi.mock('next/image', () => ({
   }))
 }));
 
-// Mock Clerk hooks for unit tests
-vi.mock('@clerk/nextjs', async () => {
-  const actual = await vi.importActual('@clerk/nextjs');
-  return {
-    ...actual,
-    useUser: () => ({
-      isLoaded: true,
-      isSignedIn: true,
-      user: {
-        id: 'test-user-id',
-        firstName: 'Test',
-        lastName: 'User',
-        primaryEmailAddress: { emailAddress: 'test@example.com' },
-        imageUrl: 'https://example.com/avatar.jpg'
+// Mock our custom auth hooks for unit tests
+vi.mock('@/lib/mock-auth', () => ({
+  useUser: () => ({
+    isLoaded: true,
+    isSignedIn: true,
+    user: {
+      id: 'test-user-id',
+      firstName: 'Test',
+      lastName: 'User',
+      fullName: 'Test User',
+      username: 'testuser',
+      primaryEmailAddress: { emailAddress: 'test@example.com' },
+      imageUrl: 'https://example.com/avatar.jpg',
+      emailAddresses: [
+        {
+          id: 'email_test',
+          emailAddress: 'test@example.com',
+          verification: { status: 'verified' }
+        }
+      ]
+    }
+  }),
+  useAuth: () => ({
+    isLoaded: true,
+    isSignedIn: true,
+    userId: 'test-user-id',
+    sessionId: 'test-session-id',
+    getToken: vi.fn().mockResolvedValue('mock-token'),
+    signOut: vi.fn()
+  }),
+  SignOutButton: ({ children }: { children?: React.ReactNode }) =>
+    React.createElement(
+      'button',
+      { 'data-testid': 'sign-out-button' },
+      children || 'Sign Out'
+    ),
+  AuthProvider: ({ children }: { children: React.ReactNode }) =>
+    React.createElement(
+      'div',
+      { 'data-testid': 'mock-auth-provider' },
+      children
+    ),
+  auth: vi.fn().mockResolvedValue({
+    userId: 'test-user-id',
+    sessionId: 'test-session-id'
+  })
+}));
+
+// Mock server-side auth
+vi.mock('@/lib/mock-auth-server', () => ({
+  auth: vi.fn().mockResolvedValue({
+    userId: 'test-user-id',
+    sessionId: 'test-session-id'
+  }),
+  currentUser: vi.fn().mockResolvedValue({
+    id: 'test-user-id',
+    firstName: 'Test',
+    lastName: 'User',
+    fullName: 'Test User',
+    username: 'testuser',
+    primaryEmailAddress: { emailAddress: 'test@example.com' },
+    imageUrl: 'https://example.com/avatar.jpg',
+    emailAddresses: [
+      {
+        id: 'email_test',
+        emailAddress: 'test@example.com',
+        verification: { status: 'verified' }
       }
-    }),
-    useAuth: () => ({
-      isLoaded: true,
-      isSignedIn: true,
-      userId: 'test-user-id',
-      sessionId: 'test-session-id',
-      getToken: vi.fn().mockResolvedValue('mock-token'),
-      signOut: vi.fn()
-    }),
-    useClerk: () => ({
-      loaded: true,
-      user: {
-        id: 'test-user-id',
-        firstName: 'Test',
-        lastName: 'User'
-      }
-    }),
-    SignOutButton: ({ children }: { children?: React.ReactNode }) =>
-      React.createElement(
-        'button',
-        { 'data-testid': 'sign-out-button' },
-        children || 'Sign Out'
-      )
-  };
-});
+    ]
+  })
+}));
 
 // Global test setup
 Object.defineProperty(window, 'matchMedia', {

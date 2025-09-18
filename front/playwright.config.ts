@@ -41,7 +41,7 @@ export default defineConfig({
         launchOptions: {
           executablePath: resolveChromeExecutable()
         },
-        storageState: 'playwright/.clerk/user.json'
+        storageState: 'playwright/.mock-auth/user.json'
       },
       dependencies: ['global setup']
     },

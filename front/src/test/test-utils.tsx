@@ -1,7 +1,7 @@
 import { ReactElement } from 'react';
 import { render, RenderOptions } from '@testing-library/react';
 import { ThemeProvider } from 'next-themes';
-import { ClerkProvider } from '@clerk/nextjs';
+import { AuthProvider } from '@/lib/mock-auth';
 
 // Mock Next.js router for testing
 const mockRouter = {
@@ -22,31 +22,17 @@ const mockAppRouterContext = {
   asPath: '/dashboard'
 };
 
-// Mock Clerk for testing
-const mockClerkProvider = ({ children }: { children: React.ReactNode }) => {
-  // For component tests, we mock Clerk with a basic provider
-  return (
-    <ClerkProvider
-      publishableKey={
-        process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || 'pk_test_mock'
-      }
-      appearance={{
-        baseTheme: undefined,
-        variables: {
-          colorPrimary: '#000'
-        }
-      }}
-    >
-      {children}
-    </ClerkProvider>
-  );
+// Mock auth provider for testing
+const mockAuthProvider = ({ children }: { children: React.ReactNode }) => {
+  // For component tests, we use our mock auth provider
+  return <AuthProvider>{children}</AuthProvider>;
 };
 
 // Custom render function with providers
 const AllTheProviders = ({ children }: { children: React.ReactNode }) => {
   return (
     <ThemeProvider attribute='class' defaultTheme='light' enableSystem>
-      {mockClerkProvider({ children })}
+      {mockAuthProvider({ children })}
     </ThemeProvider>
   );
 };

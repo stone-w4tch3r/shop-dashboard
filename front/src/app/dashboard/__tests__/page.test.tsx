@@ -1,91 +1,81 @@
-import { render, screen } from '@/test/test-utils';
-import { describe, it, expect, vi } from 'vitest';
-import DashboardPage from '../page';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-// Mock next/navigation
+// Mock next/navigation with proper hoisting
+const mockRedirect = vi.fn();
 vi.mock('next/navigation', () => ({
   useRouter: () => ({
     push: vi.fn(),
     replace: vi.fn(),
     refresh: vi.fn()
   }),
-  redirect: vi.fn(),
+  redirect: mockRedirect,
   usePathname: () => '/dashboard',
   useSearchParams: () => new URLSearchParams(),
   useParams: () => ({})
 }));
 
-// Mock Clerk server auth
-vi.mock('@clerk/nextjs/server', () => ({
-  auth: vi.fn().mockResolvedValue({ userId: 'test-user-id' })
+// Mock server auth
+const mockAuth = vi.fn().mockResolvedValue({ userId: 'test-user-id' });
+vi.mock('@/lib/mock-auth-server', () => ({
+  auth: mockAuth
 }));
 
-// Mock any dashboard components that might be complex
-vi.mock('@/components/layout/page-container', () => ({
-  PageContainer: ({ children }: { children: React.ReactNode }) => (
-    <div data-testid='page-container'>{children}</div>
-  )
-}));
+// Import after mocks are set up
+const DashboardPage = await import('../page').then((m) => m.default);
 
 describe('DashboardPage', () => {
-  it('renders without crashing', async () => {
-    // Since DashboardPage is async, we need to await the component
-    const AsyncDashboard = await DashboardPage();
-    render(AsyncDashboard);
-
-    // The actual page renders a div with p-6 class
-    expect(document.querySelector('.p-6')).toBeInTheDocument();
+  beforeEach(() => {
+    mockRedirect.mockClear();
+    mockAuth.mockClear();
+    mockAuth.mockResolvedValue({ userId: 'test-user-id' });
   });
 
-  it('displays welcome content or placeholder', async () => {
-    const AsyncDashboard = await DashboardPage();
-    render(AsyncDashboard);
-
-    // The actual page renders a minimal div
-    expect(document.querySelector('.p-6')).toBeInTheDocument();
+  it('redirects to overview when user is authenticated', async () => {
+    await DashboardPage();
+    expect(mockRedirect).toHaveBeenCalledWith('/dashboard/overview');
   });
 
-  it('has accessible structure', async () => {
-    const AsyncDashboard = await DashboardPage();
-    render(AsyncDashboard);
+  it('redirects to sign-in when user is not authenticated', async () => {
+    // Mock auth to return no userId
+    mockAuth.mockResolvedValueOnce({ userId: null });
 
-    // Check for the rendered div
-    expect(document.querySelector('.p-6')).toBeInTheDocument();
+    await DashboardPage();
+    expect(mockRedirect).toHaveBeenCalledWith('/auth/sign-in');
   });
 
-  it('handles empty state gracefully', async () => {
-    const AsyncDashboard = await DashboardPage();
-    render(AsyncDashboard);
-
-    // Page should render the minimal div
-    expect(document.querySelector('.p-6')).toBeInTheDocument();
+  it('handles auth check correctly', async () => {
+    await DashboardPage();
+    expect(mockAuth).toHaveBeenCalled();
   });
 
-  it('maintains consistent layout', async () => {
-    const AsyncDashboard = await DashboardPage();
-    render(AsyncDashboard);
-
-    const container = document.querySelector('.p-6');
-    expect(container).toBeInTheDocument();
-    expect(container).toHaveClass('p-6');
+  it('does not render any content - just redirects', async () => {
+    // Since the page immediately redirects, it shouldn't render any content
+    const result = await DashboardPage();
+    expect(result).toBeUndefined(); // redirect() doesn't return JSX
   });
 
-  it('is ready for content integration', async () => {
-    const AsyncDashboard = await DashboardPage();
-    render(AsyncDashboard);
+  it('handles authentication flow properly', async () => {
+    await DashboardPage();
+    // Should redirect to overview for authenticated user
+    expect(mockRedirect).toHaveBeenCalledWith('/dashboard/overview');
+  });
 
-    // Should render the basic structure
-    expect(document.querySelector('.p-6')).toBeInTheDocument();
+  it('maintains proper async behavior', async () => {
+    const start = Date.now();
+    await DashboardPage();
+    const end = Date.now();
+
+    // Should complete quickly (no actual rendering)
+    expect(end - start).toBeLessThan(100);
+    expect(mockRedirect).toHaveBeenCalled();
   });
 
   it('does not throw console errors', async () => {
     const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
-    const AsyncDashboard = await DashboardPage();
-    render(AsyncDashboard);
+    await DashboardPage();
 
     expect(consoleSpy).not.toHaveBeenCalled();
-
     consoleSpy.mockRestore();
   });
 });

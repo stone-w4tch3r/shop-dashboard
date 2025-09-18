@@ -1,4 +1,4 @@
-import { UserProfile } from '@clerk/nextjs';
+import { UserProfile } from '@/lib/mock-auth';
 
 export default function ProfileViewPage() {
   return (

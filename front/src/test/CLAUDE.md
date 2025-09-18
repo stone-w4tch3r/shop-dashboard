@@ -14,7 +14,7 @@ This project implements a **three-level testing pyramid** following TDD principl
 - **Execution**: ~10 seconds for 29 tests
 
 ```tsx
-// Example: Component test with Clerk auth bypass
+// Example: Component test with mock auth
 import { render, screen } from '@/test/test-utils';
 import { Button } from '../button';
 
@@ -39,7 +39,7 @@ test('renders button with text', () => {
 
 - **Purpose**: Full user journeys with real authentication
 - **Framework**: Playwright with multi-browser support
-- **Features**: Complete workflow testing, Clerk authentication
+- **Features**: Complete workflow testing, mock authentication
 - **Configuration**: Automatic dev server startup
 
 ```ts
@@ -181,20 +181,20 @@ src/{domain}/__tests__/     # Component & integration tests
 
 ### ✅ Unit Test Authentication Implementation
 
-**Current Status**: **All 29 unit tests passing** with proper Clerk authentication bypass.
+**Current Status**: **All 29 unit tests passing** with proper mock authentication.
 
-**Implementation**: Comprehensive Clerk mocking infrastructure for component tests:
+**Implementation**: Comprehensive mock auth infrastructure for component tests:
 
-- **Global Clerk mocks** in `src/test/setup.ts` for useUser, useAuth, SignOutButton
-- **Local test mocks** for component-specific Clerk hooks
-- **Test utilities** with ClerkProvider integration
+- **Global auth mocks** in `src/test/setup.ts` for useUser, useAuth, SignOutButton
+- **Local test mocks** for component-specific auth hooks
+- **Test utilities** with AuthProvider integration
 - **Server auth mocking** for async Server Components (Dashboard page/layout)
 
 ### Unit Test Mock Configuration
 
 ```typescript
-// src/test/setup.ts - Global Clerk mocking
-vi.mock('@clerk/nextjs', async () => ({
+// src/test/setup.ts - Global auth mocking
+vi.mock('@/lib/mock-auth', async () => ({
   useUser: () => ({
     isLoaded: true,
     isSignedIn: true,
@@ -222,7 +222,7 @@ vi.mock('@clerk/nextjs', async () => ({
 }));
 
 // Server-side auth mocking for async components
-vi.mock('@clerk/nextjs/server', () => ({
+vi.mock('@/lib/mock-auth-server', () => ({
   auth: vi.fn().mockResolvedValue({ userId: 'test-user-id' })
 }));
 ```
@@ -243,7 +243,7 @@ vi.mock('@clerk/nextjs/server', () => ({
 
 #### 3. **Server Components** (Dashboard Page)
 
-- Mock Clerk server auth with `@clerk/nextjs/server`
+- Mock server auth with `@/lib/mock-auth-server`
 - Handle async component rendering with `await` pattern
 - Test authentication flow and redirect logic
 
@@ -253,9 +253,9 @@ vi.mock('@clerk/nextjs/server', () => ({
 
 **Authentication Configuration**:
 
-- **Clerk integration**: Uses `.env.test.local` with development credentials
-- **State persistence**: Saves auth state to `playwright/.clerk/user.json`
-- **Global setup**: `src/test/e2e/global.setup.ts` handles Clerk configuration
+- **Mock auth integration**: Uses simple form-based authentication
+- **State persistence**: Saves auth state to `playwright/.mock-auth/user.json`
+- **Global setup**: `src/test/e2e/global.setup.ts` handles mock auth configuration
 
 ### Test Results Summary
 
@@ -263,7 +263,7 @@ vi.mock('@clerk/nextjs/server', () => ({
 
 - **Status**: **0 failed, 29 passed** (100% success rate)
 - **Execution time**: ~10 seconds consistently
-- **Coverage**: All UI components with Clerk authentication bypass
+- **Coverage**: All UI components with mock authentication
 - **Command**: `pnpm test`
 
 #### E2E Tests ✅
