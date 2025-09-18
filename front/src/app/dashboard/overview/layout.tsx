@@ -1,7 +1,7 @@
 import PageContainer from '@/components/layout/page-container';
-// eslint-disable-next-line @typescript-eslint/no-restricted-imports -- Template mock file, will be refactored
+
 import { Badge } from '@/components/ui/badge';
-// eslint-disable-next-line @typescript-eslint/no-restricted-imports -- Template mock file, will be refactored
+
 import {
   Card,
   CardHeader,

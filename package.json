@@ -8,13 +8,7 @@
   },
   "scripts": {
     "preinstall": "npx only-allow pnpm",
-    "test": "echo \"Error: no test specified\" && exit 1",
     "prepare": "husky"
-  },
-  "lint-staged": {
-    "front/**/*.{js,jsx,tsx,ts,css,less,scss,sass}": [
-      "bash -c 'cd front && npx prettier --write ${@#front/}' --"
-    ]
   },
   "keywords": [],
   "author": "",

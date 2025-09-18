@@ -46,14 +46,14 @@ src/
 
 ### When to Use Each Pattern
 
-| Pattern | Use Cases | Examples in Codebase |
-|---------|-----------|----------------------|
-| **Global Zustand Stores** | Business logic, CRUD operations, domain state | `useProductStore`, `useAnalyticsStore` |
-| **Atomic Zustand Stores** | Component state, local behavior, UI logic | `useProductCardStore`, `useSearchBoxStore` |
-| **React Context** | Framework integration, component tree state | `ActiveThemeProvider`, `KBarProvider` |
-| **3rd Party Providers** | External library integration | `ClerkProvider`, `ThemeProvider` (next-themes) |
-| **URL State (nuqs)** | Shareable/bookmarkable state | Pagination, filters, search |
-| **Form State (RHF)** | Form-specific validation and state | Product forms, settings |
+| Pattern                   | Use Cases                                     | Examples in Codebase                           |
+| ------------------------- | --------------------------------------------- | ---------------------------------------------- |
+| **Global Zustand Stores** | Business logic, CRUD operations, domain state | `useProductStore`, `useAnalyticsStore`         |
+| **Atomic Zustand Stores** | Component state, local behavior, UI logic     | `useProductCardStore`, `useSearchBoxStore`     |
+| **React Context**         | Framework integration, component tree state   | `ActiveThemeProvider`, `KBarProvider`          |
+| **3rd Party Providers**   | External library integration                  | `ClerkProvider`, `ThemeProvider` (next-themes) |
+| **URL State (nuqs)**      | Shareable/bookmarkable state                  | Pagination, filters, search                    |
+| **Form State (RHF)**      | Form-specific validation and state            | Product forms, settings                        |
 
 ### 0. React Context Providers - Framework Integration
 
@@ -99,6 +99,7 @@ export function useThemeConfig() {
 ```
 
 **Provider Guidelines**:
+
 - **SSR Safety**: Initialize from server-provided props (`initialTheme`)
 - **Error Boundaries**: Always validate context exists
 - **Side Effects**: Handle DOM manipulation, cookies, external integrations
@@ -156,7 +157,7 @@ export const useDummyAuthStore = create<DummyAuthStore>()(
     (set) => ({
       user: null,
       setUser: (user) => set({ user }),
-      logout: () => set({ user: null }),
+      logout: () => set({ user: null })
     }),
     { name: 'dummy-auth-preferences' }
   )
@@ -169,26 +170,32 @@ export const useDummyAuthStore = create<DummyAuthStore>()(
 
 ```typescript
 // Pattern: Factory function for per-component stores
-function createProductCardStore(productId: string, deps: {
-  productsStore: ProductsStore;
-  cartStore: CartStore;
-}) {
+function createProductCardStore(
+  productId: string,
+  deps: {
+    productsStore: ProductsStore;
+    cartStore: CartStore;
+  }
+) {
   return create<ProductCardState>((set, get) => ({
     isExpanded: false,
     isEditing: false,
     localChanges: {},
 
-    toggleExpanded: () => set(state => ({ isExpanded: !state.isExpanded })),
+    toggleExpanded: () => set((state) => ({ isExpanded: !state.isExpanded })),
 
     addToCart: async () => {
-      const product = deps.productsStore.getState().products
-        .find(p => p.id === productId);
+      const product = deps.productsStore
+        .getState()
+        .products.find((p) => p.id === productId);
       await deps.cartStore.getState().addItem(product);
     },
 
     saveChanges: async () => {
       const { localChanges } = get();
-      await deps.productsStore.getState().updateProduct(productId, localChanges);
+      await deps.productsStore
+        .getState()
+        .updateProduct(productId, localChanges);
       set({ isEditing: false, localChanges: {} });
     }
   }));
@@ -208,6 +215,7 @@ export const storeFactory = new StoreFactory();
 ```
 
 **Atomic Store Guidelines**:
+
 - **Use when**: ≥3 related state pieces, complex transitions, testable logic needed
 - **Avoid when**: Simple toggles, one-off UI state, direct DOM manipulation
 - **Dependencies**: Inject global stores, never import atomic stores directly
@@ -265,19 +273,20 @@ export const apiClient = axios.create({
 ```typescript
 // Store responsibility layers
 // Layer 1: Global Domain Stores (data + business logic)
-useProductsStore     // Products CRUD, caching, business rules
-useCartStore         // Cart state, checkout logic
+useProductsStore; // Products CRUD, caching, business rules
+useCartStore; // Cart state, checkout logic
 
 // Layer 2: Atomic Component Stores (UI state + local behavior)
-useProductCardStore  // Expansion, editing, local validation
-useCartWidgetStore   // Dropdown state, animations
+useProductCardStore; // Expansion, editing, local validation
+useCartWidgetStore; // Dropdown state, animations
 
 // Layer 3: Cross-cutting Stores (framework concerns)
-useNotificationStore // Toast messages
-useUIStore          // Theme, modals, loading states
+useNotificationStore; // Toast messages
+useUIStore; // Theme, modals, loading states
 ```
 
 **Dependency Rules**:
+
 - ✅ Global stores are singletons, created once
 - ✅ Atomic stores inject global store dependencies
 - ✅ Communication: Atomic → Global (delegate), Global → Atomic (subscribe)
@@ -708,6 +717,7 @@ src/app/dashboard/
 **App/ Should Only Handle**: Routing, layouts, metadata, suspense boundaries, parallel route composition
 
 **Clean App/ Pattern**:
+
 ```typescript
 // ✅ GOOD: Thin routing logic only
 export const metadata = { title: 'Dashboard: Products' };
@@ -725,6 +735,7 @@ export default async function Page(props: pageProps) {
 ```
 
 **Move to Features/**:
+
 - UI component composition (`<Card>`, `<Button>`, etc.)
 - Hardcoded content and text
 - Business logic and data fetching

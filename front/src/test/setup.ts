@@ -25,12 +25,10 @@ vi.mock('next/navigation', () => ({
 
 // Mock Next.js image component
 vi.mock('next/image', () => ({
-  default: vi
-    .fn()
-    .mockImplementation(({ src, alt, ...props }) => ({
-      type: 'img',
-      props: { src, alt, ...props }
-    }))
+  default: vi.fn().mockImplementation(({ src, alt, ...props }) => ({
+    type: 'img',
+    props: { src, alt, ...props }
+  }))
 }));
 
 // Mock Clerk hooks for unit tests

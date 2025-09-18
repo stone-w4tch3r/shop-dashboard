@@ -1,1 +1,1 @@
-npx lint-staged
+cd front && pnpm run lint:fix && pnpm run build

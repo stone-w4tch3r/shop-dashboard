@@ -49,7 +49,7 @@ export const navItems: NavItem[] = [
         icon: 'login'
       }
     ]
-  },
+  }
 ];
 
 export interface SaleUser {
