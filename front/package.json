@@ -1,11 +1,10 @@
 {
-  "name": "next-shadcn-dashboard-starter",
+  "name": "next-dashboard-template",
   "version": "1.0.0",
   "private": true,
   "type": "module",
   "author": {
-    "name": "Kiran",
-    "url": "https://github.com/Kiranism"
+    "name": "stone-w4tch3r based on Kiranism's work"
   },
   "scripts": {
     "preinstall": "npx only-allow pnpm",

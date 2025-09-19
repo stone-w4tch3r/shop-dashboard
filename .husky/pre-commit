@@ -1,1 +1,1 @@
-cd front && pnpm run lint:fix && pnpm run build
+pnpm run lint-staged && cd front && pnpm run build

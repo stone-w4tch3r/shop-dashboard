@@ -74,7 +74,7 @@ test.describe('Dashboard Functionality Tests', () => {
   });
 
   test('should display correct page titles', async ({ page }) => {
-    // Check dashboard title - should be 'Next Shadcn Dashboard Starter' but since it's empty, verify URL redirect works correctly
+    // Ensure redirect works correctly
     await page.goto('/dashboard');
     await page.waitForLoadState('networkidle');
     // Verify the redirect to overview works as expected

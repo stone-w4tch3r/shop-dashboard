@@ -46,14 +46,14 @@ src/
 
 ### When to Use Each Pattern
 
-| Pattern                   | Use Cases                                     | Examples in Codebase                           |
-| ------------------------- | --------------------------------------------- | ---------------------------------------------- |
-| **Global Zustand Stores** | Business logic, CRUD operations, domain state | `useProductStore`, `useAnalyticsStore`         |
-| **Atomic Zustand Stores** | Component state, local behavior, UI logic     | `useProductCardStore`, `useSearchBoxStore`     |
-| **React Context**         | Framework integration, component tree state   | `ActiveThemeProvider`, `KBarProvider`          |
+| Pattern                   | Use Cases                                     | Examples in Codebase                                 |
+| ------------------------- | --------------------------------------------- | ---------------------------------------------------- |
+| **Global Zustand Stores** | Business logic, CRUD operations, domain state | `useProductStore`, `useAnalyticsStore`               |
+| **Atomic Zustand Stores** | Component state, local behavior, UI logic     | `useProductCardStore`, `useSearchBoxStore`           |
+| **React Context**         | Framework integration, component tree state   | `ActiveThemeProvider`, `KBarProvider`                |
 | **3rd Party Providers**   | External library integration                  | `AuthProvider` (mock), `ThemeProvider` (next-themes) |
-| **URL State (nuqs)**      | Shareable/bookmarkable state                  | Pagination, filters, search                    |
-| **Form State (RHF)**      | Form-specific validation and state            | Product forms, settings                        |
+| **URL State (nuqs)**      | Shareable/bookmarkable state                  | Pagination, filters, search                          |
+| **Form State (RHF)**      | Form-specific validation and state            | Product forms, settings                              |
 
 ### 0. React Context Providers - Framework Integration
 
