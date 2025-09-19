@@ -183,7 +183,17 @@ function ChartTooltipContent({
         {payload.map((item, index) => {
           const key = `${nameKey || item.name || item.dataKey || 'value'}`;
           const itemConfig = getPayloadConfigFromPayload(config, item, key);
-          const indicatorColor = color || item.payload.fill || item.color;
+
+          // Safe handling of potentially any-typed chart library values
+          const payloadFill =
+            typeof item.payload === 'object' &&
+            item.payload !== null &&
+            'fill' in item.payload
+              ? String((item.payload as Record<string, unknown>).fill)
+              : undefined;
+          const itemColor =
+            typeof item.color === 'string' ? item.color : undefined;
+          const indicatorColor = color || payloadFill || itemColor;
 
           return (
             <div
@@ -194,7 +204,13 @@ function ChartTooltipContent({
               )}
             >
               {formatter && item?.value !== undefined && item.name ? (
-                formatter(item.value, item.name, item, index, item.payload)
+                formatter(
+                  item.value,
+                  item.name,
+                  item,
+                  index,
+                  item.payload as Record<string, unknown>
+                )
               ) : (
                 <>
                   {itemConfig?.icon ? (
@@ -282,7 +298,7 @@ function ChartLegendContent({
 
         return (
           <div
-            key={item.value}
+            key={String(item.value)}
             className={cn(
               '[&>svg]:text-muted-foreground flex items-center gap-1.5 [&>svg]:h-3 [&>svg]:w-3'
             )}

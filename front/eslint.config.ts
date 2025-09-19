@@ -41,15 +41,47 @@ const config: Linter.Config[] = [
     files: ['**/*.ts', '**/*.tsx']
   })),
 
-  // Additional TypeScript rules
+  // Type-aware TypeScript configuration
+  {
+    files: ['**/*.ts', '**/*.tsx'],
+    languageOptions: {
+      parser: tseslint.parser,
+      parserOptions: {
+        project: ['./tsconfig.json'],
+        tsconfigRootDir: __dirname
+      }
+    },
+    plugins: {
+      '@typescript-eslint': tseslint.plugin
+    },
+    rules: {
+      // Include ALL typescript-eslint type-checking rules
+      ...tseslint.configs.recommendedTypeChecked[1]?.rules,
+      ...tseslint.configs.strictTypeChecked[1]?.rules
+    }
+  },
+
+  // TypeScript rules - Enforce CLAUDE.md standards
   {
     files: ['**/*.ts', '**/*.tsx'],
     rules: {
       'no-unused-vars': 'off', // Turn off base rule in favor of TypeScript version
       '@typescript-eslint/no-unused-vars': 'warn',
       'no-console': 'warn',
-      '@typescript-eslint/no-explicit-any': 'warn',
+
+      // TypeScript Best Practices - Strict Type Policy
+      '@typescript-eslint/no-explicit-any': 'error', // Forbid any
+      '@typescript-eslint/no-unsafe-assignment': 'error', // Forbid any assignments
+      '@typescript-eslint/no-unsafe-member-access': 'error', // Forbid any.property
+      '@typescript-eslint/no-unsafe-call': 'error', // Forbid any()
+      '@typescript-eslint/no-unsafe-return': 'error', // Forbid returning any
+      '@typescript-eslint/no-unsafe-argument': 'error', // Forbid any as argument
+
+      // Additional type safety
       'prefer-const': 'error'
+
+      // CLAUDE.md Goal: Maximum TypeScript safety (catch as many errors as possible)
+      // Note: explicit-function-return-type disabled for React components (too noisy)
     }
   },
 

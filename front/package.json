@@ -13,10 +13,13 @@
     "build": "next build --turbopack",
     "build:analyze": "ANALYZE=true next build --turbopack",
     "start": "next start",
-    "lint": "eslint src",
-    "lint:fix": "eslint src --fix && pnpm format",
+    "lint": "pnpm typecheck && eslint src --cache && pnpm format:check",
+    "lint:fix": "pnpm typecheck && eslint src --fix --cache && pnpm format",
+    "lint:husky-pre-commit": "eslint --fix --cache",
     "format": "prettier --write .",
-    "format:check": "prettier -c -w .",
+    "format:husky-pre-commit": "prettier --write",
+    "format:check": "prettier --check",
+    "typecheck": "tsc --noEmit",
     "test:unit": "vitest --run",
     "test:e2e:headless": "playwright test",
     "test:e2e:headed": "playwright test --headed",
@@ -103,6 +106,7 @@
     "jiti": "^2.5.1",
     "jsdom": "^26.1.0",
     "msw": "^2.10.4",
+    "only-allow": "^1.2.1",
     "playwright": "^1.54.2",
     "postcss": "8.4.49",
     "prettier": "3.4.2",
@@ -119,7 +123,9 @@
   },
   "engines": {
     "node": ">=20.0.0",
-    "pnpm": ">=9.0.0"
+    "pnpm": ">=9.0.0",
+    "npm": "please-use-pnpm",
+    "yarn": "please-use-pnpm"
   },
   "packageManager": "pnpm@9.0.0",
   "volta": {

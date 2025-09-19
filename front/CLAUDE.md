@@ -770,6 +770,241 @@ export const navItems: NavItem[] = [
 8. **Stepwise Guarded Flow**: Use simple guards to short-circuit on failure and return Result values (no complex functional helpers needed)
 9. **Programming by Contract**: Define contracts via types and Zod; enforce at boundaries (props, API, store methods); tests also act as executable contracts
 
+## TypeScript Best Practices
+
+### Strict Type Policy
+
+#### 1. **`any` is Forbidden with Migration Strategy**
+
+```typescript
+// ❌ FORBIDDEN - Never use any in new code
+function handleData(data: any): void {}
+const result: any = await fetchData();
+
+// ✅ MIGRATION STRATEGY - For existing template code
+// Step 1: Add TODO comment for migration
+function handleLegacyData(
+  data: any /* TODO: Replace with proper type */
+): void {
+  // Step 2: Add runtime assertion as first line
+  if (!isValidLegacyData(data)) {
+    throw new Error('Invalid legacy data structure');
+  }
+  // Step 3: Use type assertion after validation
+  const typedData = data as LegacyDataType;
+  // Step 4: Replace any with proper type in function signature
+}
+
+// ✅ PREFERRED - Explicit types with validation
+function handleData(data: unknown): Result<ProcessedData, ValidationError> {
+  const validation = dataSchema.safeParse(data);
+  return validation.success
+    ? { success: true, data: processData(validation.data) }
+    : { success: false, error: { issues: validation.error.errors } };
+}
+```
+
+#### 2. **Type Hierarchy (Preferred → Forbidden)**
+
+```typescript
+// ✅ PREFERRED - Explicit and specific
+string | number | boolean          // Union types
+T extends Record<string, unknown>  // Constrained generics
+unknown                           // For truly dynamic content
+object                           // Only with explicit constraints
+
+// ⚠️ MIGRATION ONLY - Replace in existing code
+any                              // Legacy migration only
+
+// ❌ FORBIDDEN - Never use
+{}                               // Empty object (use Record<string, unknown>)
+object                           // Unconstrained (use specific interface)
+Function                         // Use proper function signature
+```
+
+#### 3. **React Component Generics - Use Constraints**
+
+```typescript
+// ❌ FORBIDDEN - any in React generics
+ReactElement<any>[]
+ComponentProps<any>
+forwardRef<any, any>
+
+// ✅ PREFERRED - Constrained generics
+ReactElement<Record<string, unknown>>[]  // For unknown props
+ReactElement[]                           // When props don't matter
+ComponentProps<'button'>                 // For specific elements
+ComponentProps<typeof Button>           // For custom components
+
+// ✅ BEST - Explicit interface constraints
+interface StepProps {
+  readonly onNext: () => void;
+  readonly onPrev: () => void;
+}
+
+function useMultistepForm(steps: ReactElement<StepProps>[]): MultiStepForm {
+  // Implementation with proper typing
+}
+```
+
+#### 4. **Third-Party Library Type Strategy**
+
+**Hierarchy (try in order):**
+
+```typescript
+// 1. ✅ FIRST: Search for official typing packages
+npm install @types/library-name
+
+// 2. ✅ SECOND: Search for community typing packages
+npm install @types/react-library-name
+npm install library-name-types
+
+// 3. ✅ THIRD: Write our own type definitions
+// types/library-name.d.ts
+declare module 'untyped-library' {
+  interface LibraryConfig {
+    readonly timeout: number;
+    readonly retries?: number;
+  }
+
+  export function createClient(config: LibraryConfig): LibraryClient;
+
+  interface LibraryClient {
+    request: (url: string) => Promise<unknown>;
+    destroy: () => void;
+  }
+}
+
+// 4. ✅ FOURTH: Module augmentation for incomplete types
+declare module 'recharts' {
+  interface TooltipProps {
+    payload?: Array<{
+      color?: string;
+      payload: Record<string, unknown>;
+      dataKey?: string;
+      name?: string;
+      value?: unknown;
+    }>;
+  }
+}
+
+// 5. ⚠️ LAST RESORT: Runtime assertion pattern
+function useUntypedChartLibrary(config: unknown): Result<ChartInstance, ValidationError> {
+  if (!assertChartConfig(config)) {
+    return { success: false, error: { message: 'Invalid chart config' } };
+  }
+
+  // Now TypeScript knows the shape
+  const chart = createChart(config);
+  return { success: true, data: chart };
+}
+```
+
+#### 5. **Dynamic Data Handling - Prefer Zod**
+
+```typescript
+// ✅ PREFERRED - Zod for all dynamic data
+const apiResponseSchema = z.object({
+  id: z.string(),
+  data: z.array(z.record(z.unknown()))
+});
+
+function handleServerResponse(
+  response: unknown
+): Result<ApiResponse, ValidationError> {
+  const result = apiResponseSchema.safeParse(response);
+  return result.success
+    ? { success: true, data: result.data }
+    : {
+        success: false,
+        error: { issues: result.error.errors.map((e) => e.message) }
+      };
+}
+
+// ✅ ACCEPTABLE - JSON.parse with immediate validation
+function parseJsonSafely(
+  jsonString: string
+): Result<ParsedData, ValidationError> {
+  try {
+    const parsed: unknown = JSON.parse(jsonString); // unknown, not any
+    return validateParsedData(parsed); // Immediate validation
+  } catch (error) {
+    return { success: false, error: { message: 'Invalid JSON' } };
+  }
+}
+
+// ❌ FORBIDDEN - Raw JSON.parse usage
+const data = JSON.parse(response); // Returns any, no validation
+processData(data); // Unsafe usage
+```
+
+### Untyped Object Assertion Pattern
+
+**For working with untyped but known objects (documentation examples, legacy APIs):**
+
+```typescript
+// Step 1: Define expected interface
+interface ExpectedLibraryObject {
+  readonly id: string;
+  readonly config: { timeout: number };
+  process: (data: string) => Promise<void>;
+  destroy: () => void;
+}
+
+// Step 2: Create type guard with explicit checks
+function assertLibraryShape(obj: unknown): obj is ExpectedLibraryObject {
+  return (
+    typeof obj === 'object' &&
+    obj !== null &&
+    'id' in obj &&
+    typeof (obj as Record<string, unknown>).id === 'string' &&
+    'config' in obj &&
+    typeof (obj as Record<string, unknown>).config === 'object' &&
+    'process' in obj &&
+    typeof (obj as Record<string, unknown>).process === 'function' &&
+    'destroy' in obj &&
+    typeof (obj as Record<string, unknown>).destroy === 'function'
+  );
+}
+
+// Step 3: Use with Result pattern
+function initializeLibrary(
+  untypedLib: unknown
+): Result<ExpectedLibraryObject, ValidationError> {
+  if (!assertLibraryShape(untypedLib)) {
+    return {
+      success: false,
+      error: { message: 'Library does not match expected interface' }
+    };
+  }
+
+  // Now TypeScript knows the exact type
+  return { success: true, data: untypedLib };
+}
+
+// Step 4: Alternative with Zod for complex validation
+const librarySchema = z.object({
+  id: z.string().min(1),
+  config: z.object({
+    timeout: z.number().positive()
+  }),
+  process: z.function(),
+  destroy: z.function()
+});
+
+function validateLibraryWithZod(
+  obj: unknown
+): Result<ExpectedLibraryObject, ValidationError> {
+  const result = librarySchema.safeParse(obj);
+  return result.success
+    ? { success: true, data: result.data as ExpectedLibraryObject }
+    : {
+        success: false,
+        error: { issues: result.error.errors.map((e) => e.message) }
+      };
+}
+```
+
 ### Component Patterns
 
 ```typescript
@@ -1020,6 +1255,10 @@ pnpm run build
 # Code quality
 pnpm run lint
 pnpm run lint:fix
+pnpm run typecheck          # TypeScript only
+
+# ⚠️ IMPORTANT: ESLint alone cannot catch all TypeScript errors
+# Always use `pnpm run lint` instead of `eslint .` for complete type safety
 
 # Type checking (via Next.js build)
 pnpm run build

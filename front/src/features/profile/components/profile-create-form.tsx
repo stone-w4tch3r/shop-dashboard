@@ -33,7 +33,7 @@ import { useState } from 'react';
 import { SubmitHandler, useFieldArray, useForm } from 'react-hook-form';
 
 interface ProfileFormType {
-  initialData: any | null;
+  initialData: Record<string, unknown> | null;
 }
 
 const ProfileCreateForm: React.FC<ProfileFormType> = ({ initialData }) => {
