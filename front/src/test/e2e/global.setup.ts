@@ -14,7 +14,7 @@ setup('global setup', async ({}) => {
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const authFile = path.join(
   __dirname,
-  '../../../playwright/.mock-auth/user.json'
+  '../../../.test-data/mock-auth/user.json'
 );
 
 setup('authenticate and save state', async ({ page }) => {

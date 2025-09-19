@@ -48,7 +48,7 @@ export default defineConfig({
       testMatch: /.*authenticated.*\.spec\.ts/,
       use: {
         ...customChromeConfig,
-        storageState: 'playwright/.mock-auth/user.json'
+        storageState: '.test-data/mock-auth/user.json'
       },
       dependencies: ['global setup']
     },

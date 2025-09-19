@@ -76,7 +76,7 @@ projects: [
     testMatch: /.*authenticated.*\.spec\.ts/,
     use: {
       ...customChromeConfig,
-      storageState: 'playwright/.mock-auth/user.json' // 🔑 Pre-loaded auth
+      storageState: '.test-data/mock-auth/user.json' // 🔑 Pre-loaded auth
     },
     dependencies: ['global setup']
   },
@@ -282,7 +282,7 @@ vi.mock('@/lib/mock-auth-server', () => ({
 **Authentication Configuration**:
 
 - **Mock auth integration**: Simple form-based authentication
-- **State persistence**: Saves auth state to `playwright/.mock-auth/user.json`
+- **State persistence**: Saves auth state to `.test-data/mock-auth/user.json`
 - **Global setup**: `src/test/e2e/global.setup.ts` handles mock auth configuration
 - **Automatic classification**: File naming determines authentication level
 

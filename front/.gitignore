@@ -52,4 +52,4 @@ next-env.d.ts
 /playwright-report
 
 # Mock auth
-/playwright/.mock-auth
+/.test-data/
