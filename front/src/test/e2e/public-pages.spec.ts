@@ -1,7 +1,9 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Authentication Flow Tests', () => {
-  test('should redirect unauthenticated users to sign-in from dashboard', async ({ page }) => {
+  test('should redirect unauthenticated users to sign-in from dashboard', async ({
+    page
+  }) => {
     await page.goto('/dashboard');
 
     // Should redirect to sign-in page

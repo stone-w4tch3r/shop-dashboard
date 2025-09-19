@@ -1032,10 +1032,6 @@ pnpm run build
 pnpm test:unit              # Component & Integration tests (Vitest)
 pnpm test:e2e:headless      # End-to-end tests (Playwright)
 pnpm test:all               # Complete test suite (both levels)
-
-# Development & Debugging
-pnpm test:unit:watch        # Watch mode for TDD development
-pnpm test:unit:coverage     # Generate coverage reports
 ```
 
 ## TDD Testing Infrastructure ⚡
@@ -1048,11 +1044,10 @@ pnpm test:unit:coverage     # Generate coverage reports
    - Mock external dependencies and contexts
    - Fast execution (~10 seconds)
 
-2. **Integration Tests** (Vitest + MSW)
+2. **Integration Tests** (Vitest)
 
    - Feature workflows with mocked backend
    - Store integration and state management
-   - API interaction testing
 
 3. **E2E Tests** (Playwright)
    - Full user journey testing
@@ -1065,9 +1060,6 @@ pnpm test:unit:coverage     # Generate coverage reports
 src/test/
 ├── setup.ts                # Global test configuration
 ├── test-utils.tsx          # Custom render with providers
-├── mocks/
-│   ├── handlers.ts         # MSW API mock handlers
-│   └── server.ts           # MSW server setup
 └── e2e/
     └── *.spec.ts           # Playwright end-to-end tests
 
@@ -1086,7 +1078,6 @@ src/features/{domain}/
 
 **Key Testing Features**:
 
-- **MSW API Mocking**: Realistic backend simulation for integration tests
 - **Custom Test Utils**: Pre-configured render with all providers
 - **Global Mocks**: matchMedia, IntersectionObserver, ResizeObserver
 - **Multi-browser E2E**: Chromium, Firefox, Safari support

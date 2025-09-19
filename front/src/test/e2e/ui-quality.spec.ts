@@ -24,7 +24,6 @@ test.describe('UI Quality & Accessibility Tests', () => {
     }
   });
 
-
   test('should load without console errors', async ({ page }) => {
     const consoleErrors: string[] = [];
 

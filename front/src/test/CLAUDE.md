@@ -55,13 +55,14 @@ test('dashboard navigation', async ({ page }) => {
 
 The E2E tests use **three separate Playwright projects** for different authentication scenarios:
 
-| Project | File Pattern | Authentication | Purpose |
-|---------|-------------|----------------|---------|
-| **`global setup`** | `global.setup.ts` | 🔧 **Creates auth state** | Authentication setup |
-| **`authenticated`** | `*authenticated*.spec.ts` | ✅ **Has auth state** | Dashboard functionality |
-| **`auth-less`** | `!(authenticated)*.spec.ts` | ❌ **No auth state** | Public pages, UI quality |
+| Project             | File Pattern                | Authentication            | Purpose                  |
+| ------------------- | --------------------------- | ------------------------- | ------------------------ |
+| **`global setup`**  | `global.setup.ts`           | 🔧 **Creates auth state** | Authentication setup     |
+| **`authenticated`** | `*authenticated*.spec.ts`   | ✅ **Has auth state**     | Dashboard functionality  |
+| **`auth-less`**     | `!(authenticated)*.spec.ts` | ❌ **No auth state**      | Public pages, UI quality |
 
 **Project Configuration**:
+
 ```typescript
 // playwright.config.ts
 projects: [
@@ -75,17 +76,17 @@ projects: [
     testMatch: /.*authenticated.*\.spec\.ts/,
     use: {
       ...customChromeConfig,
-      storageState: 'playwright/.mock-auth/user.json'  // 🔑 Pre-loaded auth
+      storageState: 'playwright/.mock-auth/user.json' // 🔑 Pre-loaded auth
     },
     dependencies: ['global setup']
   },
   {
     name: 'auth-less',
     testMatch: /^(?!.*authenticated).*\.spec\.ts$/,
-    use: customChromeConfig,  // 🚫 Clean slate
+    use: customChromeConfig, // 🚫 Clean slate
     dependencies: ['global setup']
   }
-]
+];
 ```
 
 ## Test Configuration Files
@@ -163,10 +164,10 @@ src/{domain}/__tests__/               # Component & integration tests
 
 ### **E2E Test File Naming Convention**
 
-| Pattern | Project | Authentication | Example Files |
-|---------|---------|----------------|---------------|
-| `*authenticated*.spec.ts` | `authenticated` | ✅ **Logged in** | `dashboard.authenticated.spec.ts` |
-| `*.spec.ts` (no "authenticated") | `auth-less` | ❌ **Not logged in** | `public-pages.spec.ts`, `ui-quality.spec.ts` |
+| Pattern                          | Project         | Authentication       | Example Files                                |
+| -------------------------------- | --------------- | -------------------- | -------------------------------------------- |
+| `*authenticated*.spec.ts`        | `authenticated` | ✅ **Logged in**     | `dashboard.authenticated.spec.ts`            |
+| `*.spec.ts` (no "authenticated") | `auth-less`     | ❌ **Not logged in** | `public-pages.spec.ts`, `ui-quality.spec.ts` |
 
 ## Testing Best Practices
 
@@ -286,6 +287,7 @@ vi.mock('@/lib/mock-auth-server', () => ({
 - **Automatic classification**: File naming determines authentication level
 
 **Authentication State Flow**:
+
 ```mermaid
 graph TD
     A[Test Run Starts] --> B[Global Setup Project]
