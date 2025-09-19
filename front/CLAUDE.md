@@ -51,7 +51,7 @@ src/
 | **Global Zustand Stores** | Business logic, CRUD operations, domain state | `useProductStore`, `useAnalyticsStore`         |
 | **Atomic Zustand Stores** | Component state, local behavior, UI logic     | `useProductCardStore`, `useSearchBoxStore`     |
 | **React Context**         | Framework integration, component tree state   | `ActiveThemeProvider`, `KBarProvider`          |
-| **3rd Party Providers**   | External library integration                  | `ClerkProvider`, `ThemeProvider` (next-themes) |
+| **3rd Party Providers**   | External library integration                  | `AuthProvider` (mock), `ThemeProvider` (next-themes) |
 | **URL State (nuqs)**      | Shareable/bookmarkable state                  | Pagination, filters, search                    |
 | **Form State (RHF)**      | Form-specific validation and state            | Product forms, settings                        |
 
@@ -1102,7 +1102,7 @@ We use an **"Islands Architecture"** approach to minimize risk and maximize prod
 - [x] Basic dashboard layout
 - [x] Data table components
 - [x] Form components with validation
-- [x] Authentication setup (Clerk)
+- [x] Authentication setup (Mock Auth)
 - [x] Theme system
 - [x] Command palette (kbar)
 - [x] Existing product listing (Server Components + mock data)
@@ -1175,8 +1175,7 @@ src/
 ```bash
 # Frontend (.env.local)
 NEXT_PUBLIC_API_URL=http://localhost:3001
-NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_key
-CLERK_SECRET_KEY=your_secret
+# Mock auth - no keys needed for development
 ```
 
 ### Frontend Development Setup

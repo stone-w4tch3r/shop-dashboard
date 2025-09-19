@@ -22,7 +22,7 @@ task1/
 - **Backend**: Mockoon (mock API server for development)
 - **Database**: JSON files (via Mockoon, simulating MongoDB structure)
 - **State Management**: React Query + Zustand + Nuqs
-- **Authentication**: Clerk (preconfigured in template)
+- **Authentication**: Mock Authentication (development mode, Auth.js planned)
 
 ### Development Approach
 - **Frontend-first development** using existing dashboard template
@@ -221,25 +221,20 @@ cd back
 - Maintain consistency across components and features
 - Document new patterns as they emerge
 
-### Clerk Authentication Setup (Development Mode)
+### Mock Authentication Setup (Development Mode)
 
-The template uses Clerk's **test mode** for keyless development authentication:
+The template uses **mock authentication** for development:
 
-**For New Users (First Time Setup):**
-1. Navigate to sign-up page: `http://localhost:3000/auth/sign-up`
-2. Use test email: `your_mail+clerk_test@example.com` (default in form)
-3. Use test password: `your_mail+clerk_test@example.com` (same as email)
-4. Email verification code: `424242` (special test code)
-
-**For Returning Users:**
-- Reuse the same test credentials on sign-in page
-- Email: `your_mail+clerk_test@example.com`
-- Password: `your_mail+clerk_test@example.com`
+**For Development Testing:**
+1. Navigate to sign-in page: `http://localhost:3000/auth/sign-in`
+2. Use any email/password combination (e.g., `test@example.com` / `password`)
+3. Authentication is automatically granted for any credentials
 
 **How It Works:**
-- Clerk's test mode recognizes `+clerk_test` email format
-- No real emails sent - uses hardcoded verification code `424242`
-- Works with empty `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` in development
+- Mock auth accepts any email/password combination
+- Session stored in browser cookies (`mock-auth-session`)
+- Middleware protects `/dashboard` routes by checking for auth cookie
+- Future migration to Auth.js planned for production
 
 ---
 
