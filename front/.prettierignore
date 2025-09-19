@@ -46,3 +46,10 @@ node_modules
 build
 dist
 ico
+
+# browserbase
+.cache
+
+# custom
+.test-data
+.test-results

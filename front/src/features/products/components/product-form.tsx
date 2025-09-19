@@ -33,19 +33,10 @@ const ACCEPTED_IMAGE_TYPES = [
   'image/webp'
 ];
 
-// File input validation using untyped object assertion pattern
-const validateFileList = (files: unknown): files is FileList => {
-  return (
-    files instanceof FileList ||
-    (typeof files === 'object' && files !== null && 'length' in files)
-  );
-};
-
 const formSchema = z.object({
   image: z
-    .unknown()
-    .refine(validateFileList, 'Invalid file input.')
-    .refine((files) => files.length === 1, 'Image is required.')
+    .array(z.instanceof(File))
+    .min(1, 'Image is required.')
     .refine((files) => files[0]?.size <= MAX_FILE_SIZE, `Max file size is 5MB.`)
     .refine(
       (files) => ACCEPTED_IMAGE_TYPES.includes(files[0]?.type),
@@ -69,6 +60,7 @@ export default function ProductForm({
   pageTitle: string;
 }) {
   const defaultValues = {
+    image: [] as File[],
     name: initialData?.name || '',
     category: initialData?.category || '',
     price: initialData?.price || 0,
@@ -77,10 +69,10 @@ export default function ProductForm({
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    values: defaultValues
+    defaultValues
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  function onSubmit(_values: z.infer<typeof formSchema>) {
     // Form submission logic would be implemented here
   }
 
@@ -103,7 +95,7 @@ export default function ProductForm({
                     <FormLabel>Images</FormLabel>
                     <FormControl>
                       <FileUploader
-                        value={field.value}
+                        value={field.value || []}
                         onValueChange={field.onChange}
                         maxFiles={4}
                         maxSize={4 * 1024 * 1024}

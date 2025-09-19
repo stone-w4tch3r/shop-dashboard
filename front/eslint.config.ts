@@ -66,7 +66,14 @@ const config: Linter.Config[] = [
     files: ['**/*.ts', '**/*.tsx'],
     rules: {
       'no-unused-vars': 'off', // Turn off base rule in favor of TypeScript version
-      '@typescript-eslint/no-unused-vars': 'warn',
+      '@typescript-eslint/no-unused-vars': [
+        'warn',
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+          caughtErrorsIgnorePattern: '^_'
+        }
+      ],
       'no-console': 'warn',
 
       // TypeScript Best Practices - Strict Type Policy

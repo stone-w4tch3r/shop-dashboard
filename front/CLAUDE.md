@@ -774,7 +774,7 @@ export const navItems: NavItem[] = [
 
 ### Strict Type Policy
 
-#### 1. **`any` is Forbidden with Migration Strategy**
+#### 1. **`any` is Forbidden with Migration and Edge Case Strategy**
 
 ```typescript
 // ❌ FORBIDDEN - Never use any in new code
@@ -794,6 +794,18 @@ function handleLegacyData(
   const typedData = data as LegacyDataType;
   // Step 4: Replace any with proper type in function signature
 }
+
+// ✅ EDGE CASE SUPPRESSION - Only when fixing is impractical
+// Use when third-party libraries force any usage or trusted libraries show lint errors
+
+// Example 1: Third-party library forcing any
+const libraryResult = library.processData(input);
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+library.continueProcessDataWithWrongTypeDefinitions(input as any);
+
+// Example 2: Shadcn/ui component with lint errors (trusted source)
+// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment
+const { data } = useQuery<any>('key', fetcher);
 
 // ✅ PREFERRED - Explicit types with validation
 function handleData(data: unknown): Result<ProcessedData, ValidationError> {
@@ -815,6 +827,10 @@ object                           // Only with explicit constraints
 
 // ⚠️ MIGRATION ONLY - Replace in existing code
 any                              // Legacy migration only
+
+// ⚠️ SUPPRESSION ONLY - Edge cases with ESLint disable comments
+any                              // Third-party library requirements
+                                 // Trusted libraries (e.g., shadcn/ui) with lint errors
 
 // ❌ FORBIDDEN - Never use
 {}                               // Empty object (use Record<string, unknown>)
@@ -898,6 +914,16 @@ function useUntypedChartLibrary(config: unknown): Result<ChartInstance, Validati
   const chart = createChart(config);
   return { success: true, data: chart };
 }
+
+// 6. ⚠️ SUPPRESSION: When all else fails for trusted/forced any usage
+// Criteria for suppression:
+// - Third-party library forces any in its API
+// - Trusted library (e.g., shadcn/ui) shows lint errors that aren't breaking
+// - Always use specific ESLint disable comments, never blanket disables
+
+// For trusted libraries like shadcn/ui with multiple lint issues:
+// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment
+const componentProps = { ...defaultProps, ...userProps };
 ```
 
 #### 5. **Dynamic Data Handling - Prefer Zod**
