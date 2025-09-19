@@ -4,9 +4,18 @@ export default function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const isProtectedRoute = pathname.startsWith('/dashboard');
 
-  if (isProtectedRoute && !request.cookies.get('mock-auth-session')) {
-    return NextResponse.redirect(new URL('/auth/sign-in', request.url));
+  // Skip middleware for auth pages to prevent loops
+  if (pathname.startsWith('/auth')) {
+    return NextResponse.next();
   }
+
+  if (isProtectedRoute && !request.cookies.get('mock-auth-session')) {
+    const signInUrl = new URL('/auth/sign-in', request.url);
+    signInUrl.searchParams.set('redirect_url', pathname);
+    return NextResponse.redirect(signInUrl);
+  }
+
+  return NextResponse.next();
 }
 
 export const config = {

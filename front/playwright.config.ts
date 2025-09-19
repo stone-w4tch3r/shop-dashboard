@@ -1,13 +1,22 @@
 import { resolveChromeExecutable } from './scripts/chrome';
-import { defineConfig, devices } from '@playwright/test';
-import { config as loadEnv } from 'dotenv';
+import { defineConfig } from '@playwright/test';
 
-// Load test-specific environment variables
-loadEnv({ path: '.env.test.local' });
-
-// Prepare device profile without the channel to avoid conflict with executablePath
-const desktopChrome = devices['Desktop Chrome'];
-const { channel: _omit, ...desktopChromeNoChannel } = desktopChrome as any;
+// Custom browser configuration to use our Chrome installation
+const customChromeConfig = {
+  name: 'chromium',
+  launchOptions: {
+    executablePath: resolveChromeExecutable(),
+    args: [
+      '--no-sandbox',
+      '--disable-dev-shm-usage',
+      '--disable-gpu',
+      '--disable-web-security',
+      '--disable-background-timer-throttling',
+      '--disable-backgrounding-occluded-windows',
+      '--disable-renderer-backgrounding'
+    ]
+  }
+};
 
 export default defineConfig({
   testDir: './src/test/e2e',
@@ -16,51 +25,44 @@ export default defineConfig({
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : 2, // Limit workers for speed
   reporter: process.env.CI ? 'github' : 'list',
-  timeout: 20000,
+  timeout: 30000,
   use: {
     headless: !process.argv.includes('--headed'), // Default to headless for SSH compatibility
     viewport: { width: 1280, height: 720 },
-    baseURL: 'http://localhost:3000',
+    baseURL: 'http://localhost:3100',
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
-    video: 'retain-on-failure',
-    actionTimeout: 20000,
-    navigationTimeout: 20000
+    video: 'off',
+    actionTimeout: 30000,
+    navigationTimeout: 30000
   },
   projects: [
     {
       name: 'global setup',
-      testMatch: /global\.setup\.ts/
+      testMatch: /global\.setup\.ts/,
+      use: customChromeConfig
     },
-    // Authenticated tests (limited - only one)
+    // Authenticated tests
     {
       name: 'authenticated',
-      testMatch: /.*auth.*\.spec\.ts/,
+      testMatch: /.*authenticated.*\.spec\.ts/,
       use: {
-        ...desktopChromeNoChannel,
-        launchOptions: {
-          executablePath: resolveChromeExecutable()
-        },
+        ...customChromeConfig,
         storageState: 'playwright/.mock-auth/user.json'
       },
       dependencies: ['global setup']
     },
-    // Fast auth-less tests (majority)
+    // Not authenticated tests
     {
       name: 'auth-less',
-      testMatch: /^(?!.*auth).*\.spec\.ts$/, // Exclude auth tests
-      use: {
-        ...desktopChromeNoChannel,
-        launchOptions: {
-          executablePath: resolveChromeExecutable()
-        }
-      },
+      testMatch: /^(?!.*authenticated).*\.spec\.ts$/, // Exclude authenticated tests
+      use: customChromeConfig,
       dependencies: ['global setup']
     }
   ],
   webServer: {
-    command: 'pnpm run dev',
-    url: 'http://localhost:3000',
+    command: 'PORT=3100 pnpm run dev',
+    url: 'http://localhost:3100',
     reuseExistingServer: !process.env.CI,
     timeout: 60000 // very long wait until app loads
   }

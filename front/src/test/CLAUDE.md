@@ -37,10 +37,10 @@ test('renders button with text', () => {
 
 **Location**: `src/test/e2e/*.spec.ts` | **Command**: `pnpm test:e2e`
 
-- **Purpose**: Full user journeys with real authentication
+- **Purpose**: Full user journeys with mock authentication
 - **Framework**: Playwright with multi-browser support
-- **Features**: Complete workflow testing, mock authentication
-- **Configuration**: Automatic dev server startup
+- **Features**: Complete workflow testing, project-based authentication
+- **Configuration**: Automatic dev server startup with authentication state management
 
 ```ts
 // Example: E2E test with authentication
@@ -51,19 +51,55 @@ test('dashboard navigation', async ({ page }) => {
 });
 ```
 
+#### **Playwright Projects Architecture**
+
+The E2E tests use **three separate Playwright projects** for different authentication scenarios:
+
+| Project | File Pattern | Authentication | Purpose |
+|---------|-------------|----------------|---------|
+| **`global setup`** | `global.setup.ts` | 🔧 **Creates auth state** | Authentication setup |
+| **`authenticated`** | `*authenticated*.spec.ts` | ✅ **Has auth state** | Dashboard functionality |
+| **`auth-less`** | `!(authenticated)*.spec.ts` | ❌ **No auth state** | Public pages, UI quality |
+
+**Project Configuration**:
+```typescript
+// playwright.config.ts
+projects: [
+  {
+    name: 'global setup',
+    testMatch: /global\.setup\.ts/,
+    use: customChromeConfig
+  },
+  {
+    name: 'authenticated',
+    testMatch: /.*authenticated.*\.spec\.ts/,
+    use: {
+      ...customChromeConfig,
+      storageState: 'playwright/.mock-auth/user.json'  // 🔑 Pre-loaded auth
+    },
+    dependencies: ['global setup']
+  },
+  {
+    name: 'auth-less',
+    testMatch: /^(?!.*authenticated).*\.spec\.ts$/,
+    use: customChromeConfig,  // 🚫 Clean slate
+    dependencies: ['global setup']
+  }
+]
+```
+
 ## Test Configuration Files
 
 ### Core Config
 
 - **`vitest.config.ts`**: Vitest configuration with React plugin
 - **`playwright.config.ts`**: Playwright E2E configuration
-- **`src/test/setup.ts`**: Global test setup (MSW, mocks, jest-dom)
+- **`src/test/setup.ts`**: Global test setup (auth mocks, Next.js mocks, jest-dom)
 - **`src/test/test-utils.tsx`**: Custom render with providers
 
 ### Mock Infrastructure
 
-- **`src/test/mocks/handlers.ts`**: API endpoint mocks
-- **`src/test/mocks/server.ts`**: MSW server for Node.js tests
+- **Direct mocks**: Uses `fakeProducts` from `constants/mock-api.ts` for data
 
 ## Test Commands Reference
 
@@ -108,51 +144,29 @@ touch src/test/e2e/products.spec.ts
 # 6. Connect API integration (E2E passes)
 ```
 
-## Mock API Data Structure
-
-### Product Mock Data
-
-```typescript
-// src/test/mocks/handlers.ts
-const mockProducts = [
-  {
-    _id: '1',
-    userId: 'test-user',
-    title: 'Protein Powder',
-    description: 'High-quality whey protein',
-    category: 'sports nutrition',
-    price: 49.99,
-    commissionPercent: 15,
-    referralLink: 'https://example.com/ref/protein-powder',
-    clicks: 25,
-    createdAt: '2024-01-01T00:00:00.000Z'
-  }
-];
-```
-
-### API Endpoint Coverage
-
-- **GET** `/api/products` - List products
-- **GET** `/api/products/:id` - Get product by ID
-- **POST** `/api/products` - Create product
-- **PUT** `/api/products/:id` - Update product
-- **DELETE** `/api/products/:id` - Delete product
-- **GET** `/api/analytics/dashboard` - Dashboard stats
-- **GET** `/api/analytics/products/:id` - Product analytics
-
 ## Test File Organization
 
 ```
 src/test/
-├── setup.ts                # Global test configuration & mocks
-├── test-utils.tsx          # Custom render with providers
-├── mocks/                  # MSW API mock infrastructure
-└── e2e/                    # Playwright end-to-end tests
+├── setup.ts                          # Global test configuration & mocks
+├── test-utils.tsx                    # Custom render with providers
+└── e2e/                              # Playwright end-to-end tests
+    ├── global.setup.ts               # Authentication setup
+    ├── dashboard.authenticated.spec.ts # 🔐 Authenticated dashboard tests
+    ├── public-pages.spec.ts          # 🌐 Public authentication flow
+    └── ui-quality.spec.ts            # 🎨 UI quality & accessibility
 
-src/{domain}/__tests__/     # Component & integration tests
-├── *.test.tsx             # Component unit tests
-└── *.integration.test.tsx # Feature integration tests
+src/{domain}/__tests__/               # Component & integration tests
+├── *.test.tsx                       # Component unit tests
+└── *.integration.test.tsx           # Feature integration tests
 ```
+
+### **E2E Test File Naming Convention**
+
+| Pattern | Project | Authentication | Example Files |
+|---------|---------|----------------|---------------|
+| `*authenticated*.spec.ts` | `authenticated` | ✅ **Logged in** | `dashboard.authenticated.spec.ts` |
+| `*.spec.ts` (no "authenticated") | `auth-less` | ❌ **Not logged in** | `public-pages.spec.ts`, `ui-quality.spec.ts` |
 
 ## Testing Best Practices
 
@@ -178,6 +192,13 @@ src/{domain}/__tests__/     # Component & integration tests
 - **Avoid testing implementation details**
 
 ## Authentication Testing Setup
+
+### 🔐 **Authentication Strategy**
+
+**Current Implementation**: **Mock Authentication** (transitioning to Auth.js in the future)
+
+- **✅ Mock Auth**: Custom mock authentication system for all test levels
+- **🔮 Future**: Will migrate to Auth.js when ready
 
 ### ✅ Unit Test Authentication Implementation
 
@@ -247,15 +268,36 @@ vi.mock('@/lib/mock-auth-server', () => ({
 - Handle async component rendering with `await` pattern
 - Test authentication flow and redirect logic
 
-### E2E Testing Strategy
+### ✅ E2E Testing Strategy
 
-**Approach**: Unified E2E test suite covering critical user journeys with authentication.
+**Approach**: **Project-based E2E testing** with automatic authentication state management.
+
+**Authentication Flow**:
+
+1. **Global Setup** (`global.setup.ts`): Creates authentication state once
+2. **Authenticated Tests** (`*authenticated*.spec.ts`): Use saved auth state
+3. **Non-Authenticated Tests** (`*.spec.ts`): Start with clean slate
 
 **Authentication Configuration**:
 
-- **Mock auth integration**: Uses simple form-based authentication
+- **Mock auth integration**: Simple form-based authentication
 - **State persistence**: Saves auth state to `playwright/.mock-auth/user.json`
 - **Global setup**: `src/test/e2e/global.setup.ts` handles mock auth configuration
+- **Automatic classification**: File naming determines authentication level
+
+**Authentication State Flow**:
+```mermaid
+graph TD
+    A[Test Run Starts] --> B[Global Setup Project]
+    B --> C[Creates user.json]
+    C --> D{File Name Check}
+    D -->|Contains 'authenticated'| E[Authenticated Project]
+    D -->|No 'authenticated'| F[Auth-less Project]
+    E --> G[Loads user.json]
+    F --> H[Clean Browser State]
+    G --> I[Tests Run with Auth]
+    H --> J[Tests Run without Auth]
+```
 
 ### Test Results Summary
 
@@ -268,9 +310,8 @@ vi.mock('@/lib/mock-auth-server', () => ({
 
 #### E2E Tests ✅
 
-- **Status**: Full user journey coverage with authentication
-- **Execution time**: Optimized for reasonable performance
 - **Coverage**: Critical paths including dashboard functionality
+- **Projects**: 3 separate playwright projects (global setup, authenticated, auth-less)
 - **Command**: `pnpm test:e2e`
 
 ## Development Integration

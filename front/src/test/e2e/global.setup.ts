@@ -30,11 +30,11 @@ setup('authenticate and save state', async ({ page }) => {
     // Submit the form
     await page.click('button[type="submit"]');
 
-    // Wait for redirect to dashboard
-    await page.waitForURL('**/dashboard**', { timeout: 15000 });
+    // Wait for redirect to dashboard (matches /dashboard or /dashboard/* or /dashboard/*/*/*...)
+    await page.waitForURL('**/dashboard{,/**}', { timeout: 30000 }); // here entire dashboard compiles, long wait
 
     // Verify we can access protected routes
-    await page.waitForSelector('nav, [role="navigation"]', { timeout: 15000 });
+    await page.waitForSelector('nav, [role="navigation"]', { timeout: 30000 });
 
     // Save the authenticated state
     await page.context().storageState({ path: authFile });

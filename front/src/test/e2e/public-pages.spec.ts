@@ -1,9 +1,7 @@
 import { test, expect } from '@playwright/test';
 
-test.describe('Public Pages', () => {
-  test('should redirect to sign-in when accessing dashboard unauthenticated', async ({
-    page
-  }) => {
+test.describe('Authentication Flow Tests', () => {
+  test('should redirect unauthenticated users to sign-in from dashboard', async ({ page }) => {
     await page.goto('/dashboard');
 
     // Should redirect to sign-in page
@@ -13,13 +11,24 @@ test.describe('Public Pages', () => {
     ).toBeVisible();
   });
 
-  test('should redirect to sign-in when accessing products unauthenticated', async ({
+  test('should redirect unauthenticated users to sign-in from products page', async ({
     page
   }) => {
     await page.goto('/dashboard/product');
 
     // Should redirect to sign-in page with redirect URL
     await expect(page).toHaveURL(/.*\/auth\/sign-in.*redirect_url/);
+  });
+
+  test('should display sign-in form correctly', async ({ page }) => {
+    await page.goto('/auth/sign-in');
+
+    // Check form elements - be more specific to avoid multiple matches
+    await expect(page.getByText(/email/i)).toBeVisible();
+    await expect(page.getByRole('textbox', { name: /email/i })).toBeVisible();
+    await expect(
+      page.getByRole('button', { name: 'Sign In', exact: true })
+    ).toBeVisible();
   });
 
   test('should load sign-in page correctly', async ({ page }) => {

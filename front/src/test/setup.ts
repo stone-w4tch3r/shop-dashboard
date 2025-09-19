@@ -1,12 +1,6 @@
 import '@testing-library/jest-dom';
-import { afterEach, beforeAll, afterAll, vi } from 'vitest';
-import { server } from './mocks/server';
+import { vi } from 'vitest';
 import React from 'react';
-
-// Setup MSW server
-beforeAll(() => server.listen({ onUnhandledRequest: 'error' }));
-afterEach(() => server.resetHandlers());
-afterAll(() => server.close());
 
 // Mock Next.js navigation
 vi.mock('next/navigation', () => ({

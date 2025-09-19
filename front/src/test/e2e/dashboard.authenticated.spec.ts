@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-test.describe('Dashboard Authenticated Functionality', () => {
+test.describe('Dashboard Functionality Tests', () => {
   test('should display dashboard layout when authenticated', async ({
     page
   }) => {
@@ -81,8 +81,8 @@ test.describe('Dashboard Authenticated Functionality', () => {
     await expect(page).toHaveURL(/\/dashboard\/overview/);
 
     // Navigate to products and check title
-    await page.goto('/dashboard/product');
-    await page.waitForLoadState('networkidle');
+    await page.goto('/dashboard/product', { timeout: 30000 });
+    await page.waitForLoadState('networkidle', { timeout: 30000 });
     await expect(page).toHaveTitle(/product/i);
   });
 

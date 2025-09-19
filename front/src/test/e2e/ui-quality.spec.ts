@@ -1,31 +1,14 @@
 import { test, expect } from '@playwright/test';
 
-// These tests check public authentication behavior
-test.describe('Public Authentication Flow', () => {
-  test('should redirect unauthenticated users to sign-in', async ({ page }) => {
-    await page.goto('/dashboard');
-
-    // Should redirect to sign-in page
-    await expect(page).toHaveURL(/.*\/auth\/sign-in/);
-    await expect(
-      page.getByRole('heading', { name: /sign.?in/i })
-    ).toBeVisible();
-  });
-
-  test('should show sign-in page elements', async ({ page }) => {
-    await page.goto('/auth/sign-in');
-
-    // Should show basic sign-in elements
-    await expect(page.getByText(/email/i)).toBeVisible();
-    await expect(page.getByRole('textbox', { name: /email/i })).toBeVisible();
-  });
-
-  test('should handle responsive design on sign-in page', async ({ page }) => {
+test.describe('UI Quality & Accessibility Tests', () => {
+  test('should have responsive design on sign-in page', async ({ page }) => {
     await page.goto('/auth/sign-in');
 
     const viewports = [
       { width: 375, height: 667 }, // Mobile
-      { width: 768, height: 1024 } // Tablet
+      { width: 768, height: 1024 }, // Tablet
+      { width: 1024, height: 768 }, // Desktop small
+      { width: 1920, height: 1080 } // Desktop large
     ];
 
     for (const viewport of viewports) {
@@ -40,6 +23,7 @@ test.describe('Public Authentication Flow', () => {
       await expect(page.locator('body')).toBeVisible();
     }
   });
+
 
   test('should load without console errors', async ({ page }) => {
     const consoleErrors: string[] = [];

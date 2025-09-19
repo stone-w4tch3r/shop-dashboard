@@ -1,8 +1,17 @@
 import type { NextConfig } from 'next';
 import { withSentryConfig } from '@sentry/nextjs';
+import withBundleAnalyzer from '@next/bundle-analyzer';
 
 // Define the base Next.js configuration
 const baseConfig: NextConfig = {
+  // Performance optimizations
+  // experimental: {
+  //   optimizePackageImports: [
+  //     '@radix-ui/react-icons',
+  //     '@tabler/icons-react',
+  //     'lucide-react'
+  //   ]
+  // },
   images: {
     remotePatterns: [
       {
@@ -53,5 +62,10 @@ if (!process.env.NEXT_PUBLIC_SENTRY_DISABLED) {
   });
 }
 
-const nextConfig = configWithPlugins;
+// Add bundle analyzer for performance debugging
+const withAnalyzer = withBundleAnalyzer({
+  enabled: process.env.ANALYZE === 'true'
+});
+
+const nextConfig = withAnalyzer(configWithPlugins);
 export default nextConfig;
