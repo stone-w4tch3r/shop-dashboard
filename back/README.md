@@ -1,6 +1,6 @@
 # Mock Backend API Server
 
-This directory contains the Mockoon configuration for the Product Management System mock API.
+This directory contains the Mockoon configuration for the dashboard template mock API.
 
 ## Quick Start
 
@@ -15,15 +15,11 @@ The server will start on `http://localhost:3001`
 
 ### 2. Available Endpoints
 
-#### Products
-- `GET /api/products` - Get all products
-- `POST /api/products` - Create new product  
-- `PUT /api/products/:id` - Update product
-- `DELETE /api/products/:id` - Delete product
-
-#### Analytics
-- `GET /api/stats` - Get analytics data
-- `POST /api/click/:productId` - Record product click
+#### Data Management (Example: Products)
+- `GET /api/products` - Get all items/products
+- `POST /api/products` - Create new item
+- `PUT /api/products/:id` - Update item
+- `DELETE /api/products/:id` - Delete item
 
 ### 3. Test the API
 
@@ -45,10 +41,10 @@ curl http://localhost:3001/api/stats
 ## Mock Data
 
 Sample data includes:
-- 5 fitness products (protein, bands, tracker, shoes, yoga mat)
-- Analytics with click counts and earnings
+- Example items with various categories and statuses
+- Analytics with interaction counts and metrics
 - Category breakdown and time-series data
 
 ## Frontend Integration
 
-The frontend at `http://localhost:3000` is configured to call this mock API for all product and analytics operations.
+The frontend at `http://localhost:3000` is configured to call this mock API for all data management and analytics operations.

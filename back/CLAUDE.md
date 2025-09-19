@@ -2,7 +2,7 @@
 
 ## Overview
 
-This directory contains **Mockoon configuration files** that provide a mock REST API server for the Product Management System. This allows frontend development to proceed without implementing a real backend.
+This directory contains **Mockoon configuration files** that provide a mock REST API server for the dashboard template. This allows frontend development to proceed without implementing a real backend.
 
 **Purpose**: Simulate MongoDB-based API responses for rapid prototyping and frontend development.
 
@@ -51,37 +51,33 @@ mockoon-cli start --data api-config.json --port 3001
 
 ## API Endpoints Structure
 
-The mock API will simulate these endpoints from the original task requirements:
+The mock API provides example endpoints for common dashboard functionality:
 
-### Product Management
+### Data Management (Example: Products)
 ```
-GET /api/products           # Get user's products
-POST /api/products          # Create a product  
-PUT /api/products/:id       # Update a product
-DELETE /api/products/:id    # Delete a product
-```
-
-### Analytics
-```
-GET /api/stats             # Get analytics data
-POST /api/click/:productId # Record a click (simulation)
+GET /api/products           # Get user's items/products
+POST /api/products          # Create a new item
+PUT /api/products/:id       # Update an item
+DELETE /api/products/:id    # Delete an item
 ```
 
 ### Data Structure
-Mock responses will follow the MongoDB-like structure defined in the task:
+Mock responses follow a standard database-like structure:
 
-**Product Object:**
+**Example Item Object:**
 ```json
 {
   "_id": "507f1f77bcf86cd799439011",
   "userId": "user123",
-  "title": "Whey Protein 2kg",
-  "description": "High-quality protein for muscle gain",
-  "category": "sports nutrition",
-  "price": 2500,
-  "commissionPercent": 15,
-  "referralLink": "https://example.com/ref/abc123",
-  "clicks": 47,
+  "title": "Sample Item",
+  "description": "Sample description for template",
+  "category": "category1",
+  "value": 100,
+  "status": "active",
+  "metadata": {
+    "views": 47,
+    "interactions": 12
+  },
   "createdAt": "2024-01-15T10:30:00.000Z"
 }
 ```

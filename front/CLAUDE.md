@@ -1,16 +1,18 @@
-# Frontend Development Ruleset - Product Management Dashboard
+# Frontend Development Ruleset - Next.js Dashboard Template
 
 ## Project Overview
 
-This is the frontend for a product management system built for fitness bloggers. Built on a Next.js dashboard template, it provides interfaces for managing affiliate products, tracking performance, and viewing analytics.
+This is a comprehensive Next.js dashboard template featuring modern UI components and development patterns. Built with Next.js 15, it provides a solid foundation for building admin interfaces, e-commerce dashboards, and analytics applications.
 
-**Frontend Features:**
+**Template Features:**
 
-- Product management interface (CRUD operations)
-- Referral link display and management
-- Analytics dashboard with charts and metrics
-- Category filtering and search
-- Responsive dashboard layout
+- Complete dashboard layout with sidebar navigation
+- Advanced data tables with filtering and pagination
+- Form handling with validation (React Hook Form + Zod)
+- Chart components and analytics visualization
+- Theme system (dark/light mode)
+- Mock authentication system
+- Example product management implementation
 
 ## Architecture Principles
 
@@ -654,41 +656,6 @@ interface ProductFilters {
   search: string;
   sortBy: 'createdAt' | 'title' | 'price' | 'clicks';
   sortOrder: 'asc' | 'desc';
-}
-```
-
-### Frontend Analytics Types
-
-```typescript
-interface ProductAnalytics {
-  readonly productId: string;
-  readonly clicks: number;
-  readonly potentialEarnings: number;
-  readonly clickHistory: readonly ClickEvent[];
-}
-
-interface ClickEvent {
-  readonly _id: string;
-  readonly productId: string;
-  readonly userId: string;
-  readonly clickedAt: string;
-  readonly ip: string;
-}
-
-interface DashboardStats {
-  readonly totalProducts: number;
-  readonly totalClicks: number;
-  readonly totalEarnings: number;
-  readonly topPerformingProducts: readonly Product[];
-  readonly periodStart: string;
-  readonly periodEnd: string;
-}
-
-interface AnalyticsFilters {
-  timeRange: '7d' | '30d' | '90d' | 'custom';
-  startDate?: string;
-  endDate?: string;
-  productIds?: readonly string[];
 }
 ```
 
@@ -1382,13 +1349,7 @@ We use an **"Islands Architecture"** approach to minimize risk and maximize prod
 - [ ] Add Result pattern types (`/types/result.ts`)
 - [ ] Add notification store for error handling
 
-**Phase 2: New Features (2-3 hours each)**
-
-- [ ] Analytics dashboard (replace overview with our architecture)
-- [ ] Settings page (new feature with our patterns)
-- [ ] Enhanced product management (new components using stores)
-
-**Phase 3: Integration (1-2 hours)**
+**Phase 2: Integration (1-2 hours)**
 
 - [ ] Connect existing product listing to new API client
 - [ ] Replace mock data with real API calls
@@ -1406,7 +1367,7 @@ We use an **"Islands Architecture"** approach to minimize risk and maximize prod
 ### 🗑️ Template Cleanup
 
 - [ ] Remove mock data system (`src/constants/mock-api.ts`)
-- [ ] Remove unused overview components (replaced by analytics)
+- [ ] Remove unused overview components
 - [ ] Remove sample/demo data
 
 ### Architecture Coexistence

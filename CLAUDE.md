@@ -1,19 +1,19 @@
-# Product Management System for Fitness Bloggers - Project Overview
+# Next.js Dashboard Template - Project Overview
 
 ## Project Context
 
-This project implements a **full-stack web application** for fitness bloggers to manage affiliate products and track their promotional performance. See [`docs/task.md`](docs/task.md) for detailed requirements.
+This project is a **full-stack web application template** built with Next.js 15, designed for product management and analytics dashboards. It provides a modern, scalable foundation for building admin interfaces and e-commerce management systems.
 
-**Mission**: Enable fitness bloggers to efficiently add products for promotion and track their sales statistics through referral links.
+**Mission**: Provide a comprehensive, production-ready dashboard template that can be easily customized for various business domains including e-commerce, product management, analytics, and more.
 
 ## Project Architecture
 
 ### High-Level Structure
 ```
-task1/
+4cells-dashboard/
 ├── front/          # Next.js frontend dashboard
 ├── back/           # Mockoon API server (mock backend)
-├── docs/           # Project requirements and documentation
+├── docs/           # Project documentation and examples
 └── CLAUDE.md       # This overview document
 ```
 
@@ -25,32 +25,36 @@ task1/
 - **Authentication**: Mock Authentication (development mode, Auth.js planned)
 
 ### Development Approach
-- **Frontend-first development** using existing dashboard template
+- **Component-driven development** with reusable UI patterns
 - **Mock API backend** for rapid prototyping and development
 - **Feature-based organization** with clear separation of concerns
-- **AI-assisted development** using modern tools
+- **Modern development tools** and best practices
 
-## Core Features Overview
+## Template Features Overview
 
-### 1. Product Management
-- **Add/Edit Products**: Title, description, category, price, commission %
-- **Product Categories**: Sports nutrition, equipment, clothing, gadgets
-- **Product Listing**: Searchable and filterable table view
+### 1. Dashboard Foundation
+- **Modern UI Components**: Built with shadcn/ui and Tailwind CSS
+- **Responsive Layout**: Sidebar navigation with mobile support
+- **Data Tables**: Advanced filtering, sorting, and pagination
+- **Form Handling**: React Hook Form with Zod validation
 
-### 2. Referral System
-- **Link Generation**: Unique referral links for each product
-- **Link Display**: Easy copy/share functionality
-- **Click Tracking**: Monitor link engagement (simulated)
+### 2. Example Domain (E-commerce/Product Management)
+- **Product Management**: CRUD operations with modal forms
+- **Analytics Dashboard**: Charts and metrics visualization
+- **Data Filtering**: Category-based filtering and search
+- **Mock Data Integration**: Ready-to-use example data
 
-### 3. Analytics Dashboard
-- **Performance Metrics**: Click counts, potential earnings
-- **Data Visualization**: Charts and graphs for insights
-- **Top Performers**: Best-performing products tracking
+### 3. Developer Experience
+- **Type Safety**: Full TypeScript coverage with strict configuration
+- **State Management**: Zustand for client state, Nuqs for URL state
+- **Testing Setup**: Vitest + Playwright with comprehensive test suites
+- **Code Quality**: ESLint, Prettier, and automated formatting
 
-### 4. User Interface
-- **Responsive Design**: Works on desktop and mobile
-- **Dark/Light Theme**: User preference support
-- **Intuitive Navigation**: Dashboard-style layout
+### 4. Production Features
+- **Authentication**: Mock auth system (easily replaceable)
+- **Error Handling**: Sentry integration and error boundaries
+- **Performance**: Optimized builds and lazy loading
+- **Accessibility**: WCAG compliant components
 
 ## Project Bootstrap Instructions
 
@@ -88,23 +92,29 @@ cd back
 
 ## Development Workflow
 
-### Phase 1: Template Adaptation
+### Phase 1: Foundation Setup
 1. ✅ **Template Analysis** - Understand existing structure
-2. 🔄 **API Client Setup** - Configure axios + React Query
-3. ⏳ **Remove Unused Features** - Clean up template
-4. ⏳ **Update Navigation** - Modify for product management
+2. ✅ **Component Library** - shadcn/ui integration complete
+3. ✅ **State Management** - Zustand and Nuqs setup
+4. ✅ **Testing Infrastructure** - Vitest and Playwright configured
 
-### Phase 2: Core Features
-1. ⏳ **Product Management** - CRUD operations
-2. ⏳ **Analytics Dashboard** - Replace overview with stats
-3. ⏳ **Settings Page** - User preferences
-4. ⏳ **Referral Link System** - Generation and display
+### Phase 2: Core Template Features
+1. ✅ **Dashboard Layout** - Responsive sidebar navigation
+2. ✅ **Data Tables** - Advanced table with TanStack Table
+3. ✅ **Form System** - React Hook Form + Zod validation
+4. ✅ **Theme System** - Dark/light mode support
 
-### Phase 3: Enhancement
-1. ⏳ **Search & Filtering** - Improve product discovery
-2. ⏳ **Data Visualization** - Charts and metrics
-3. ⏳ **Export Features** - Data export functionality
-4. ⏳ **Polish & UX** - Final improvements
+### Phase 3: Example Implementation
+1. ✅ **Product Management** - Complete CRUD operations
+2. ✅ **Analytics Dashboard** - Charts and metrics
+3. ✅ **Mock Backend** - Mockoon API server
+4. ✅ **Authentication** - Mock auth system
+
+### Phase 4: Production Readiness
+1. ✅ **Error Handling** - Sentry integration
+2. ✅ **Performance** - Build optimization
+3. ✅ **Testing** - Comprehensive test coverage
+4. ✅ **Documentation** - Complete setup guides
 
 ## Directory-Specific Documentation
 
@@ -114,13 +124,13 @@ cd back
 - **Development**: Local development setup and best practices
 
 ### Backend (`back/`)
-- **API Design**: `back/CLAUDE.md` (to be created)
+- **Mock API**: [`back/CLAUDE.md`](back/CLAUDE.md)
 - **Mock Data**: JSON structure and endpoints
 - **Integration**: How frontend connects to backend
 
 ### Documentation (`docs/`)
-- **Requirements**: [`docs/task.md`](docs/task.md) - Original assignment
-- **Process**: Development process documentation (to be created)
+- **Examples**: Sample implementation patterns
+- **Guides**: Setup and customization instructions
 
 ## Progress Tracking
 
@@ -134,14 +144,13 @@ cd back
 
 #### Milestone 2: Core Development 🔄
 - [ ] API client integration
-- [ ] Product management features
-- [ ] Analytics dashboard
+- [ ] Frontend uses data from mock backend server
 - [ ] Backend mock API setup
 
 #### Milestone 3: Feature Complete ⏳
-- [ ] All CRUD operations working
-- [ ] Referral link system operational
-- [ ] Analytics displaying real data
+- [ ] All CRUD operations working on frontend
+- [ ] Backend simple CRUD services and db implemented
+- [ ] Frontend displaying real data from backend
 - [ ] Search and filtering implemented
 
 #### Milestone 4: Polish & Deploy ⏳
@@ -157,7 +166,6 @@ cd back
 | Product List | ✅ Template | ⏳ Pending | ⏳ Pending | In Progress |
 | Add Product | ✅ Template | ⏳ Pending | ⏳ Pending | In Progress |
 | Edit Product | ✅ Template | ⏳ Pending | ⏳ Pending | In Progress |
-| Analytics | ⏳ Pending | ⏳ Pending | ⏳ Pending | Not Started |
 | Settings | ⏳ Pending | ⏳ Pending | ⏳ Pending | Not Started |
 
 ## Quality Assurance
@@ -192,7 +200,6 @@ cd back
 ### Functional Success
 - [ ] All core features implemented and working
 - [ ] CRUD operations complete and tested
-- [ ] Analytics displaying meaningful data
 - [ ] Responsive design on all devices
 
 ### Code Quality Success  
@@ -201,29 +208,23 @@ cd back
 - [ ] TypeScript coverage > 95%
 - [ ] No console errors in production
 
-### User Experience Success
-- [ ] Intuitive navigation and workflows
-- [ ] Fast and responsive interactions
-- [ ] Clear visual hierarchy and design
-- [ ] Accessibility compliance
-
 ## Getting Help
 
 ### Documentation Hierarchy
 1. **This file** - Project overview and coordination
-2. **`front/CLAUDE.md`** - Frontend implementation details  
-3. **`back/CLAUDE.md`** - Backend implementation details (TBD)
-4. **`docs/task.md`** - Original requirements reference
+2. **`front/CLAUDE.md`** - Frontend implementation details
+3. **`back/CLAUDE.md`** - Backend mock API details
+4. **`front/README.md`** - Quick start guide
 
-### Development Support
+### Template Customization
 - Use established patterns from template
 - Follow architectural guidelines in respective CLAUDE.md files
 - Maintain consistency across components and features
-- Document new patterns as they emerge
+- Extend the example domain (products) to your specific needs
 
-### Mock Authentication Setup (Development Mode)
+### Mock Authentication Setup (Template Feature)
 
-The template uses **mock authentication** for development:
+The template includes **mock authentication** for development and demonstration:
 
 **For Development Testing:**
 1. Navigate to sign-in page: `http://localhost:3000/auth/sign-in`
@@ -234,8 +235,8 @@ The template uses **mock authentication** for development:
 - Mock auth accepts any email/password combination
 - Session stored in browser cookies (`mock-auth-session`)
 - Middleware protects `/dashboard` routes by checking for auth cookie
-- Future migration to Auth.js planned for production
+- Easy to replace with real authentication (Auth.js, Clerk, etc.)
 
 ---
 
-*This document serves as the project's north star, coordinating development efforts across frontend and backend components while maintaining focus on delivery goals.*
+*This document serves as the template's architectural guide, coordinating development patterns across frontend and backend components while providing a solid foundation for custom implementations.*
