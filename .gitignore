@@ -823,3 +823,7 @@ CLAUDE.local.md
 
 distrobox.ini
 .pnpm-store
+
+# mcp
+.config
+.playwright-mcp/
