@@ -18,7 +18,10 @@ function useControllableState<T>({
   prop,
   defaultProp,
   onChange = () => {}
-}: UseControllableStateParams<T>) {
+}: UseControllableStateParams<T>): readonly [
+  T | undefined,
+  React.Dispatch<React.SetStateAction<T | undefined>>
+] {
   const [uncontrolledProp, setUncontrolledProp] = useUncontrolledState({
     defaultProp,
     onChange
@@ -48,7 +51,10 @@ function useControllableState<T>({
 function useUncontrolledState<T>({
   defaultProp,
   onChange
-}: Omit<UseControllableStateParams<T>, 'prop'>) {
+}: Omit<UseControllableStateParams<T>, 'prop'>): [
+  T | undefined,
+  React.Dispatch<React.SetStateAction<T | undefined>>
+] {
   const uncontrolledState = React.useState<T | undefined>(defaultProp);
   const [value] = uncontrolledState;
   const prevValueRef = React.useRef(value);

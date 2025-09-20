@@ -13,7 +13,7 @@
     "build": "next build --turbopack",
     "build:analyze": "ANALYZE=true next build --turbopack",
     "start": "next start",
-    "lint": "pnpm typecheck && eslint src --cache && pnpm format",
+    "lint": "pnpm typecheck && eslint src --cache",
     "lint:fix": "pnpm typecheck && eslint src --fix --cache && pnpm format",
     "lint:husky-pre-commit": "eslint --fix --cache",
     "format": "prettier --write .",

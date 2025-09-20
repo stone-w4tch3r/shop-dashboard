@@ -85,10 +85,79 @@ const config: Linter.Config[] = [
       '@typescript-eslint/no-unsafe-argument': 'error', // Forbid any as argument
 
       // Additional type safety
-      'prefer-const': 'error'
+      'prefer-const': 'error',
+
+      // Tier 1: Core Comparison & Casting Safety (High Impact)
+      eqeqeq: 'error', // Force === instead of ==
+      '@typescript-eslint/strict-boolean-expressions': [
+        'warn', // Start as warning due to high volume in existing code
+        {
+          allowString: false,
+          allowNumber: false,
+          allowNullableObject: true, // Allow obj && obj.method()
+          allowNullableBoolean: true,
+          allowNullableString: false,
+          allowNullableNumber: false,
+          allowAny: false
+        }
+      ],
+      '@typescript-eslint/no-non-null-assertion': 'error', // Forbid dangerous ! operator
+      '@typescript-eslint/prefer-nullish-coalescing': 'warn', // Use ?? instead of || (warning due to volume)
+
+      // Tier 2: High Value Safety & Readability Rules
+      '@typescript-eslint/prefer-optional-chain': 'error', // Use ?. instead of && chains
+      '@typescript-eslint/no-unnecessary-type-assertion': 'error', // Remove redundant assertions
+      '@typescript-eslint/switch-exhaustiveness-check': 'error', // Ensure switch completeness
+      '@typescript-eslint/consistent-type-assertions': [
+        'error',
+        {
+          assertionStyle: 'as',
+          objectLiteralTypeAssertions: 'never'
+        }
+      ],
+      '@typescript-eslint/prefer-as-const': 'error', // Use as const for literals
+
+      // Forbid vague types in favor of explicit types
+      '@typescript-eslint/ban-ts-comment': 'error',
+      '@typescript-eslint/no-empty-object-type': 'error', // Forbid {} - use Record<string, unknown> instead
+      '@typescript-eslint/prefer-function-type': 'error', // Prefer function types over interfaces with call signatures
+      '@typescript-eslint/no-wrapper-object-types': 'error', // Forbid Object, Boolean, Number, String, Symbol
+      '@typescript-eslint/no-unsafe-function-type': 'error', // Forbid Function - use specific signatures instead
+      // Ban the 'object' type using the new no-restricted-types rule (replacement for ban-types)
+      '@typescript-eslint/no-restricted-types': [
+        'error',
+        {
+          types: {
+            object: {
+              message:
+                'Use Record<string, unknown> or a specific interface instead of object',
+              fixWith: 'Record<string, unknown>',
+              suggest: [
+                'Record<string, unknown>',
+                'Record<string, any>',
+                'Record<PropertyKey, unknown>'
+              ]
+            }
+          }
+        }
+      ],
+
+      // Explicit return types - enforced for non-obvious cases only
+      '@typescript-eslint/explicit-function-return-type': [
+        'error',
+        {
+          allowExpressions: true, // Allow arrow functions as expressions (type inferred)
+          allowTypedFunctionExpressions: true, // Allow when function type already specified
+          allowHigherOrderFunctions: true, // Allow functions returning functions
+          allowDirectConstAssertionInArrowFunctions: true, // Allow `() => value as const`
+          allowConciseArrowFunctionExpressionsStartingWithVoid: true, // Allow `() => void expression`
+          allowFunctionsWithoutTypeParameters: true, // Allow simple functions with obvious returns
+          allowedNames: [], // No function name exceptions
+          allowIIFEs: true // Allow immediately invoked function expressions
+        }
+      ]
 
       // CLAUDE.md Goal: Maximum TypeScript safety (catch as many errors as possible)
-      // Note: explicit-function-return-type disabled for React components (too noisy)
     }
   },
 
@@ -98,7 +167,22 @@ const config: Linter.Config[] = [
     rules: {
       // React hooks rules (these come from next/core-web-vitals)
       'react-hooks/exhaustive-deps': 'error',
-      'react-hooks/rules-of-hooks': 'error'
+      'react-hooks/rules-of-hooks': 'error',
+
+      // React components - relaxed return type enforcement (can be noisy)
+      '@typescript-eslint/explicit-function-return-type': [
+        'error', // Still enforce, but with very permissive settings
+        {
+          allowExpressions: true, // Allow arrow function expressions
+          allowTypedFunctionExpressions: true, // Allow when type already specified
+          allowHigherOrderFunctions: true, // Allow functions returning functions
+          allowDirectConstAssertionInArrowFunctions: true, // Allow `() => value as const`
+          allowConciseArrowFunctionExpressionsStartingWithVoid: true, // Allow `() => void expression`
+          allowFunctionsWithoutTypeParameters: true, // Very permissive for React components
+          allowedNames: [], // No function name exceptions
+          allowIIFEs: true // Allow immediately invoked function expressions
+        }
+      ]
     }
   },
 
@@ -116,6 +200,39 @@ const config: Linter.Config[] = [
       '@typescript-eslint/no-unused-vars': 'off',
       '@typescript-eslint/no-explicit-any': 'off',
       'no-console': 'off'
+    }
+  },
+
+  // Relaxed rules for shadcn/ui components (default library components)
+  {
+    files: ['src/components/ui/**/*'],
+    rules: {
+      // Original exemptions
+      '@typescript-eslint/explicit-function-return-type': 'off',
+      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-unsafe-assignment': 'off',
+      '@typescript-eslint/no-unsafe-member-access': 'off',
+      '@typescript-eslint/no-unsafe-call': 'off',
+      '@typescript-eslint/no-unsafe-return': 'off',
+      '@typescript-eslint/no-unsafe-argument': 'off',
+
+      // New comparison/casting safety rule exemptions
+      eqeqeq: 'off',
+      '@typescript-eslint/strict-boolean-expressions': 'off',
+      '@typescript-eslint/no-non-null-assertion': 'off',
+      '@typescript-eslint/prefer-nullish-coalescing': 'off',
+      '@typescript-eslint/prefer-optional-chain': 'off',
+      '@typescript-eslint/no-unnecessary-type-assertion': 'off',
+      '@typescript-eslint/switch-exhaustiveness-check': 'off',
+      '@typescript-eslint/consistent-type-assertions': 'off',
+      '@typescript-eslint/prefer-as-const': 'off',
+
+      // Vague type rule exemptions
+      '@typescript-eslint/no-empty-object-type': 'off',
+      '@typescript-eslint/prefer-function-type': 'off',
+      '@typescript-eslint/no-wrapper-object-types': 'off',
+      '@typescript-eslint/no-unsafe-function-type': 'off',
+      '@typescript-eslint/no-restricted-types': 'off'
     }
   }
 ];

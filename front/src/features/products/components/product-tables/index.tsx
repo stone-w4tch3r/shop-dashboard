@@ -16,7 +16,7 @@ export function ProductTable<TData, TValue>({
   data,
   totalItems,
   columns
-}: ProductTableParams<TData, TValue>) {
+}: ProductTableParams<TData, TValue>): React.JSX.Element {
   const [pageSize] = useQueryState('perPage', parseAsInteger.withDefault(10));
 
   const pageCount = Math.ceil(totalItems / pageSize);

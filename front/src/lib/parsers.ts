@@ -15,7 +15,7 @@ const sortingItemSchema = z.object({
 
 export const getSortingStateParser = <TData>(
   columnIds?: string[] | Set<string>
-) => {
+): ReturnType<typeof createParser<ExtendedColumnSort<TData>[]>> => {
   const validKeys = columnIds
     ? columnIds instanceof Set
       ? columnIds
@@ -61,7 +61,7 @@ export type FilterItemSchema = z.infer<typeof filterItemSchema>;
 
 export const getFiltersStateParser = <TData>(
   columnIds?: string[] | Set<string>
-) => {
+): ReturnType<typeof createParser<ExtendedColumnFilter<TData>[]>> => {
   const validKeys = columnIds
     ? columnIds instanceof Set
       ? columnIds
