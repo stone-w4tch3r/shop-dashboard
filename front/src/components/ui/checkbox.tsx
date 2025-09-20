@@ -15,17 +15,17 @@ function Checkbox({
       data-slot='checkbox'
       className={cn(
         // Base styles matching Figma design
-        'peer shrink-0 rounded-[5px] border-[1.25px] transition-all outline-none',
+        'peer shrink-0 rounded-md border-[1.25px] transition-all outline-none',
         // Size: 30px x 30px (larger to match Figma)
         'size-[30px]',
-        // Default state: dark background with secondary border (#131418 bg, #393939 border)
-        'border-[#393939] bg-[#131418]',
-        // Checked state: accent blue background, no border (#3C88ED)
-        'data-[state=checked]:border-[#3C88ED] data-[state=checked]:bg-[#3C88ED]',
+        // Default state: background with border
+        'border-border bg-input',
+        // Checked state: accent background with accent border
+        'data-[state=checked]:border-accent data-[state=checked]:bg-accent',
         // Text color for check icon
-        'data-[state=checked]:text-[#FEFEFE]',
+        'data-[state=checked]:text-accent-foreground',
         // Focus styles
-        'focus-visible:ring-2 focus-visible:ring-[#3C88ED]/50 focus-visible:ring-offset-2',
+        'focus-visible:ring-accent/50 focus-visible:ring-2 focus-visible:ring-offset-2',
         // Disabled styles
         'disabled:cursor-not-allowed disabled:opacity-50',
         // Invalid styles

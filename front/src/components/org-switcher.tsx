@@ -50,13 +50,21 @@ export function OrgSwitcher({
           <DropdownMenuTrigger asChild>
             <SidebarMenuButton
               size='lg'
-              className='data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground'
+              className='data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground h-13 rounded-lg px-2'
             >
-              <div className='bg-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg'>
-                <GalleryVerticalEnd className='size-4' />
+              <div className='flex items-center gap-1'>
+                <div className='text-accent text-base leading-none font-bold'>
+                  4
+                </div>
+                <div className='flex flex-col'>
+                  <div className='text-background text-sm leading-none font-bold'>
+                    C
+                  </div>
+                  <div className='bg-accent h-1.5 w-1.5 rounded-full'></div>
+                </div>
               </div>
               <div className='flex flex-col gap-0.5 leading-none'>
-                <span className='font-semibold'>Dashboard Template</span>
+                <span className='font-semibold'>4Cells</span>
                 <span className=''>{selectedTenant.name}</span>
               </div>
               <ChevronsUpDown className='ml-auto' />

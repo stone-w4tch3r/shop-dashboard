@@ -20,15 +20,14 @@ const buttonVariants = cva(
         ghost:
           'hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50',
         link: 'text-primary underline-offset-4 hover:underline',
-        // New Figma-based variants
         'figma-primary':
-          'bg-[#191A1E] text-[#FEFEFE] hover:bg-[#191A1E]/90 transition-colors',
+          'bg-primary text-primary-foreground hover:bg-primary/90 transition-colors',
         'figma-secondary':
-          'bg-[#393939] text-[#FEFEFE] hover:bg-[#393939]/90 transition-colors',
+          'bg-secondary text-secondary-foreground hover:bg-secondary/90 transition-colors',
         'figma-selected':
-          'bg-[#222328] text-[#FEFEFE] hover:bg-[#222328]/90 transition-colors',
+          'bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90 transition-colors',
         'figma-gradient':
-          'bg-gradient-to-r from-[#2672D7] via-[#3C88ED] to-[#2672D7] text-[#FEFEFE] hover:opacity-90 transition-opacity'
+          'bg-gradient-to-r from-[#2672D7] via-accent to-[#2672D7] text-accent-foreground hover:opacity-90 transition-opacity'
       },
       size: {
         default: 'h-9 px-4 py-2 has-[>svg]:px-3',

@@ -21,21 +21,21 @@ const buttonShowcase = [
     icon: 'billing' as keyof typeof Icons,
     label: 'Device Status',
     variant: 'figma-primary' as const,
-    iconColor: 'text-[#8C8C8E]',
+    iconColor: 'text-muted-foreground',
     size: 'default' as const
   },
   {
     icon: 'billing' as keyof typeof Icons,
     label: 'Device Status',
     variant: 'figma-secondary' as const,
-    iconColor: 'text-[#3C88ED]',
+    iconColor: 'text-accent',
     size: 'default' as const
   },
   {
     icon: 'billing' as keyof typeof Icons,
     label: 'Device Status',
     variant: 'figma-selected' as const,
-    iconColor: 'text-[#FEFEFE]',
+    iconColor: 'text-sidebar-primary-foreground',
     size: 'default' as const
   }
 ];
@@ -46,19 +46,19 @@ const burgerButtonShowcase = [
     icon: 'ellipsis' as keyof typeof Icons,
     label: 'Close Menu',
     variant: 'figma-primary' as const,
-    iconColor: 'text-[#8C8C8E]'
+    iconColor: 'text-muted-foreground'
   },
   {
     icon: 'ellipsis' as keyof typeof Icons,
     label: 'Close Menu',
     variant: 'figma-secondary' as const,
-    iconColor: 'text-[#3C88ED]'
+    iconColor: 'text-accent'
   },
   {
     icon: 'ellipsis' as keyof typeof Icons,
     label: 'Close Menu',
     variant: 'figma-selected' as const,
-    iconColor: 'text-[#FEFEFE]'
+    iconColor: 'text-sidebar-primary-foreground'
   }
 ];
 
