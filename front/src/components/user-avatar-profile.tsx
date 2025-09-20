@@ -20,9 +20,9 @@ export function UserAvatarProfile({
     <div className='flex items-center gap-2'>
       <Avatar className={className}>
         <AvatarImage src={user?.imageUrl || ''} alt={user?.fullName || ''} />
-        <AvatarFallback className='rounded-lg'>
-          {user?.fullName?.slice(0, 2)?.toUpperCase() || 'CN'}
-        </AvatarFallback>
+        {/* <AvatarFallback className='rounded-lg'> */}
+        {/* {user?.fullName?.slice(0, 2)?.toUpperCase() || 'CN'} */}
+        {/* </AvatarFallback> */}
       </Avatar>
 
       {showInfo && (

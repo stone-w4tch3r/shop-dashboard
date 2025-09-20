@@ -9,13 +9,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
-import { SidebarMenuButton } from '@/components/ui/sidebar';
 import { UserAvatarProfile } from '@/components/user-avatar-profile';
 import { useUser } from '@/lib/mock-auth';
 import {
   IconBell,
-  IconChevronsDown,
   IconCreditCard,
+  IconDotsVertical,
   IconLogout,
   IconUserCircle
 } from '@tabler/icons-react';
@@ -23,6 +22,9 @@ import { SignOutButton } from '@/lib/mock-auth';
 import { useRouter } from 'next/navigation';
 import { Icons } from '@/components/icons';
 import { useCurrentPage } from '@/hooks/use-current-page';
+
+// Constants
+const USER_WIDGET_MIN_WIDTH = '15rem';
 
 function Header() {
   const [isMounted, setIsMounted] = React.useState(false);
@@ -52,17 +54,20 @@ function Header() {
         {isMounted && user && (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <SidebarMenuButton
-                size='lg'
-                className='data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground h-10 px-3'
+              <button
+                className='bg-primary hover:bg-primary/90 focus:ring-ring flex h-11 items-center justify-between rounded-[5px] px-[5px] py-0 focus:ring-2 focus:outline-none'
+                style={{ minWidth: USER_WIDGET_MIN_WIDTH }}
               >
                 <UserAvatarProfile
-                  className='h-8 w-8 rounded-lg'
-                  showInfo
+                  className='bg-secondary h-[34px] w-[34px] rounded-[5px]'
+                  showInfo={false}
                   user={user}
                 />
-                <IconChevronsDown className='ml-auto size-4' />
-              </SidebarMenuButton>
+                <span className='text-primary-foreground text-sm font-medium'>
+                  {user.firstName ?? 'User'}
+                </span>
+                <IconDotsVertical className='text-muted-foreground h-4 w-4' />
+              </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent
               className='w-56 rounded-lg'
