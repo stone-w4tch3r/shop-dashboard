@@ -1,3 +1,4 @@
+import React from 'react';
 import { render, screen, fireEvent } from '@/test/test-utils';
 import { describe, it, expect } from 'vitest';
 
@@ -11,7 +12,6 @@ const Header = () => (
     <input data-testid='search-input' placeholder='Search...' />
     <div data-testid='user-nav'>User Navigation</div>
     <button data-testid='theme-toggle'>Toggle Theme</button>
-    <div data-testid='theme-selector'>Theme Selector</div>
   </header>
 );
 

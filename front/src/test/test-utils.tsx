@@ -1,7 +1,8 @@
-import { ReactElement } from 'react';
+import React, { ReactElement } from 'react';
 import { render, RenderOptions } from '@testing-library/react';
 import { ThemeProvider } from 'next-themes';
 import { AuthProvider } from '@/lib/mock-auth';
+import { vi } from 'vitest';
 
 // Mock Next.js router for testing
 const mockRouter = {

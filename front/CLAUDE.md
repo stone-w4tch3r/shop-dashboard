@@ -52,7 +52,7 @@ src/
 | ------------------------- | --------------------------------------------- | ---------------------------------------------------- |
 | **Global Zustand Stores** | Business logic, CRUD operations, domain state | `useProductStore`, `useAnalyticsStore`               |
 | **Atomic Zustand Stores** | Component state, local behavior, UI logic     | `useProductCardStore`, `useSearchBoxStore`           |
-| **React Context**         | Framework integration, component tree state   | `ActiveThemeProvider`, `KBarProvider`                |
+| **React Context**         | Framework integration, component tree state   | `KBarProvider`                                       |
 | **3rd Party Providers**   | External library integration                  | `AuthProvider` (mock), `ThemeProvider` (next-themes) |
 | **URL State (nuqs)**      | Shareable/bookmarkable state                  | Pagination, filters, search                          |
 | **Form State (RHF)**      | Form-specific validation and state            | Product forms, settings                              |

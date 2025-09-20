@@ -81,9 +81,9 @@ test.describe('Dashboard Functionality Tests', () => {
       // Verify button is still functional after click (no errors)
       await expect(themeToggle).toBeVisible();
 
-      // Should contain theme-related class
+      // Should contain dark or light theme class
       const body = page.locator('body');
-      await expect(body).toHaveAttribute('class', /theme-/);
+      await expect(body).toHaveAttribute('class', /(dark|light)/);
     }
 
     await hydrationChecker.checkForHydrationErrors();

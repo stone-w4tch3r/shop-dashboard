@@ -2,23 +2,14 @@
 import { AuthProvider } from '@/lib/mock-auth';
 import { useTheme } from 'next-themes';
 import React from 'react';
-import { ActiveThemeProvider } from '../active-theme';
 
-export default function Providers({
-  activeThemeValue,
-  children
-}: {
-  activeThemeValue: string;
-  children: React.ReactNode;
-}) {
-  // Theme is handled by ThemeProvider and ActiveThemeProvider
+export default function Providers({ children }: { children: React.ReactNode }) {
+  // Theme is handled by ThemeProvider (next-themes)
   useTheme(); // Keep for theme system compatibility
 
   return (
     <>
-      <ActiveThemeProvider initialTheme={activeThemeValue}>
-        <AuthProvider appearance={{}}>{children}</AuthProvider>
-      </ActiveThemeProvider>
+      <AuthProvider appearance={{}}>{children}</AuthProvider>
     </>
   );
 }
