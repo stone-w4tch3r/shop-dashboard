@@ -60,6 +60,8 @@ const tenants = [
 ];
 
 function AppSidebar() {
+  const [isMounted, setIsMounted] = React.useState(false);
+  React.useEffect(() => setIsMounted(true), []);
   const pathname = usePathname();
   const { isOpen } = useMediaQuery();
   const { user } = useUser();
@@ -88,7 +90,8 @@ function AppSidebar() {
           <SidebarGroupLabel>Overview</SidebarGroupLabel>
           <SidebarMenu>
             {navItems.map((item) => {
-              const Icon = item.icon ? Icons[item.icon] : Icons.logo;
+              const Icon =
+                item.icon !== undefined ? Icons[item.icon] : Icons.logo;
               return item?.items && item?.items?.length > 0 ? (
                 <Collapsible
                   key={item.title}
@@ -102,7 +105,7 @@ function AppSidebar() {
                         tooltip={item.title}
                         isActive={pathname === item.url}
                       >
-                        {item.icon && <Icon />}
+                        {item.icon !== undefined && <Icon />}
                         <span>{item.title}</span>
                         <IconChevronRight className='ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90' />
                       </SidebarMenuButton>
@@ -152,7 +155,7 @@ function AppSidebar() {
                   size='lg'
                   className='data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground'
                 >
-                  {user && (
+                  {isMounted && user && (
                     <UserAvatarProfile
                       className='h-8 w-8 rounded-lg'
                       showInfo
@@ -170,7 +173,7 @@ function AppSidebar() {
               >
                 <DropdownMenuLabel className='p-0 font-normal'>
                   <div className='px-1 py-1.5'>
-                    {user && (
+                    {isMounted && user && (
                       <UserAvatarProfile
                         className='h-8 w-8 rounded-lg'
                         showInfo
