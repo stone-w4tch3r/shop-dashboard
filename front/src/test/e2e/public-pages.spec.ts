@@ -1,9 +1,13 @@
 import { test, expect } from '@playwright/test';
+import { createHydrationErrorChecker } from './utils/hydration-checker';
 
 test.describe('Authentication Flow Tests', () => {
   test('should redirect unauthenticated users to sign-in from dashboard', async ({
     page
   }) => {
+    const hydrationChecker = createHydrationErrorChecker(page);
+    hydrationChecker.startListening();
+
     await page.goto('/dashboard');
 
     // Should redirect to sign-in page
@@ -11,6 +15,8 @@ test.describe('Authentication Flow Tests', () => {
     await expect(
       page.getByRole('heading', { name: /sign.?in/i })
     ).toBeVisible();
+
+    await hydrationChecker.checkForHydrationErrors();
   });
 
   test('should redirect unauthenticated users to sign-in from products page', async ({
@@ -23,6 +29,9 @@ test.describe('Authentication Flow Tests', () => {
   });
 
   test('should display sign-in form correctly', async ({ page }) => {
+    const hydrationChecker = createHydrationErrorChecker(page);
+    hydrationChecker.startListening();
+
     await page.goto('/auth/sign-in');
 
     // Check form elements - be more specific to avoid multiple matches
@@ -31,6 +40,8 @@ test.describe('Authentication Flow Tests', () => {
     await expect(
       page.getByRole('button', { name: 'Sign In', exact: true })
     ).toBeVisible();
+
+    await hydrationChecker.checkForHydrationErrors();
   });
 
   test('should load sign-in page correctly', async ({ page }) => {

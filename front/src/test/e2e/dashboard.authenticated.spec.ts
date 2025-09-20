@@ -1,9 +1,13 @@
 import { test, expect } from '@playwright/test';
+import { createHydrationErrorChecker } from './utils/hydration-checker';
 
 test.describe('Dashboard Functionality Tests', () => {
   test('should display dashboard layout when authenticated', async ({
     page
   }) => {
+    const hydrationChecker = createHydrationErrorChecker(page);
+    hydrationChecker.startListening();
+
     // This test uses the stored authentication state from global setup
     await page.goto('/dashboard');
 
@@ -33,11 +37,16 @@ test.describe('Dashboard Functionality Tests', () => {
     // The sidebar might toggle state rather than show as dialog
     // Just verify that clicking doesn't cause errors and button still exists
     await expect(sidebarToggle).toBeVisible();
+
+    await hydrationChecker.checkForHydrationErrors();
   });
 
   test('should navigate to products page when authenticated', async ({
     page
   }) => {
+    const hydrationChecker = createHydrationErrorChecker(page);
+    hydrationChecker.startListening();
+
     // Navigate directly to products page
     await page.goto('/dashboard/product');
 
@@ -51,9 +60,14 @@ test.describe('Dashboard Functionality Tests', () => {
     await expect(page.getByRole('heading', { name: /products/i })).toBeVisible({
       timeout: 10000
     });
+
+    await hydrationChecker.checkForHydrationErrors();
   });
 
   test('should handle theme switching when authenticated', async ({ page }) => {
+    const hydrationChecker = createHydrationErrorChecker(page);
+    hydrationChecker.startListening();
+
     await page.goto('/dashboard/overview');
 
     // Test theme toggle functionality - just verify the button works
@@ -71,6 +85,8 @@ test.describe('Dashboard Functionality Tests', () => {
       const body = page.locator('body');
       await expect(body).toHaveAttribute('class', /theme-/);
     }
+
+    await hydrationChecker.checkForHydrationErrors();
   });
 
   test('should display correct page titles', async ({ page }) => {

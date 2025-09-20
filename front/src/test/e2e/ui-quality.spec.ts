@@ -1,7 +1,11 @@
 import { test, expect } from '@playwright/test';
+import { createHydrationErrorChecker } from './utils/hydration-checker';
 
 test.describe('UI Quality & Accessibility Tests', () => {
   test('should have responsive design on sign-in page', async ({ page }) => {
+    const hydrationChecker = createHydrationErrorChecker(page);
+    hydrationChecker.startListening();
+
     await page.goto('/auth/sign-in');
 
     const viewports = [
@@ -22,6 +26,8 @@ test.describe('UI Quality & Accessibility Tests', () => {
       // Main content visible
       await expect(page.locator('body')).toBeVisible();
     }
+
+    await hydrationChecker.checkForHydrationErrors();
   });
 
   test('should load without console errors', async ({ page }) => {
