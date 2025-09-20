@@ -18,7 +18,6 @@ import {
   SidebarContent,
   SidebarFooter,
   SidebarGroup,
-  SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
@@ -46,18 +45,12 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import * as React from 'react';
 import { Icons } from '../icons';
-import { OrgSwitcher } from '../org-switcher';
+import { CompanyLogoSVG } from '../company-logo';
 export const company = {
   name: 'Acme Inc',
   logo: IconPhotoUp,
   plan: 'Enterprise'
 };
-
-const tenants = [
-  { id: '1', name: 'Acme Inc' },
-  { id: '2', name: 'Beta Corp' },
-  { id: '3', name: 'Gamma Ltd' }
-];
 
 function AppSidebar() {
   const [isMounted, setIsMounted] = React.useState(false);
@@ -66,28 +59,20 @@ function AppSidebar() {
   const { isOpen } = useMediaQuery();
   const { user } = useUser();
   const router = useRouter();
-  const handleSwitchTenant = (_tenantId: string) => {
-    // Tenant switching functionality would be implemented here
-  };
-
-  const activeTenant = tenants[0];
 
   React.useEffect(() => {
     // Side effects based on sidebar state changes
   }, [isOpen]);
 
   return (
-    <Sidebar collapsible='icon'>
+    <Sidebar collapsible='icon' variant='floating'>
       <SidebarHeader>
-        <OrgSwitcher
-          tenants={tenants}
-          defaultTenant={activeTenant}
-          onTenantSwitch={handleSwitchTenant}
-        />
+        <div className='flex w-full justify-center'>
+          <CompanyLogoSVG className='' />
+        </div>
       </SidebarHeader>
       <SidebarContent className='overflow-x-hidden'>
         <SidebarGroup>
-          <SidebarGroupLabel>Overview</SidebarGroupLabel>
           <SidebarMenu>
             {navItems.map((item) => {
               const Icon =
@@ -162,7 +147,7 @@ function AppSidebar() {
                       user={user}
                     />
                   )}
-                  <IconChevronsDown className='ml-auto size-4' />
+                  <IconChevronsDown className='ml-auto size-4 group-data-[collapsible=icon]:hidden' />
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
               <DropdownMenuContent

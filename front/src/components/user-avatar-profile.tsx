@@ -1,4 +1,5 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { cn } from '@/lib/utils';
 
 interface UserAvatarProfileProps {
   className?: string;
@@ -25,7 +26,12 @@ export function UserAvatarProfile({
       </Avatar>
 
       {showInfo && (
-        <div className='grid flex-1 text-left text-sm leading-tight'>
+        <div
+          className={cn(
+            'grid flex-1 text-left text-sm leading-tight',
+            'group-data-[collapsible=icon]:hidden'
+          )}
+        >
           <span className='truncate font-semibold'>{user?.fullName || ''}</span>
           <span className='truncate text-xs'>
             {user?.emailAddresses[0].emailAddress || ''}
