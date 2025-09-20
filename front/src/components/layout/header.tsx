@@ -1,9 +1,5 @@
 'use client';
 import React from 'react';
-import { Breadcrumbs } from '../breadcrumbs';
-import SearchInput from '../search-input';
-import { ModeToggle } from './ThemeToggle/theme-toggle';
-import CtaGithub from './cta-github';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -25,25 +21,33 @@ import {
 } from '@tabler/icons-react';
 import { SignOutButton } from '@/lib/mock-auth';
 import { useRouter } from 'next/navigation';
+import { Icons } from '@/components/icons';
+import { useCurrentPage } from '@/hooks/use-current-page';
 
 function Header() {
   const [isMounted, setIsMounted] = React.useState(false);
   React.useEffect(() => setIsMounted(true), []);
   const { user } = useUser();
   const router = useRouter();
+  const currentPage = useCurrentPage();
+
+  const IconComponent =
+    currentPage?.icon !== undefined ? Icons[currentPage.icon] : Icons.dashboard;
 
   return (
     <header className='flex h-16 shrink-0 items-center justify-between gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12'>
-      <div className='flex items-center gap-2 px-4'>
-        <Breadcrumbs />
+      {/* Page Title and Icon Section */}
+      <div className='flex items-center gap-3 px-4'>
+        <div className='flex h-11 w-11 items-center justify-center rounded-[10px] bg-[#191A1E]'>
+          <IconComponent className='h-[26px] w-[26px] text-white' />
+        </div>
+        <h1 className='text-2xl font-bold text-[#FEFEFE]'>
+          {currentPage?.title ?? 'Dashboard'}
+        </h1>
       </div>
 
+      {/* User Section */}
       <div className='flex items-center gap-2 px-4'>
-        <CtaGithub />
-        <div className='hidden md:flex'>
-          <SearchInput />
-        </div>
-
         {/* User Block moved from sidebar */}
         {isMounted && user && (
           <DropdownMenu>
@@ -101,8 +105,6 @@ function Header() {
             </DropdownMenuContent>
           </DropdownMenu>
         )}
-
-        <ModeToggle />
       </div>
     </header>
   );

@@ -20,9 +20,9 @@ import {
 } from '@/components/ui/sidebar';
 import { navItems } from '@/constants/data';
 import { useMediaQuery } from '@/hooks/use-media-query';
+import { useCurrentPage } from '@/hooks/use-current-page';
 import { IconChevronRight, IconMenu2, IconPhotoUp } from '@tabler/icons-react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
 import * as React from 'react';
 import { Icons } from '../icons';
 import { CompanyLogoSVG } from '../company-logo';
@@ -33,7 +33,7 @@ export const company = {
 };
 
 function AppSidebar() {
-  const pathname = usePathname();
+  const currentPage = useCurrentPage();
   const { isOpen } = useMediaQuery();
   const { toggleSidebar, open } = useSidebar();
 
@@ -76,7 +76,7 @@ function AppSidebar() {
                     <CollapsibleTrigger asChild>
                       <SidebarMenuButton
                         tooltip={item.title}
-                        isActive={pathname === item.url}
+                        isActive={currentPage?.url === item.url}
                       >
                         {item.icon !== undefined && <Icon />}
                         <span>{item.title}</span>
@@ -89,7 +89,7 @@ function AppSidebar() {
                           <SidebarMenuSubItem key={subItem.title}>
                             <SidebarMenuSubButton
                               asChild
-                              isActive={pathname === subItem.url}
+                              isActive={currentPage?.url === subItem.url}
                             >
                               <Link href={subItem.url}>
                                 <span>{subItem.title}</span>
@@ -106,7 +106,7 @@ function AppSidebar() {
                   <SidebarMenuButton
                     asChild
                     tooltip={item.title}
-                    isActive={pathname === item.url}
+                    isActive={currentPage?.url === item.url}
                   >
                     <Link href={item.url}>
                       <Icon />

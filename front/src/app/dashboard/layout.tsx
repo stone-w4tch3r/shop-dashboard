@@ -25,6 +25,8 @@ export default async function DashboardLayout({
         <AppSidebar />
         <SidebarInset>
           <Header />
+          {/* Horizontal divider between header and content */}
+          <div className='bg-foreground h-px w-full opacity-5' />
           {/* page main content */}
           {children}
           {/* page main content ends */}
