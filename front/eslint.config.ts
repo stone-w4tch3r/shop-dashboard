@@ -203,9 +203,12 @@ const config: Linter.Config[] = [
     }
   },
 
-  // Relaxed rules for shadcn/ui components (default library components)
+  // Relaxed rules for shadcn/ui and template-provided components
   {
-    files: ['src/components/ui/**/*'],
+    files: [
+      'src/components/ui/**/*', // shadcn/ui components
+      'src/components/kbar/**/*' // kbar library components
+    ],
     rules: {
       // Original exemptions
       '@typescript-eslint/explicit-function-return-type': 'off',
