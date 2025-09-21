@@ -6,6 +6,17 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
+import { Toggle } from '@/components/ui/toggle';
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Progress } from '@/components/ui/progress';
+import { Slider } from '@/components/ui/slider';
+import { useState } from 'react';
 
 // Icon components organized by categories from Figma
 const statusIcons = ['billing'] as const; // Using billing as coins/status icon
@@ -86,6 +97,8 @@ const switchShowcase = [
 ];
 
 export default function StoryboardPage() {
+  const [sliderValue, setSliderValue] = useState([50]);
+  const [togglePressed, setTogglePressed] = useState(false);
   return (
     <PageContainer>
       <div className='flex w-full flex-col gap-8'>
@@ -255,6 +268,241 @@ export default function StoryboardPage() {
                     ))}
                   </div>
                 </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Additional Interactive Components for Cursor Testing */}
+          <section className='grid gap-6 lg:grid-cols-2'>
+            <div className='space-y-4'>
+              <h3 className='text-lg font-medium'>Toggle Components</h3>
+              <div className='border-muted-foreground/40 rounded-xl border border-dashed p-6'>
+                <div className='space-y-4'>
+                  <Toggle
+                    pressed={togglePressed}
+                    onPressedChange={setTogglePressed}
+                    aria-label='Toggle italic'
+                  >
+                    <Icons.settings className='h-4 w-4' />
+                    Toggle Me
+                  </Toggle>
+
+                  <ToggleGroup type='multiple' className='justify-start'>
+                    <ToggleGroupItem value='bold' aria-label='Toggle bold'>
+                      <Icons.dashboard className='h-4 w-4' />
+                    </ToggleGroupItem>
+                    <ToggleGroupItem value='italic' aria-label='Toggle italic'>
+                      <Icons.billing className='h-4 w-4' />
+                    </ToggleGroupItem>
+                    <ToggleGroupItem
+                      value='underline'
+                      aria-label='Toggle underline'
+                    >
+                      <Icons.warning className='h-4 w-4' />
+                    </ToggleGroupItem>
+                  </ToggleGroup>
+                </div>
+              </div>
+            </div>
+
+            <div className='space-y-4'>
+              <h3 className='text-lg font-medium'>Tabs Component</h3>
+              <div className='border-muted-foreground/40 rounded-xl border border-dashed p-6'>
+                <Tabs defaultValue='tab1' className='w-full'>
+                  <TabsList className='grid w-full grid-cols-3'>
+                    <TabsTrigger value='tab1'>Tab One</TabsTrigger>
+                    <TabsTrigger value='tab2'>Tab Two</TabsTrigger>
+                    <TabsTrigger value='tab3'>Tab Three</TabsTrigger>
+                  </TabsList>
+                  <TabsContent value='tab1' className='mt-4'>
+                    <p className='text-muted-foreground text-sm'>
+                      Content for tab one
+                    </p>
+                  </TabsContent>
+                  <TabsContent value='tab2' className='mt-4'>
+                    <p className='text-muted-foreground text-sm'>
+                      Content for tab two
+                    </p>
+                  </TabsContent>
+                  <TabsContent value='tab3' className='mt-4'>
+                    <p className='text-muted-foreground text-sm'>
+                      Content for tab three
+                    </p>
+                  </TabsContent>
+                </Tabs>
+              </div>
+            </div>
+          </section>
+
+          {/* Interactive vs Non-Interactive Comparison */}
+          <section className='grid gap-6 lg:grid-cols-2'>
+            <div className='space-y-4'>
+              <h3 className='text-lg font-medium'>
+                Interactive Elements (Should Have Pointer)
+              </h3>
+              <div className='border-muted-foreground/40 rounded-xl border border-dashed p-6'>
+                <div className='space-y-4'>
+                  <Button variant='outline' size='sm'>
+                    Clickable Button
+                  </Button>
+
+                  <div className='space-y-2'>
+                    <Label htmlFor='test-checkbox'>Clickable Label</Label>
+                    <Checkbox id='test-checkbox' />
+                  </div>
+
+                  <Slider
+                    value={sliderValue}
+                    onValueChange={setSliderValue}
+                    max={100}
+                    step={1}
+                    className='w-full'
+                  />
+
+                  <Card
+                    className='hover:bg-accent/50 cursor-pointer transition-colors'
+                    onClick={() => alert('Card clicked!')}
+                  >
+                    <CardHeader>
+                      <CardTitle className='text-sm'>Clickable Card</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className='text-muted-foreground text-xs'>
+                        This card is clickable
+                      </p>
+                    </CardContent>
+                  </Card>
+                </div>
+              </div>
+            </div>
+
+            <div className='space-y-4'>
+              <h3 className='text-lg font-medium'>
+                Non-Interactive Elements (Should NOT Have Pointer)
+              </h3>
+              <div className='border-muted-foreground/40 rounded-xl border border-dashed p-6'>
+                <div className='space-y-4'>
+                  <Badge variant='secondary'>Static Badge</Badge>
+
+                  <Input type='text' placeholder='Text input (I-beam cursor)' />
+
+                  <Textarea placeholder='Textarea (I-beam cursor)' />
+
+                  <Progress value={33} className='w-full' />
+
+                  <Separator />
+
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className='text-sm'>Static Card</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className='text-muted-foreground text-xs'>
+                        This card is not clickable
+                      </p>
+                    </CardContent>
+                  </Card>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Disabled Components Section */}
+          <section className='space-y-4'>
+            <h2 className='text-xl font-semibold'>
+              Disabled Components (Should NOT Have Pointer)
+            </h2>
+            <div className='border-muted-foreground/40 rounded-xl border border-dashed p-6'>
+              <div className='grid gap-6 lg:grid-cols-3'>
+                <div className='space-y-4'>
+                  <h4 className='text-muted-foreground text-sm font-medium'>
+                    Disabled Buttons
+                  </h4>
+                  <div className='space-y-2'>
+                    <Button disabled>Disabled Default</Button>
+                    <Button disabled variant='outline'>
+                      Disabled Outline
+                    </Button>
+                    <Button disabled variant='secondary'>
+                      Disabled Secondary
+                    </Button>
+                    <Button disabled variant='destructive'>
+                      Disabled Destructive
+                    </Button>
+                  </div>
+                </div>
+
+                <div className='space-y-4'>
+                  <h4 className='text-muted-foreground text-sm font-medium'>
+                    Disabled Form Controls
+                  </h4>
+                  <div className='space-y-3'>
+                    <div className='flex items-center space-x-2'>
+                      <Checkbox disabled id='disabled-checkbox' />
+                      <Label
+                        htmlFor='disabled-checkbox'
+                        className='text-muted-foreground'
+                      >
+                        Disabled Checkbox
+                      </Label>
+                    </div>
+
+                    <div className='flex items-center space-x-2'>
+                      <Switch disabled id='disabled-switch' />
+                      <Label
+                        htmlFor='disabled-switch'
+                        className='text-muted-foreground'
+                      >
+                        Disabled Switch
+                      </Label>
+                    </div>
+
+                    <Toggle disabled aria-label='Disabled toggle'>
+                      <Icons.settings className='h-4 w-4' />
+                      Disabled Toggle
+                    </Toggle>
+                  </div>
+                </div>
+
+                <div className='space-y-4'>
+                  <h4 className='text-muted-foreground text-sm font-medium'>
+                    Disabled Inputs
+                  </h4>
+                  <div className='space-y-2'>
+                    <Input disabled placeholder='Disabled text input' />
+                    <Textarea disabled placeholder='Disabled textarea' />
+                    <Button
+                      disabled
+                      variant='outline'
+                      size='sm'
+                      className='w-full'
+                    >
+                      Disabled Submit Button
+                    </Button>
+                  </div>
+                </div>
+              </div>
+
+              <Separator className='my-6' />
+
+              <div className='space-y-3'>
+                <h4 className='text-muted-foreground text-sm font-medium'>
+                  Disabled Toggle Group
+                </h4>
+                <ToggleGroup disabled type='multiple' className='justify-start'>
+                  <ToggleGroupItem value='bold' aria-label='Disabled bold'>
+                    <Icons.dashboard className='h-4 w-4' />
+                  </ToggleGroupItem>
+                  <ToggleGroupItem value='italic' aria-label='Disabled italic'>
+                    <Icons.billing className='h-4 w-4' />
+                  </ToggleGroupItem>
+                  <ToggleGroupItem
+                    value='underline'
+                    aria-label='Disabled underline'
+                  >
+                    <Icons.warning className='h-4 w-4' />
+                  </ToggleGroupItem>
+                </ToggleGroup>
               </div>
             </div>
           </section>

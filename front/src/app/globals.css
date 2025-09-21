@@ -159,3 +159,36 @@
   /* Apply the reveal animation */
   animation: reveal 0.4s ease-in-out forwards;
 }
+
+/* Cursor pointer fix for interactive elements */
+@layer base {
+  /* Primary interactive elements */
+  button:not([disabled]),
+  [role='button']:not([disabled]),
+  [role='tab']:not([disabled]),
+  [role='option']:not([disabled]),
+  [role='menuitem']:not([disabled]),
+  [role='menuitemcheckbox']:not([disabled]),
+  [role='menuitemradio']:not([disabled]) {
+    cursor: pointer;
+  }
+
+  /* Form controls */
+  input[type='checkbox']:not([disabled]),
+  input[type='radio']:not([disabled]),
+  input[type='submit']:not([disabled]),
+  input[type='button']:not([disabled]),
+  input[type='reset']:not([disabled]) {
+    cursor: pointer;
+  }
+
+  /* Labels associated with form controls */
+  label[for]:not([disabled]) {
+    cursor: pointer;
+  }
+
+  /* Clickable elements with specific data attributes */
+  [data-clickable='true']:not([disabled]) {
+    cursor: pointer;
+  }
+}
