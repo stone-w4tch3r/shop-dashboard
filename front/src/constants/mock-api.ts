@@ -79,7 +79,7 @@ export const fakeProducts = {
     }
 
     // Search functionality across multiple fields
-    if (search) {
+    if (typeof search === 'string' && search.length > 0) {
       products = matchSorter(products, search, {
         keys: ['name', 'description', 'category']
       });
@@ -101,7 +101,10 @@ export const fakeProducts = {
     search?: string;
   }) {
     await delay(1000);
-    const categoriesArray = categories ? categories.split('.') : [];
+    const categoriesArray =
+      typeof categories === 'string' && categories.length > 0
+        ? categories.split('.')
+        : [];
     const allProducts = await this.getAll({
       categories: categoriesArray,
       search

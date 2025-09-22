@@ -67,14 +67,14 @@ const config: Linter.Config[] = [
     rules: {
       'no-unused-vars': 'off', // Turn off base rule in favor of TypeScript version
       '@typescript-eslint/no-unused-vars': [
-        'warn',
+        process.env.NODE_ENV === 'development' ? 'warn' : 'error',
         {
           argsIgnorePattern: '^_',
           varsIgnorePattern: '^_',
           caughtErrorsIgnorePattern: '^_'
         }
       ],
-      'no-console': 'warn',
+      'no-console': process.env.NODE_ENV === 'development' ? 'warn' : 'error',
 
       // TypeScript Best Practices - Strict Type Policy
       '@typescript-eslint/no-explicit-any': 'error', // Forbid any
@@ -90,7 +90,7 @@ const config: Linter.Config[] = [
       // Tier 1: Core Comparison & Casting Safety (High Impact)
       eqeqeq: 'error', // Force === instead of ==
       '@typescript-eslint/strict-boolean-expressions': [
-        'warn', // Start as warning due to high volume in existing code
+        'error',
         {
           allowString: false,
           allowNumber: false,
@@ -102,7 +102,7 @@ const config: Linter.Config[] = [
         }
       ],
       '@typescript-eslint/no-non-null-assertion': 'error', // Forbid dangerous ! operator
-      '@typescript-eslint/prefer-nullish-coalescing': 'warn', // Use ?? instead of || (warning due to volume)
+      '@typescript-eslint/prefer-nullish-coalescing': 'error', // Use ?? instead of ||
 
       // Tier 2: High Value Safety & Readability Rules
       '@typescript-eslint/prefer-optional-chain': 'error', // Use ?. instead of && chains

@@ -244,7 +244,7 @@ export function FileUploader(props: FileUploaderProps) {
           </div>
         )}
       </Dropzone>
-      {files?.length ? (
+      {(files?.length ?? 0) > 0 ? (
         <ScrollArea className='h-fit w-full px-3'>
           <div className='max-h-48 space-y-4'>
             {files?.map((file, index) => (
@@ -291,7 +291,7 @@ function FileCard({ file, progress, onRemove }: FileCardProps) {
               {formatBytes(file.size)}
             </p>
           </div>
-          {progress ? <Progress value={progress} /> : null}
+          {progress !== undefined ? <Progress value={progress} /> : null}
         </div>
       </div>
       <div className='flex items-center gap-2'>

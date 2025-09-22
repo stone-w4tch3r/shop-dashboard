@@ -117,7 +117,12 @@ export function PieGraph() {
             >
               <Label
                 content={({ viewBox }) => {
-                  if (viewBox && 'cx' in viewBox && 'cy' in viewBox) {
+                  if (
+                    viewBox !== null &&
+                    viewBox !== undefined &&
+                    'cx' in viewBox &&
+                    'cy' in viewBox
+                  ) {
                     return (
                       <text
                         x={viewBox.cx}
@@ -134,7 +139,10 @@ export function PieGraph() {
                         </tspan>
                         <tspan
                           x={viewBox.cx}
-                          y={(viewBox.cy || 0) + 24}
+                          y={
+                            (typeof viewBox.cy === 'number' ? viewBox.cy : 0) +
+                            24
+                          }
                           className='fill-muted-foreground text-sm'
                         >
                           Total Visitors

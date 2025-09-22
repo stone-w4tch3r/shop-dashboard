@@ -1,4 +1,4 @@
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Avatar, AvatarImage } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
 
 interface UserAvatarProfileProps {
@@ -19,7 +19,7 @@ export function UserAvatarProfile({
   return (
     <div className='flex items-center gap-2'>
       <Avatar className={className}>
-        <AvatarImage src={user?.imageUrl || ''} alt={user?.fullName || ''} />
+        <AvatarImage src={user?.imageUrl ?? ''} alt={user?.fullName ?? ''} />
         {/* <AvatarFallback className='rounded-lg'> */}
         {/* {user?.fullName?.slice(0, 2)?.toUpperCase() || 'CN'} */}
         {/* </AvatarFallback> */}
@@ -32,9 +32,9 @@ export function UserAvatarProfile({
             'group-data-[collapsible=icon]:hidden'
           )}
         >
-          <span className='truncate font-semibold'>{user?.fullName || ''}</span>
+          <span className='truncate font-semibold'>{user?.fullName ?? ''}</span>
           <span className='truncate text-xs'>
-            {user?.emailAddresses[0].emailAddress || ''}
+            {user?.emailAddresses?.[0]?.emailAddress ?? ''}
           </span>
         </div>
       )}

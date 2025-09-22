@@ -11,12 +11,25 @@ export default async function ProductListingPage() {
   const pageLimit = searchParamsCache.get('perPage');
   const categories = searchParamsCache.get('category');
 
-  const filters = {
-    page,
-    limit: pageLimit,
-    ...(search && { search }),
-    ...(categories && { categories: categories })
-  };
+  const filters: {
+    page?: number;
+    limit?: number;
+    search?: string;
+    categories?: string;
+  } = {};
+
+  if (typeof page === 'number' && !Number.isNaN(page)) {
+    filters.page = page;
+  }
+  if (typeof pageLimit === 'number' && !Number.isNaN(pageLimit)) {
+    filters.limit = pageLimit;
+  }
+  if (typeof search === 'string' && search.length > 0) {
+    filters.search = search;
+  }
+  if (typeof categories === 'string' && categories.length > 0) {
+    filters.categories = categories;
+  }
 
   const data = await fakeProducts.getProducts(filters);
   const totalProducts = data.total_products;

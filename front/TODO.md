@@ -7,3 +7,6 @@
 - review unit tests
 - stricter react-specific rules
 - partial records rule
+- forbid somehow "supress error message with default empty string" in case when a real value is expected
+- helpers like records
+- try use pnpm build && pnpm start in ui tests

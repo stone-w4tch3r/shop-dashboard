@@ -15,7 +15,7 @@ export default async function ProductViewPage({
   if (productId !== 'new') {
     const data = await fakeProducts.getProductById(Number(productId));
     product = data.product as Product;
-    if (!product) {
+    if (product === null || product === undefined) {
       notFound();
     }
     pageTitle = `Edit Product`;

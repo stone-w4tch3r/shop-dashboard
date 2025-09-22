@@ -23,7 +23,7 @@ export async function register() {
     return;
   }
 
-  if (!process.env.NEXT_PUBLIC_SENTRY_DISABLED) {
+  if (process.env.NEXT_PUBLIC_SENTRY_DISABLED !== 'true') {
     if (process.env.NEXT_RUNTIME === 'nodejs') {
       // Node.js Sentry configuration
       Sentry.init(sentryOptions);

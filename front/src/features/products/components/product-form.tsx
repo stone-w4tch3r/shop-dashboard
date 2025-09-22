@@ -61,10 +61,10 @@ export default function ProductForm({
 }) {
   const defaultValues = {
     image: [] as File[],
-    name: initialData?.name || '',
-    category: initialData?.category || '',
-    price: initialData?.price || 0,
-    description: initialData?.description || ''
+    name: initialData?.name ?? '',
+    category: initialData?.category ?? '',
+    price: initialData?.price ?? 0,
+    description: initialData?.description ?? ''
   };
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -95,7 +95,7 @@ export default function ProductForm({
                     <FormLabel>Images</FormLabel>
                     <FormControl>
                       <FileUploader
-                        value={field.value || []}
+                        value={field.value ?? []}
                         onValueChange={field.onChange}
                         maxFiles={4}
                         maxSize={4 * 1024 * 1024}
