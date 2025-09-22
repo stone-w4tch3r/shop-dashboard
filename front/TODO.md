@@ -12,3 +12,5 @@
 - [ ] try use pnpm build && pnpm start in ui tests
 - [ ] fix ide errors in tests
 - [ ] enable linters for tests
+- [ ] CLAUDE.md: allow suppressing lint errors in edge cases
+- [ ] more strict force return types

@@ -99,7 +99,15 @@ export const fakeProducts = {
     limit?: number;
     categories?: string;
     search?: string;
-  }) {
+  }): Promise<{
+    success: boolean;
+    time: string;
+    message: string;
+    total_products: number;
+    offset: number;
+    limit: number;
+    products: Product[];
+  }> {
     await delay(1000);
     const categoriesArray =
       typeof categories === 'string' && categories.length > 0
@@ -131,7 +139,15 @@ export const fakeProducts = {
   },
 
   // Get a specific product by its ID
-  async getProductById(id: number) {
+  async getProductById(id: number): Promise<
+    | {
+        success: true;
+        message: string;
+        time: string;
+        product: Product;
+      }
+    | { success: false; message: string; time?: undefined; product?: undefined }
+  > {
     await delay(1000); // Simulate a delay
 
     // Find the product by its ID

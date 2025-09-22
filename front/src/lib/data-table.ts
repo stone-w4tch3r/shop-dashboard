@@ -54,7 +54,7 @@ export function getFilterOperators(filterVariant: FilterVariant) {
     multiSelect: dataTableConfig.multiSelectOperators
   };
 
-  return operatorMap[filterVariant] ?? dataTableConfig.textOperators;
+  return operatorMap[filterVariant];
 }
 
 export function getDefaultFilterOperator(filterVariant: FilterVariant) {
@@ -72,8 +72,6 @@ export function getValidFilters<TData>(
       filter.operator === 'isNotEmpty' ||
       (Array.isArray(filter.value)
         ? filter.value.length > 0
-        : filter.value !== '' &&
-          filter.value !== null &&
-          filter.value !== undefined)
+        : filter.value !== '')
   );
 }

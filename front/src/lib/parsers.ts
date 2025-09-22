@@ -43,8 +43,10 @@ export const getSortingStateParser = <TData>(
     eq: (a, b) =>
       a.length === b.length &&
       a.every(
+        /* eslint-disable @typescript-eslint/no-unnecessary-condition */
         (item, index) =>
           item.id === b[index]?.id && item.desc === b[index]?.desc
+        /* eslint-enable @typescript-eslint/no-unnecessary-condition */
       )
   });
 };
@@ -89,11 +91,13 @@ export const getFiltersStateParser = <TData>(
     eq: (a, b) =>
       a.length === b.length &&
       a.every(
+        /* eslint-disable  @typescript-eslint/no-unnecessary-condition */
         (filter, index) =>
           filter.id === b[index]?.id &&
           filter.value === b[index]?.value &&
           filter.variant === b[index]?.variant &&
           filter.operator === b[index]?.operator
+        /* eslint-enable  @typescript-eslint/no-unnecessary-condition */
       )
   });
 };

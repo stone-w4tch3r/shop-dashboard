@@ -2,7 +2,7 @@ export function formatDate(
   date: Date | string | number | undefined,
   opts: Intl.DateTimeFormatOptions = {}
 ) {
-  if (date === null || date === undefined) return '';
+  if (date === undefined) return '';
 
   try {
     return new Intl.DateTimeFormat('en-US', {

@@ -61,7 +61,7 @@ const config: Linter.Config[] = [
     }
   },
 
-  // TypeScript rules - Enforce CLAUDE.md standards
+  // TypeScript rules - Enforce fail fast and strict linting
   {
     files: ['**/*.ts', '**/*.tsx'],
     rules: {
@@ -87,7 +87,7 @@ const config: Linter.Config[] = [
       // Additional type safety
       'prefer-const': 'error',
 
-      // Tier 1: Core Comparison & Casting Safety (High Impact)
+      // Tier 1 bool safety: Core Comparison & Casting Safety (High Impact)
       eqeqeq: 'error', // Force === instead of ==
       '@typescript-eslint/strict-boolean-expressions': [
         'error',
@@ -104,7 +104,7 @@ const config: Linter.Config[] = [
       '@typescript-eslint/no-non-null-assertion': 'error', // Forbid dangerous ! operator
       '@typescript-eslint/prefer-nullish-coalescing': 'error', // Use ?? instead of ||
 
-      // Tier 2: High Value Safety & Readability Rules
+      // Tier 2 bool safety: High Value Safety & Readability Rules
       '@typescript-eslint/prefer-optional-chain': 'error', // Use ?. instead of && chains
       '@typescript-eslint/no-unnecessary-type-assertion': 'error', // Remove redundant assertions
       '@typescript-eslint/switch-exhaustiveness-check': 'error', // Ensure switch completeness
@@ -155,9 +155,10 @@ const config: Linter.Config[] = [
           allowedNames: [], // No function name exceptions
           allowIIFEs: true // Allow immediately invoked function expressions
         }
-      ]
+      ],
 
-      // CLAUDE.md Goal: Maximum TypeScript safety (catch as many errors as possible)
+      // Misc
+      '@typescript-eslint/no-unnecessary-condition': 'error'
     }
   },
 
@@ -197,9 +198,7 @@ const config: Linter.Config[] = [
       'postcss.config.js'
     ],
     rules: {
-      '@typescript-eslint/no-unused-vars': 'off',
-      '@typescript-eslint/no-explicit-any': 'off',
-      'no-console': 'off'
+      '@typescript-eslint/no-explicit-any': 'off'
     }
   },
 
