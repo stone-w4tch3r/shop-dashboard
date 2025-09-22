@@ -22,8 +22,8 @@ import {
 } from '@/components/ui/popover';
 import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
-
 import type { Option } from '@/types/data-table';
+
 import type { Column } from '@tanstack/react-table';
 
 interface DataTableFacetedFilterProps<TData, TValue> {

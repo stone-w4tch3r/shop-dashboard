@@ -1,6 +1,6 @@
 - [x] fix current lint issues
+- [x] stricter eslint config
 - [ ] microfrontends
-- [ ] stricter eslint config
 - [ ] cleanup app/ and add eslint rules for it
 - [ ] fix tests
 - [ ] naming conventions

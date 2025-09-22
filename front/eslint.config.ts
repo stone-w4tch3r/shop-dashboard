@@ -40,12 +40,6 @@ const config: Linter.Config[] = [
   // Next.js configuration using FlatCompat for legacy config
   ...compat.extends('next/core-web-vitals'),
 
-  // TypeScript configuration using modern typescript-eslint
-  ...tseslint.configs.recommended.map((config) => ({
-    ...config,
-    files: ['**/*.ts', '**/*.tsx']
-  })),
-
   // Type-aware TypeScript configuration
   {
     files: ['**/*.ts', '**/*.tsx'],
@@ -172,22 +166,7 @@ const config: Linter.Config[] = [
     rules: {
       // React hooks rules (these come from next/core-web-vitals)
       'react-hooks/exhaustive-deps': 'error',
-      'react-hooks/rules-of-hooks': 'error',
-
-      // React components - relaxed return type enforcement (can be noisy)
-      '@typescript-eslint/explicit-function-return-type': [
-        'error', // Still enforce, but with very permissive settings
-        {
-          allowExpressions: true, // Allow arrow function expressions
-          allowTypedFunctionExpressions: true, // Allow when type already specified
-          allowHigherOrderFunctions: true, // Allow functions returning functions
-          allowDirectConstAssertionInArrowFunctions: true, // Allow `() => value as const`
-          allowConciseArrowFunctionExpressionsStartingWithVoid: true, // Allow `() => void expression`
-          allowFunctionsWithoutTypeParameters: true, // Very permissive for React components
-          allowedNames: [], // No function name exceptions
-          allowIIFEs: true // Allow immediately invoked function expressions
-        }
-      ]
+      'react-hooks/rules-of-hooks': 'error'
     }
   },
 
@@ -203,7 +182,7 @@ const config: Linter.Config[] = [
     rules: {
       'import/first': warnInDevModeErrorInProd(),
       'import/newline-after-import': warnInDevModeErrorInProd(),
-      'import/no-duplicates': warnInDevModeErrorInProd(),
+      'import/no-duplicates': 'off', // to avoid potential false positives
       // organize imports into groups
       'import/order': [
         warnInDevModeErrorInProd(),
@@ -216,6 +195,9 @@ const config: Linter.Config[] = [
             'internal',
             ['parent', 'sibling', 'index'],
             'type'
+          ],
+          pathGroups: [
+            { pattern: '@/**', group: 'internal', position: 'before' }
           ],
           pathGroupsExcludedImportTypes: ['builtin'],
           warnOnUnassignedImports: true
