@@ -117,39 +117,35 @@ export function PieGraph() {
             >
               <Label
                 content={({ viewBox }) => {
-                  if (
-                    viewBox !== null &&
-                    viewBox !== undefined &&
-                    'cx' in viewBox &&
-                    'cy' in viewBox
-                  ) {
-                    return (
-                      <text
-                        x={viewBox.cx}
-                        y={viewBox.cy}
-                        textAnchor='middle'
-                        dominantBaseline='middle'
+                  const vb = viewBox as
+                    | { cx?: unknown; cy?: unknown }
+                    | undefined;
+                  const cx = typeof vb?.cx === 'number' ? vb.cx : undefined;
+                  const cy = typeof vb?.cy === 'number' ? vb.cy : undefined;
+                  if (cx === undefined || cy === undefined) return null;
+                  return (
+                    <text
+                      x={cx}
+                      y={cy}
+                      textAnchor='middle'
+                      dominantBaseline='middle'
+                    >
+                      <tspan
+                        x={cx}
+                        y={cy}
+                        className='fill-foreground text-3xl font-bold'
                       >
-                        <tspan
-                          x={viewBox.cx}
-                          y={viewBox.cy}
-                          className='fill-foreground text-3xl font-bold'
-                        >
-                          {totalVisitors.toLocaleString()}
-                        </tspan>
-                        <tspan
-                          x={viewBox.cx}
-                          y={
-                            (typeof viewBox.cy === 'number' ? viewBox.cy : 0) +
-                            24
-                          }
-                          className='fill-muted-foreground text-sm'
-                        >
-                          Total Visitors
-                        </tspan>
-                      </text>
-                    );
-                  }
+                        {totalVisitors.toLocaleString()}
+                      </tspan>
+                      <tspan
+                        x={cx}
+                        y={cy + 24}
+                        className='fill-muted-foreground text-sm'
+                      >
+                        Total Visitors
+                      </tspan>
+                    </text>
+                  );
                 }}
               />
             </Pie>

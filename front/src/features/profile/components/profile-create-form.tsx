@@ -98,7 +98,7 @@ const ProfileCreateForm: React.FC<ProfileFormType> = ({ initialData }) => {
       name: 'Professional Informations',
       // fields are mapping and flattening for the error to be trigger  for the dynamic fields
       fields: fields
-        ?.map((_, index) => [
+        .map((_, index) => [
           `jobs.${index}.jobtitle`,
           `jobs.${index}.employer`,
           `jobs.${index}.startdate`,
@@ -344,7 +344,7 @@ const ProfileCreateForm: React.FC<ProfileFormType> = ({ initialData }) => {
             )}
             {currentStep === 1 && (
               <>
-                {fields?.map((field, index) => (
+                {fields.map((field, index) => (
                   <Accordion
                     type='single'
                     collapsible
@@ -355,7 +355,7 @@ const ProfileCreateForm: React.FC<ProfileFormType> = ({ initialData }) => {
                       <AccordionTrigger
                         className={cn(
                           'relative no-underline! [&[data-state=closed]>button]:hidden [&[data-state=open]>.alert]:hidden',
-                          errors?.jobs?.[index] && 'text-red-700'
+                          errors.jobs?.[index] && 'text-red-700'
                         )}
                       >
                         {`Work Experience ${index + 1}`}
@@ -368,7 +368,7 @@ const ProfileCreateForm: React.FC<ProfileFormType> = ({ initialData }) => {
                         >
                           <IconTrash className='h-4 w-4' />
                         </Button>
-                        {errors?.jobs?.[index] && (
+                        {errors.jobs?.[index] && (
                           <span className='alert absolute right-8'>
                             <IconAlertTriangle className='h-4 w-4 text-red-700' />
                           </span>

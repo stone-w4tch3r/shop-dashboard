@@ -99,7 +99,7 @@ export default function ProductForm({
                     <FormLabel>Images</FormLabel>
                     <FormControl>
                       <FileUploader
-                        value={field.value ?? []}
+                        value={field.value}
                         onValueChange={field.onChange}
                         maxFiles={4}
                         maxSize={4 * 1024 * 1024}
@@ -138,7 +138,7 @@ export default function ProductForm({
                     <FormLabel>Category</FormLabel>
                     <Select
                       onValueChange={(value) => field.onChange(value)}
-                      value={field.value ?? ''}
+                      value={field.value}
                     >
                       <FormControl>
                         <SelectTrigger>

@@ -116,6 +116,7 @@ const config: Linter.Config[] = [
         }
       ],
       '@typescript-eslint/prefer-as-const': 'error', // Use as const for literals
+      '@typescript-eslint/no-unnecessary-condition': 'error', // Allows to catch incorrect type checks
 
       // Forbid vague types in favor of explicit types
       '@typescript-eslint/ban-ts-comment': 'error',
@@ -155,10 +156,7 @@ const config: Linter.Config[] = [
           allowedNames: [], // No function name exceptions
           allowIIFEs: true // Allow immediately invoked function expressions
         }
-      ],
-
-      // Misc
-      '@typescript-eslint/no-unnecessary-condition': 'error'
+      ]
     }
   },
 
@@ -209,7 +207,7 @@ const config: Linter.Config[] = [
       'src/components/kbar/**/*' // kbar library components
     ],
     rules: {
-      // Original exemptions
+      // Unsafe/any and other strict rules
       '@typescript-eslint/explicit-function-return-type': 'off',
       '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/no-unsafe-assignment': 'off',
@@ -217,6 +215,7 @@ const config: Linter.Config[] = [
       '@typescript-eslint/no-unsafe-call': 'off',
       '@typescript-eslint/no-unsafe-return': 'off',
       '@typescript-eslint/no-unsafe-argument': 'off',
+      '@typescript-eslint/no-unnecessary-condition': 'off',
 
       // New comparison/casting safety rule exemptions
       eqeqeq: 'off',
