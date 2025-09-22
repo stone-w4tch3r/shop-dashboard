@@ -37,9 +37,13 @@ const formSchema = z.object({
   image: z
     .array(z.instanceof(File))
     .min(1, 'Image is required.')
-    .refine((files) => files[0]?.size <= MAX_FILE_SIZE, `Max file size is 5MB.`)
     .refine(
-      (files) => ACCEPTED_IMAGE_TYPES.includes(files[0]?.type),
+      (files) => (files[0]?.size ?? 0) <= MAX_FILE_SIZE,
+      `Max file size is 5MB.`
+    )
+    .refine(
+      (files) =>
+        files[0] !== undefined && ACCEPTED_IMAGE_TYPES.includes(files[0].type),
       '.jpg, .jpeg, .png and .webp files are accepted.'
     ),
   name: z.string().min(2, {
@@ -134,7 +138,7 @@ export default function ProductForm({
                     <FormLabel>Category</FormLabel>
                     <Select
                       onValueChange={(value) => field.onChange(value)}
-                      value={field.value[field.value.length - 1]}
+                      value={field.value ?? ''}
                     >
                       <FormControl>
                         <SelectTrigger>
