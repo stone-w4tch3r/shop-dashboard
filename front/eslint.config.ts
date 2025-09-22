@@ -1,9 +1,14 @@
-import type { Linter } from 'eslint';
-import { FlatCompat } from '@eslint/eslintrc';
-import js from '@eslint/js';
-import tseslint from 'typescript-eslint';
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
+
+import { FlatCompat } from '@eslint/eslintrc';
+import js from '@eslint/js';
+import { Linter } from 'eslint';
+import eslintConfigPrettier from 'eslint-config-prettier';
+import pluginImport from 'eslint-plugin-import';
+import reactHooks from 'eslint-plugin-react-hooks';
+import unusedImports from 'eslint-plugin-unused-imports';
+import tseslint from 'typescript-eslint';
 
 const __filename: string = fileURLToPath(import.meta.url);
 const __dirname: string = dirname(__filename);
@@ -52,7 +57,8 @@ const config: Linter.Config[] = [
       }
     },
     plugins: {
-      '@typescript-eslint': tseslint.plugin
+      '@typescript-eslint': tseslint.plugin,
+      'react-hooks': reactHooks
     },
     rules: {
       // Include ALL typescript-eslint type-checking rules
@@ -67,14 +73,14 @@ const config: Linter.Config[] = [
     rules: {
       'no-unused-vars': 'off', // Turn off base rule in favor of TypeScript version
       '@typescript-eslint/no-unused-vars': [
-        process.env.NODE_ENV === 'development' ? 'warn' : 'error',
+        warnInDevModeErrorInProd(),
         {
           argsIgnorePattern: '^_',
           varsIgnorePattern: '^_',
           caughtErrorsIgnorePattern: '^_'
         }
       ],
-      'no-console': process.env.NODE_ENV === 'development' ? 'warn' : 'error',
+      'no-console': warnInDevModeErrorInProd(),
 
       // TypeScript Best Practices - Strict Type Policy
       '@typescript-eslint/no-explicit-any': 'error', // Forbid any
@@ -185,6 +191,57 @@ const config: Linter.Config[] = [
     }
   },
 
+  // Imports
+  {
+    plugins: { import: pluginImport },
+    settings: {
+      'import/resolver': {
+        typescript: true,
+        node: true
+      }
+    },
+    rules: {
+      'import/first': warnInDevModeErrorInProd(),
+      'import/newline-after-import': warnInDevModeErrorInProd(),
+      'import/no-duplicates': warnInDevModeErrorInProd(),
+      // organize imports into groups
+      'import/order': [
+        warnInDevModeErrorInProd(),
+        {
+          'newlines-between': 'always',
+          alphabetize: { order: 'asc', caseInsensitive: true },
+          groups: [
+            'builtin',
+            'external',
+            'internal',
+            ['parent', 'sibling', 'index'],
+            'type'
+          ],
+          pathGroupsExcludedImportTypes: ['builtin'],
+          warnOnUnassignedImports: true
+        }
+      ]
+    }
+  },
+
+  // Remove unused imports automatically with --fix
+  {
+    rules: {
+      'unused-imports/no-unused-imports': warnInDevModeErrorInProd(),
+      'unused-imports/no-unused-vars': 'off'
+    },
+    plugins: {
+      'unused-imports': unusedImports
+    }
+  },
+
+  // Disable stylistic rules so Prettier owns formatting
+  {
+    rules: {
+      ...eslintConfigPrettier.rules
+    }
+  },
+
   // Relaxed rules for config files
   {
     files: [
@@ -237,5 +294,9 @@ const config: Linter.Config[] = [
     }
   }
 ];
+
+function warnInDevModeErrorInProd(): 'warn' | 'error' {
+  return process.env.NODE_ENV === 'development' ? 'warn' : 'error';
+}
 
 export default config;
