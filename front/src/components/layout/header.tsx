@@ -34,7 +34,7 @@ function Header() {
   const currentPage = useCurrentPage();
 
   const IconComponent =
-    currentPage?.icon !== undefined ? Icons[currentPage.icon] : Icons.dashboard;
+    currentPage.icon !== undefined ? Icons[currentPage.icon] : Icons.dashboard;
 
   return (
     <header className='flex h-16 shrink-0 items-center justify-between gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12'>
@@ -44,7 +44,7 @@ function Header() {
           <IconComponent className='h-[26px] w-[26px] text-white' />
         </div>
         <h1 className='text-2xl font-bold text-[#FEFEFE]'>
-          {currentPage?.title ?? 'Dashboard'}
+          {currentPage.title}
         </h1>
       </div>
 
@@ -64,7 +64,7 @@ function Header() {
                   user={user}
                 />
                 <span className='text-primary-foreground text-sm font-medium'>
-                  {user.firstName ?? 'User'}
+                  {user.firstName}
                 </span>
                 <IconDotsVertical className='text-muted-foreground h-4 w-4' />
               </button>

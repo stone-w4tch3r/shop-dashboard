@@ -4,7 +4,13 @@ import { usePathname } from 'next/navigation';
 import { navItems } from '@/constants/data';
 import { NavItem } from '@/types';
 
-export function useCurrentPage() {
+export function useCurrentPage():
+  | NavItem
+  | {
+      title: string;
+      icon: keyof typeof import('@/components/icons').Icons;
+      url: string;
+    } {
   const pathname = usePathname();
 
   // Function to find the matching nav item recursively
@@ -43,11 +49,11 @@ export function useCurrentPage() {
             .split('-')
             .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
             .join(' ')
-        : 'Dashboard';
+        : 'Unknown';
 
     return {
       title,
-      icon: 'dashboard' as keyof typeof import('@/components/icons').Icons,
+      icon: 'question' as keyof typeof import('@/components/icons').Icons,
       url: path
     };
   };

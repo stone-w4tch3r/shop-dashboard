@@ -65,7 +65,7 @@ function AppSidebar() {
             {navItems.map((item) => {
               const Icon =
                 item.icon !== undefined ? Icons[item.icon] : Icons.logo;
-              return item?.items && item?.items?.length > 0 ? (
+              return item.items && item.items.length > 0 ? (
                 <Collapsible
                   key={item.title}
                   asChild
@@ -76,7 +76,7 @@ function AppSidebar() {
                     <CollapsibleTrigger asChild>
                       <SidebarMenuButton
                         tooltip={item.title}
-                        isActive={currentPage?.url === item.url}
+                        isActive={currentPage.url === item.url}
                       >
                         {item.icon !== undefined && <Icon />}
                         <span>{item.title}</span>
@@ -85,11 +85,11 @@ function AppSidebar() {
                     </CollapsibleTrigger>
                     <CollapsibleContent>
                       <SidebarMenuSub>
-                        {item.items?.map((subItem) => (
+                        {item.items.map((subItem) => (
                           <SidebarMenuSubItem key={subItem.title}>
                             <SidebarMenuSubButton
                               asChild
-                              isActive={currentPage?.url === subItem.url}
+                              isActive={currentPage.url === subItem.url}
                             >
                               <Link href={subItem.url}>
                                 <span>{subItem.title}</span>
@@ -106,7 +106,7 @@ function AppSidebar() {
                   <SidebarMenuButton
                     asChild
                     tooltip={item.title}
-                    isActive={currentPage?.url === item.url}
+                    isActive={currentPage.url === item.url}
                   >
                     <Link href={item.url}>
                       <Icon />

@@ -34,7 +34,7 @@ export function UserAvatarProfile({
         >
           <span className='truncate font-semibold'>{user?.fullName ?? ''}</span>
           <span className='truncate text-xs'>
-            {user?.emailAddresses?.[0]?.emailAddress ?? ''}
+            {user?.emailAddresses[0]?.emailAddress ?? ''}
           </span>
         </div>
       )}
