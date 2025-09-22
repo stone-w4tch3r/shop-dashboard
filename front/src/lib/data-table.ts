@@ -14,11 +14,12 @@ export function getCommonPinningStyles<TData>({
   column: Column<TData>;
   withBorder?: boolean;
 }): React.CSSProperties {
-  const isPinned = column.getIsPinned();
+  const pinState = column.getIsPinned(); // 'left' | 'right' | false
+  const isPinned = pinState !== false;
   const isLastLeftPinnedColumn =
-    isPinned === 'left' && column.getIsLastColumn('left');
+    pinState === 'left' && column.getIsLastColumn('left');
   const isFirstRightPinnedColumn =
-    isPinned === 'right' && column.getIsFirstColumn('right');
+    pinState === 'right' && column.getIsFirstColumn('right');
 
   return {
     boxShadow: withBorder
@@ -28,8 +29,8 @@ export function getCommonPinningStyles<TData>({
           ? '4px 0 4px -4px hsl(var(--border)) inset'
           : undefined
       : undefined,
-    left: isPinned === 'left' ? `${column.getStart('left')}px` : undefined,
-    right: isPinned === 'right' ? `${column.getAfter('right')}px` : undefined,
+    left: pinState === 'left' ? `${column.getStart('left')}px` : undefined,
+    right: pinState === 'right' ? `${column.getAfter('right')}px` : undefined,
     opacity: isPinned ? 0.97 : 1,
     position: isPinned ? 'sticky' : 'relative',
     background: isPinned ? 'hsl(var(--background))' : 'hsl(var(--background))',

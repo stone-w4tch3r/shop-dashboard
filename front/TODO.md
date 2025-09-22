@@ -1,0 +1,9 @@
+- fix current lint issues
+- microfrontends
+- stricter eslint config
+- cleanup app/ and add eslint rules for it
+- fix tests
+- naming conventions
+- review unit tests
+- stricter react-specific rules
+- partial records rule

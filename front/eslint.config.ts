@@ -123,7 +123,7 @@ const config: Linter.Config[] = [
       '@typescript-eslint/prefer-function-type': 'error', // Prefer function types over interfaces with call signatures
       '@typescript-eslint/no-wrapper-object-types': 'error', // Forbid Object, Boolean, Number, String, Symbol
       '@typescript-eslint/no-unsafe-function-type': 'error', // Forbid Function - use specific signatures instead
-      // Ban the 'object' type using the new no-restricted-types rule (replacement for ban-types)
+      // Ban the 'object' type using the no-restricted-types rule
       '@typescript-eslint/no-restricted-types': [
         'error',
         {

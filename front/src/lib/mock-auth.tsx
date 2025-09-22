@@ -191,7 +191,11 @@ export function SignOutButton({
 
   const handleSignOut = async () => {
     await signOut();
-    if (redirectUrl && typeof window !== 'undefined') {
+    if (
+      typeof redirectUrl === 'string' &&
+      redirectUrl.length > 0 &&
+      typeof window !== 'undefined'
+    ) {
       window.location.href = redirectUrl;
     }
   };
@@ -202,7 +206,7 @@ export function SignOutButton({
       data-testid='sign-out-button'
       className='w-full text-left'
     >
-      {children || 'Sign Out'}
+      {children ?? 'Sign Out'}
     </button>
   );
 }
@@ -252,7 +256,7 @@ export function SignIn({
             id='email'
             name='email'
             type='email'
-            defaultValue={initialValues?.emailAddress || 'test@example.com'}
+            defaultValue={initialValues?.emailAddress ?? 'test@example.com'}
             className='w-full rounded-md border border-gray-300 px-3 py-2'
             required
           />
@@ -317,7 +321,7 @@ export function SignUp({
             id='email'
             name='email'
             type='email'
-            defaultValue={initialValues?.emailAddress || 'test@example.com'}
+            defaultValue={initialValues?.emailAddress ?? 'test@example.com'}
             className='w-full rounded-md border border-gray-300 px-3 py-2'
             required
           />
