@@ -1,7 +1,8 @@
 'use client';
 
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { IconAlertCircle } from '@tabler/icons-react';
+
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 export default function OverviewError({ error }: { error: Error }) {
   return (

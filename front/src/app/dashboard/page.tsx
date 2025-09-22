@@ -1,5 +1,6 @@
-import { auth } from '@/lib/mock-auth-server';
 import { redirect } from 'next/navigation';
+
+import { auth } from '@/lib/mock-auth-server';
 
 export default async function Dashboard() {
   const { userId } = await auth();

@@ -1,5 +1,4 @@
 'use client';
-import { navItems } from '@/constants/data';
 import {
   KBarAnimator,
   KBarPortal,
@@ -9,6 +8,9 @@ import {
 } from 'kbar';
 import { useRouter } from 'next/navigation';
 import { useMemo } from 'react';
+
+import { navItems } from '@/constants/data';
+
 import RenderResults from './render-result';
 import useThemeSwitching from './use-theme-switching';
 

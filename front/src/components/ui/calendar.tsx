@@ -1,12 +1,13 @@
 'use client';
 
+import { ChevronLeftIcon, ChevronRightIcon } from '@radix-ui/react-icons';
 import * as React from 'react';
 import { DayPicker } from 'react-day-picker';
-import type { ComponentProps } from 'react';
 
-import { cn } from '@/lib/utils';
 import { buttonVariants } from '@/components/ui/button';
-import { ChevronLeftIcon, ChevronRightIcon } from '@radix-ui/react-icons';
+import { cn } from '@/lib/utils';
+
+import type { ComponentProps } from 'react';
 
 // Custom icons that meet the DayPicker requirements
 const LeftIcon = () => <ChevronLeftIcon className='size-4' />;

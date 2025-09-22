@@ -1,6 +1,6 @@
 'use client';
 
-import type { Column } from '@tanstack/react-table';
+import { PlusCircle, XCircle } from 'lucide-react';
 import * as React from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -14,7 +14,8 @@ import {
 import { Separator } from '@/components/ui/separator';
 import { Slider } from '@/components/ui/slider';
 import { cn } from '@/lib/utils';
-import { PlusCircle, XCircle } from 'lucide-react';
+
+import type { Column } from '@tanstack/react-table';
 
 interface Range {
   min: number;

@@ -1,8 +1,8 @@
 'use client';
 
+import { createContext, ReactNode } from 'react';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { createContext, ReactNode } from 'react';
 
 // Types for mock auth
 export interface MockUser {

@@ -1,6 +1,7 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
+
 import { navItems } from '@/constants/data';
 import { NavItem } from '@/types';
 

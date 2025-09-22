@@ -1,4 +1,8 @@
 'use client';
+import { IconChevronRight, IconMenu2, IconPhotoUp } from '@tabler/icons-react';
+import Link from 'next/link';
+import * as React from 'react';
+
 import {
   Collapsible,
   CollapsibleContent,
@@ -19,13 +23,12 @@ import {
   useSidebar
 } from '@/components/ui/sidebar';
 import { navItems } from '@/constants/data';
-import { useMediaQuery } from '@/hooks/use-media-query';
 import { useCurrentPage } from '@/hooks/use-current-page';
-import { IconChevronRight, IconMenu2, IconPhotoUp } from '@tabler/icons-react';
-import Link from 'next/link';
-import * as React from 'react';
-import { Icons } from '../icons';
+import { useMediaQuery } from '@/hooks/use-media-query';
+
 import { CompanyLogoSVG } from '../company-logo';
+import { Icons } from '../icons';
+
 export const company = {
   name: 'Acme Inc',
   logo: IconPhotoUp,

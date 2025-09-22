@@ -1,4 +1,8 @@
 'use client';
+import { IconEdit, IconDotsVertical, IconTrash } from '@tabler/icons-react';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+
 import { AlertModal } from '@/components/modal/alert-modal';
 import { Button } from '@/components/ui/button';
 import {
@@ -9,9 +13,6 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
 import { Product } from '@/constants/data';
-import { IconEdit, IconDotsVertical, IconTrash } from '@tabler/icons-react';
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
 
 interface CellActionProps {
   data: Product;

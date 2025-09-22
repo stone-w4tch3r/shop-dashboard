@@ -1,8 +1,8 @@
 'use client';
 
-import type { Option } from '@/types/data-table';
-import type { Column } from '@tanstack/react-table';
+import { CheckIcon } from '@radix-ui/react-icons';
 import { PlusCircle, XCircle } from 'lucide-react';
+import * as React from 'react';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -22,8 +22,9 @@ import {
 } from '@/components/ui/popover';
 import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
-import * as React from 'react';
-import { CheckIcon } from '@radix-ui/react-icons';
+
+import type { Option } from '@/types/data-table';
+import type { Column } from '@tanstack/react-table';
 
 interface DataTableFacetedFilterProps<TData, TValue> {
   column?: Column<TData, TValue>;

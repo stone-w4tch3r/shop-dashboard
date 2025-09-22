@@ -1,8 +1,9 @@
 'use client';
 
 import { useSearchParams } from 'next/navigation';
-import { Button } from '@/components/ui/button';
+
 import { Icons } from '@/components/icons';
+import { Button } from '@/components/ui/button';
 
 export default function GithubSignInButton() {
   const searchParams = useSearchParams();

@@ -1,7 +1,8 @@
 'use client';
-import { AuthProvider } from '@/lib/mock-auth';
 import { useTheme } from 'next-themes';
 import React from 'react';
+
+import { AuthProvider } from '@/lib/mock-auth';
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   // Theme is handled by ThemeProvider (next-themes)

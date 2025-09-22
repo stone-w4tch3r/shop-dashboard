@@ -1,4 +1,7 @@
+import { IconTrendingUp, IconTrendingDown } from '@tabler/icons-react';
+
 import PageContainer from '@/components/layout/page-container';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -9,12 +12,11 @@ import {
   CardAction
 } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+
 import { AreaGraph } from './area-graph';
 import { BarGraph } from './bar-graph';
 import { PieGraph } from './pie-graph';
 import { RecentSales } from './recent-sales';
-import { IconTrendingUp, IconTrendingDown } from '@tabler/icons-react';
-import { Badge } from '@/components/ui/badge';
 
 export default function OverViewPage() {
   return (

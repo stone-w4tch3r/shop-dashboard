@@ -1,5 +1,15 @@
 'use client';
+import {
+  IconBell,
+  IconCreditCard,
+  IconDotsVertical,
+  IconLogout,
+  IconUserCircle
+} from '@tabler/icons-react';
+import { useRouter } from 'next/navigation';
 import React from 'react';
+
+import { Icons } from '@/components/icons';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,18 +20,8 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
 import { UserAvatarProfile } from '@/components/user-avatar-profile';
-import { useUser } from '@/lib/mock-auth';
-import {
-  IconBell,
-  IconCreditCard,
-  IconDotsVertical,
-  IconLogout,
-  IconUserCircle
-} from '@tabler/icons-react';
-import { SignOutButton } from '@/lib/mock-auth';
-import { useRouter } from 'next/navigation';
-import { Icons } from '@/components/icons';
 import { useCurrentPage } from '@/hooks/use-current-page';
+import { useUser, SignOutButton } from '@/lib/mock-auth';
 
 // Constants
 const USER_WIDGET_MIN_WIDTH = '15rem';

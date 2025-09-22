@@ -1,7 +1,8 @@
-import { buttonVariants } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
-import { SignUp as AuthSignUpForm } from '@/lib/mock-auth';
 import Link from 'next/link';
+
+import { buttonVariants } from '@/components/ui/button';
+import { SignUp as AuthSignUpForm } from '@/lib/mock-auth';
+import { cn } from '@/lib/utils';
 
 export default function SignUpViewPage() {
   return (

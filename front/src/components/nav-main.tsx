@@ -2,6 +2,7 @@
 
 import { IconChevronRight } from '@tabler/icons-react';
 
+import { Icon } from '@/components/icons';
 import {
   Collapsible,
   CollapsibleContent,
@@ -18,7 +19,6 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem
 } from '@/components/ui/sidebar';
-import { Icon } from '@/components/icons';
 
 export function NavMain({
   items

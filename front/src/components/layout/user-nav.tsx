@@ -1,6 +1,8 @@
 'use client';
-import { Button } from '@/components/ui/button';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,7 +14,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { UserAvatarProfile } from '@/components/user-avatar-profile';
 import { SignOutButton, useUser } from '@/lib/mock-auth';
-import { useRouter } from 'next/navigation';
+
 export function UserNav() {
   const { user } = useUser();
   const router = useRouter();
