@@ -135,7 +135,9 @@ export function BarGraph() {
   const [activeChart, setActiveChart] =
     React.useState<keyof typeof chartConfig>('desktop');
 
-  const total = React.useMemo(
+  const totals = React.useMemo<
+    Partial<Record<keyof typeof chartConfig, number>>
+  >(
     () => ({
       desktop: chartData.reduce((acc, curr) => acc + curr.desktop, 0),
       mobile: chartData.reduce((acc, curr) => acc + curr.mobile, 0)
@@ -172,9 +174,9 @@ export function BarGraph() {
           </CardDescription>
         </div>
         <div className='flex'>
-          {['desktop', 'mobile', 'error'].map((key) => {
-            const chart = key as keyof typeof chartConfig;
-            if (total[key as keyof typeof total] === 0) return null;
+          {(['desktop', 'mobile', 'error'] as const).map((chart) => {
+            const totalValue = totals[chart as keyof typeof totals];
+            if (totalValue === 0) return null;
             return (
               <button
                 key={chart}
@@ -186,7 +188,7 @@ export function BarGraph() {
                   {chartConfig[chart].label}
                 </span>
                 <span className='text-lg leading-none font-bold sm:text-3xl'>
-                  {total[key as keyof typeof total].toLocaleString()}
+                  {totalValue !== undefined ? totalValue.toLocaleString() : '—'}
                 </span>
               </button>
             );

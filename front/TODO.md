@@ -14,3 +14,6 @@
 - [ ] enable linters for tests
 - [ ] CLAUDE.md: allow suppressing lint errors in edge cases
 - [ ] more strict force return types
+- [ ] unify constants/configs
+- [ ] unify imports relative vs @/
+- [ ] prefer explicit type declarations over `as`

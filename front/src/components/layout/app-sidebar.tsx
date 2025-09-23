@@ -22,9 +22,9 @@ import {
   SidebarRail,
   useSidebar
 } from '@/components/ui/sidebar';
-import { navItems } from '@/constants/data';
 import { useCurrentPage } from '@/hooks/use-current-page';
 import { useMediaQuery } from '@/hooks/use-media-query';
+import { navItems } from '@/mfes/lib/build-helpers';
 
 import { CompanyLogoSVG } from '../company-logo';
 import { Icons } from '../icons';

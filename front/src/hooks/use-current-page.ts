@@ -2,8 +2,8 @@
 
 import { usePathname } from 'next/navigation';
 
-import { navItems } from '@/constants/data';
-import { NavItem } from '@/types';
+import { navItems } from '@/mfes/lib/build-helpers';
+import { NavItem } from '@/types/navigation';
 
 export function useCurrentPage():
   | NavItem

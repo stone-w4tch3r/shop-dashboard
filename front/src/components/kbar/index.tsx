@@ -9,7 +9,7 @@ import {
 import { useRouter } from 'next/navigation';
 import { useMemo } from 'react';
 
-import { navItems } from '@/constants/data';
+import { navItems } from '@/mfes/lib/build-helpers';
 
 import RenderResults from './render-result';
 import useThemeSwitching from './use-theme-switching';

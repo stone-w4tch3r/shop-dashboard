@@ -5,7 +5,7 @@ import Image from 'next/image';
 
 import { Badge } from '@/components/ui/badge';
 import { DataTableColumnHeader } from '@/components/ui/table/data-table-column-header';
-import { Product } from '@/constants/data';
+import { Product } from '@/constants/mock-data';
 
 import { CellAction } from './cell-action';
 import { CATEGORY_OPTIONS } from './options';

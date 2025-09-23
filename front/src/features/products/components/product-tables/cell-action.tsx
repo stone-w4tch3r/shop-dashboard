@@ -12,7 +12,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
-import { Product } from '@/constants/data';
+import { Product } from '@/constants/mock-data';
 
 interface CellActionProps {
   data: Product;
