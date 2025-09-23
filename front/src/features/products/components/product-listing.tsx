@@ -1,5 +1,5 @@
-import { fakeProducts } from '@/constants/mock-api';
-import { Product } from '@/constants/mock-data';
+import { fakeProducts } from '@/backend/mock-api';
+import { Product } from '@/backend/mock-data';
 import { searchParamsCache } from '@/lib/searchparams';
 
 import { ProductTable } from './product-tables';

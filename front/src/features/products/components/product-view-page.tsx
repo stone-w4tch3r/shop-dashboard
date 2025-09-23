@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 
-import { fakeProducts } from '@/constants/mock-api';
+import { fakeProducts } from '@/backend/mock-api';
 
 import ProductForm from './product-form';
 
