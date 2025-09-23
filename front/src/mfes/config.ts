@@ -1,6 +1,7 @@
-import type {
-  EditionConfigInput,
-  MicroFrontendDefinitionInput
+import {
+  validPathPrefix,
+  type EditionConfigInput,
+  type MicroFrontendDefinitionInput
 } from './lib/types';
 
 export const DEFAULT_EDITION: MicroFrontendEdition = 'default';
@@ -11,7 +12,7 @@ export const microFrontendDefinitions: readonly MicroFrontendDefinitionInput[] =
       key: 'overview',
       title: 'Dashboard',
       icon: 'dashboard',
-      pathPrefix: '/dashboard/overview',
+      pathPrefix: validPathPrefix('/dashboard/overview'),
       containerId: 'mfe-dashboard-overview-container',
       loader: () => import('./overview')
     },
@@ -19,7 +20,7 @@ export const microFrontendDefinitions: readonly MicroFrontendDefinitionInput[] =
       key: 'storyboard',
       title: 'Storyboard',
       icon: 'media',
-      pathPrefix: '/dashboard/storyboard',
+      pathPrefix: validPathPrefix('/dashboard/storyboard'),
       containerId: 'mfe-dashboard-storyboard-container',
       loader: () => import('./storyboard')
     },
@@ -27,7 +28,7 @@ export const microFrontendDefinitions: readonly MicroFrontendDefinitionInput[] =
       key: 'product',
       title: 'Product',
       icon: 'product',
-      pathPrefix: '/dashboard/product',
+      pathPrefix: validPathPrefix('/dashboard/product'),
       containerId: 'mfe-dashboard-product-container',
       loader: () => import('./product')
     },
@@ -35,7 +36,7 @@ export const microFrontendDefinitions: readonly MicroFrontendDefinitionInput[] =
       key: 'profile',
       title: 'Profile',
       icon: 'userPen',
-      pathPrefix: '/dashboard/profile',
+      pathPrefix: validPathPrefix('/dashboard/profile'),
       containerId: 'mfe-dashboard-profile-container',
       loader: () => import('./profile')
     }
