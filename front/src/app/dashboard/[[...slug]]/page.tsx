@@ -2,8 +2,8 @@ import { notFound, redirect } from 'next/navigation';
 
 import { DEFAULT_EDITION, microFrontendDefinitions } from '@/mfes/config';
 
-import WithMfeHostBoundary from '../../../mfes/shared/mfe-host-boundary';
-import SingleSpaRoot from '../../../mfes/single-spa-root';
+import WithMfeHostBoundary from '../../../mfes/lib/mfe-host-boundary';
+import SingleSpaRoot from '../../../mfes/lib/single-spa-root';
 
 type PageParams = Promise<{ slug?: string[] }>;
 

@@ -14,7 +14,7 @@ import { getEditionMicroFrontends } from '@/mfes/lib/build-helpers';
 import {
   clearMfeRuntimeError,
   reportMfeRuntimeError
-} from '@/mfes/shared/mfe-runtime-error-store';
+} from '@/mfes/lib/mfe-runtime-error-store';
 
 let singleSpaStarted = false;
 let errorHandlerRegistered = false;
