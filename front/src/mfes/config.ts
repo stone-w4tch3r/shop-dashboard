@@ -14,7 +14,7 @@ export const microFrontendDefinitions: readonly MicroFrontendDefinitionInput[] =
       section: 'primary',
       pathPrefix: '/dashboard/overview',
       containerId: 'mfe-dashboard-overview-container',
-      loader: () => import('./overview/single-spa-entry')
+      loader: () => import('./overview')
     },
     {
       key: 'storyboard',
@@ -32,7 +32,7 @@ export const microFrontendDefinitions: readonly MicroFrontendDefinitionInput[] =
       section: 'primary',
       pathPrefix: '/dashboard/product',
       containerId: 'mfe-dashboard-product-container',
-      loader: () => import('./product/single-spa-entry')
+      loader: () => import('./product')
     },
     {
       key: 'profile',
@@ -41,7 +41,7 @@ export const microFrontendDefinitions: readonly MicroFrontendDefinitionInput[] =
       section: 'account',
       pathPrefix: '/dashboard/profile',
       containerId: 'mfe-dashboard-profile-container',
-      loader: () => import('./profile/single-spa-entry')
+      loader: () => import('./profile')
     }
   ];
 

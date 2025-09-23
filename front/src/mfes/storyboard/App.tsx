@@ -2,15 +2,15 @@
 
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
-import { StoryboardRootRoute } from './routes/root';
+import { Storyboard } from './pages/Storyboard';
 
 import type { MicroFrontendRuntimeProps } from '../lib/types';
 
-export function StoryboardApp({ basename }: MicroFrontendRuntimeProps) {
+export function App({ basename }: MicroFrontendRuntimeProps) {
   return (
     <BrowserRouter basename={basename ?? '/'}>
       <Routes>
-        <Route path='/' element={<StoryboardRootRoute />} />
+        <Route path='/' element={<Storyboard />} />
       </Routes>
     </BrowserRouter>
   );

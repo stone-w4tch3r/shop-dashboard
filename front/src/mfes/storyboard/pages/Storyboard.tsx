@@ -91,7 +91,7 @@ const switchShowcase = [
   { id: 'toggle-on', label: 'Toggle On', defaultChecked: true }
 ];
 
-export function StoryboardRootRoute() {
+export function Storyboard() {
   const [sliderValue, setSliderValue] = useState([50]);
   const [togglePressed, setTogglePressed] = useState(false);
 
