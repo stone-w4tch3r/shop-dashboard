@@ -15,8 +15,8 @@ import {
   useSidebar
 } from '@/components/ui/sidebar';
 import { useCurrentPage } from '@/hooks/use-current-page';
+import { useEditionNavItems } from '@/hooks/use-edition-nav-items';
 import { useMediaQuery } from '@/hooks/use-media-query';
-import { navItems } from '@/mfes/lib/build-helpers';
 
 import { CompanyLogoSVG } from '../company-logo';
 import { Icons } from '../icons';
@@ -29,6 +29,7 @@ export const company = {
 
 function AppSidebar() {
   const currentPage = useCurrentPage();
+  const navItems = useEditionNavItems();
   const { isOpen } = useMediaQuery();
   const { toggleSidebar, open } = useSidebar();
 

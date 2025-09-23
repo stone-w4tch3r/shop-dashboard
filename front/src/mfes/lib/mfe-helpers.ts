@@ -1,10 +1,7 @@
 import type { NavItem } from '@/types/navigation';
 
-import {
-  DEFAULT_EDITION,
-  editionConfigurations,
-  microFrontendDefinitions
-} from '../config';
+import { editionConfigurations, microFrontendDefinitions } from '../config';
+import { PathPrefix } from './types';
 
 import type {
   EditionConfig,
@@ -58,11 +55,25 @@ export function buildNavItems(edition: MicroFrontendEdition): NavItem[] {
   }));
 }
 
-export function getNavItems(
-  edition: MicroFrontendEdition = DEFAULT_EDITION
-): NavItem[] {
-  return buildNavItems(edition);
-}
+/**
+ * Compile-time checker for path validity
+ * */
 
-// Info: The following data is consumed by the dashboard shell navigation.
-export const navItems: NavItem[] = getNavItems();
+export function validPathPrefix<T extends `/${string}`>(
+  s: T & (T extends `${string}/` ? never : unknown)
+): T & PathPrefix {
+  if (process.env.NODE_ENV !== 'production') {
+    if (!s.startsWith('/')) {
+      throw new Error(
+        `validPathPrefix expected value to start with '/'. Received: "${s}"`
+      );
+    }
+    if (s.length > 1 && s.endsWith('/')) {
+      throw new Error(
+        `validPathPrefix expected value without trailing '/'. Received: "${s}"`
+      );
+    }
+  }
+
+  return s as unknown as T & PathPrefix;
+}

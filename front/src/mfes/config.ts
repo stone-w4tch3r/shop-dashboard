@@ -1,5 +1,5 @@
+import { validPathPrefix } from './lib/mfe-helpers';
 import {
-  validPathPrefix,
   type EditionConfigInput,
   type MicroFrontendDefinitionInput
 } from './lib/types';

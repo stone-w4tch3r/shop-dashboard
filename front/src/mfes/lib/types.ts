@@ -9,13 +9,6 @@ declare const pathPrefixBrand: unique symbol;
  * */
 export type PathPrefix = string & { readonly [pathPrefixBrand]: true };
 
-/**
- * Compile-time checker for path validity
- * */
-export declare function validPathPrefix<T extends `/${string}`>(
-  s: T & (T extends `${string}/` ? never : unknown)
-): T & PathPrefix;
-
 export interface MicroFrontendDefinitionInput {
   key: string;
   /** Path prefix for the micro frontend, must start from / and never have trailing / */

@@ -1,6 +1,6 @@
 import { notFound, redirect } from 'next/navigation';
 
-import { DEFAULT_EDITION, microFrontendDefinitions } from '@/mfes/config';
+import { microFrontendDefinitions } from '@/mfes/config';
 
 import WithMfeHostBoundary from '../../../mfes/lib/mfe-host-boundary';
 import SingleSpaRoot from '../../../mfes/lib/single-spa-root';
@@ -31,7 +31,7 @@ export default async function DashboardMicroFrontendPage({
   return (
     <div className='flex flex-1 flex-col overflow-hidden'>
       <WithMfeHostBoundary>
-        <SingleSpaRoot edition={DEFAULT_EDITION} />
+        <SingleSpaRoot />
       </WithMfeHostBoundary>
     </div>
   );

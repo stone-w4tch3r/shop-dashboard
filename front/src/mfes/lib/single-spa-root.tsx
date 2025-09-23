@@ -10,7 +10,8 @@ import {
 } from 'single-spa';
 
 import type { MicroFrontendEdition } from '@/mfes/config';
-import { getEditionMicroFrontends } from '@/mfes/lib/build-helpers';
+import { useEdition } from '@/mfes/lib/edition-context';
+import { getEditionMicroFrontends } from '@/mfes/lib/mfe-helpers';
 import {
   clearMfeRuntimeError,
   reportMfeRuntimeError
@@ -25,12 +26,14 @@ interface SingleSpaRootProps {
 
 type SingleSpaErrorHandler = (error: unknown) => void;
 
-export function SingleSpaRoot({ edition = 'default' }: SingleSpaRootProps) {
+export function SingleSpaRoot({ edition }: SingleSpaRootProps) {
+  const { edition: contextEdition } = useEdition();
+  const activeEdition = edition ?? contextEdition;
   // keep the list of MFEs stable for the chosen edition so we only register
   // apps when the edition actually changes
   const definitions = useMemo(
-    () => getEditionMicroFrontends(edition),
-    [edition]
+    () => getEditionMicroFrontends(activeEdition),
+    [activeEdition]
   );
 
   // register MFEs from editions list
@@ -93,7 +96,7 @@ export function SingleSpaRoot({ edition = 'default' }: SingleSpaRootProps) {
 
   useEffect(() => {
     clearMfeRuntimeError();
-  }, [edition]);
+  }, [activeEdition]);
 
   return (
     <div className='flex flex-1 flex-col'>

@@ -2,11 +2,13 @@
 
 import { usePathname } from 'next/navigation';
 
-import { navItems } from '@/mfes/lib/build-helpers';
-import { NavItem } from '@/types/navigation';
+import type { NavItem } from '@/types/navigation';
+
+import { useEditionNavItems } from './use-edition-nav-items';
 
 export function useCurrentPage(): NavItem {
   const pathname = usePathname();
+  const navItems = useEditionNavItems();
 
   const currentPage = navItems.find((item) => item.url === pathname) ?? null;
 
