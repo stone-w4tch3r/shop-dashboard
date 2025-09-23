@@ -2,7 +2,7 @@
 
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
-import { Storyboard } from './pages/Storyboard';
+import { Storyboard } from './features/Storyboard';
 
 import type { MicroFrontendRuntimeProps } from '../lib/types';
 

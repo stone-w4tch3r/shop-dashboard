@@ -1,6 +1,6 @@
 'use client';
 
-import SingleSpaRoot from '@/components/mfe/single-spa-root';
+import SingleSpaRoot from '@/mfes/single-spa-root';
 
 export default function DashboardMicroFrontendPage() {
   return (
