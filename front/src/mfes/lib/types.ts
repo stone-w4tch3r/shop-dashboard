@@ -2,14 +2,11 @@ import type { Icons } from '@/components/icons';
 
 import type { LifeCycles } from 'single-spa';
 
-export type MicroFrontendSection = 'primary' | 'account';
-
 export interface MicroFrontendDefinitionInput {
   key: string;
   pathPrefix: string;
   title: string;
   icon: keyof typeof Icons;
-  section: MicroFrontendSection;
   containerId: string;
   loader: () => Promise<LifeCycles>;
 }

@@ -11,7 +11,6 @@ export const microFrontendDefinitions: readonly MicroFrontendDefinitionInput[] =
       key: 'overview',
       title: 'Dashboard',
       icon: 'dashboard',
-      section: 'primary',
       pathPrefix: '/dashboard/overview',
       containerId: 'mfe-dashboard-overview-container',
       loader: () => import('./overview')
@@ -20,7 +19,6 @@ export const microFrontendDefinitions: readonly MicroFrontendDefinitionInput[] =
       key: 'storyboard',
       title: 'Storyboard',
       icon: 'media',
-      section: 'primary',
       pathPrefix: '/dashboard/storyboard',
       containerId: 'mfe-dashboard-storyboard-container',
       loader: () => import('./storyboard')
@@ -29,7 +27,6 @@ export const microFrontendDefinitions: readonly MicroFrontendDefinitionInput[] =
       key: 'product',
       title: 'Product',
       icon: 'product',
-      section: 'primary',
       pathPrefix: '/dashboard/product',
       containerId: 'mfe-dashboard-product-container',
       loader: () => import('./product')
@@ -38,7 +35,6 @@ export const microFrontendDefinitions: readonly MicroFrontendDefinitionInput[] =
       key: 'profile',
       title: 'Profile',
       icon: 'userPen',
-      section: 'account',
       pathPrefix: '/dashboard/profile',
       containerId: 'mfe-dashboard-profile-container',
       loader: () => import('./profile')

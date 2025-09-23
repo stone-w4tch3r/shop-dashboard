@@ -1,7 +1,10 @@
 import type { NavItem } from '@/types/navigation';
 
-import { DEFAULT_EDITION } from '../config';
-import { editionConfigurations, microFrontendDefinitions } from '../config';
+import {
+  DEFAULT_EDITION,
+  editionConfigurations,
+  microFrontendDefinitions
+} from '../config';
 
 import type {
   EditionConfig,
@@ -48,47 +51,18 @@ export function getEditionMicroFrontends(
 }
 
 export function buildNavItems(edition: MicroFrontendEdition): NavItem[] {
-  const navItems: NavItem[] = [];
-  const primaryItems: NavItem[] = [];
-  const accountItems: NavItem[] = [];
-
-  getEditionMicroFrontends(edition).forEach((definition) => {
-    const item: NavItem = {
-      title: definition.title,
-      url: definition.pathPrefix,
-      icon: definition.icon
-    };
-
-    if (definition.section === 'account') {
-      accountItems.push(item);
-    } else {
-      primaryItems.push(item);
-    }
-  });
-
-  navItems.push(...primaryItems);
-
-  if (accountItems.length > 0) {
-    accountItems.push({
-      title: 'Login',
-      url: '/',
-      icon: 'login'
-    });
-
-    navItems.push({
-      title: 'Account',
-      url: '#',
-      icon: 'billing',
-      items: accountItems
-    });
-  }
-
-  return navItems;
+  return getEditionMicroFrontends(edition).map((definition) => ({
+    title: definition.title,
+    url: definition.pathPrefix,
+    icon: definition.icon
+  }));
 }
+
 export function getNavItems(
   edition: MicroFrontendEdition = DEFAULT_EDITION
 ): NavItem[] {
   return buildNavItems(edition);
-} // Info: The following data is used for the sidebar navigation and Cmd K bar.
+}
 
+// Info: The following data is consumed by the dashboard shell navigation.
 export const navItems: NavItem[] = getNavItems();

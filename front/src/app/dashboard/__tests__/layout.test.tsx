@@ -18,13 +18,6 @@ vi.mock('@/components/layout/header', () => ({
   default: () => <header data-testid='header'>Header</header>
 }));
 
-// Mock KBar component
-vi.mock('@/components/kbar', () => ({
-  default: ({ children }: { children: React.ReactNode }) => (
-    <div data-testid='kbar'>{children}</div>
-  )
-}));
-
 vi.mock('@/components/ui/sidebar', () => ({
   SidebarProvider: ({ children }: { children: React.ReactNode }) => (
     <div data-testid='sidebar-provider'>{children}</div>
@@ -40,9 +33,6 @@ describe('DashboardLayout', () => {
   it('renders all layout components', async () => {
     const AsyncLayout = await DashboardLayout({ children: mockChildren });
     render(AsyncLayout);
-
-    // Check for KBar wrapper
-    expect(screen.getByTestId('kbar')).toBeInTheDocument();
 
     // Check for sidebar provider wrapper
     expect(screen.getByTestId('sidebar-provider')).toBeInTheDocument();

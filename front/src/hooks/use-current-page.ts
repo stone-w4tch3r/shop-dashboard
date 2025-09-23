@@ -14,29 +14,7 @@ export function useCurrentPage():
     } {
   const pathname = usePathname();
 
-  // Function to find the matching nav item recursively
-  const findMatchingNavItem = (
-    items: NavItem[],
-    path: string
-  ): NavItem | null => {
-    for (const item of items) {
-      // Check if current item matches
-      if (item.url === path) {
-        return item;
-      }
-
-      // Check child items if they exist
-      if (item.items && item.items.length > 0) {
-        const childMatch = findMatchingNavItem(item.items, path);
-        if (childMatch) {
-          return childMatch;
-        }
-      }
-    }
-    return null;
-  };
-
-  const currentPage = findMatchingNavItem(navItems, pathname);
+  const currentPage = navItems.find((item) => item.url === pathname) ?? null;
 
   // Fallback for pages not in navItems
   const getPageInfoFromPath = (path: string) => {

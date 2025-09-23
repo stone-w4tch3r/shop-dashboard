@@ -9,15 +9,6 @@ export interface NavItem {
   label?: string;
   description?: string;
   isActive?: boolean;
-  items?: NavItem[];
-}
-
-export interface NavItemWithChildren extends NavItem {
-  items: NavItemWithChildren[];
-}
-
-export interface NavItemWithOptionalChildren extends NavItem {
-  items?: NavItemWithChildren[];
 }
 
 export interface FooterItem {
@@ -29,6 +20,6 @@ export interface FooterItem {
   }[];
 }
 
-export type MainNavItem = NavItemWithOptionalChildren;
+export type MainNavItem = NavItem;
 
-export type SidebarNavItem = NavItemWithChildren;
+export type SidebarNavItem = NavItem;
