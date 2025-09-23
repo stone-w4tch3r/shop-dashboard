@@ -30,7 +30,11 @@ const config: Linter.Config[] = [
       '**/.pnpm-store/**',
       '**/build/**',
       '**/__tests__/**',
-      '**/test/**'
+      '**/test/**',
+      'playwright.config.ts',
+      'vitest.config.ts',
+      'next.config.ts',
+      'postcss.config.js'
     ]
   },
 
@@ -221,21 +225,6 @@ const config: Linter.Config[] = [
   {
     rules: {
       ...eslintConfigPrettier.rules
-    }
-  },
-
-  // Relaxed rules for config files
-  {
-    files: [
-      'vitest.config.ts',
-      'playwright.config.ts',
-      'next.config.ts',
-      'tailwind.config.ts',
-      'eslint.config.ts',
-      'postcss.config.js'
-    ],
-    rules: {
-      '@typescript-eslint/no-explicit-any': 'off'
     }
   },
 

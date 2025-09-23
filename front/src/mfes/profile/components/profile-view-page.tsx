@@ -1,3 +1,5 @@
+'use client';
+
 import { UserProfile } from '@/lib/mock-auth';
 
 export default function ProfileViewPage() {

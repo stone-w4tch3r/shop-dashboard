@@ -61,7 +61,7 @@ export default defineConfig({
     }
   ],
   webServer: {
-    command: 'PORT=3100 pnpm run dev',
+    command: 'pnpm build && PORT=3100 pnpm start',
     url: 'http://localhost:3100',
     reuseExistingServer: !process.env.CI,
     timeout: 60000 // very long wait until app loads
