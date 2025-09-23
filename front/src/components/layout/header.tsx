@@ -20,7 +20,7 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
 import { UserAvatarProfile } from '@/components/user-avatar-profile';
-import { useCurrentPageOrFailFast } from '@/hooks/use-current-page';
+import { useCurrentPage } from '@/hooks/use-current-page';
 import { useUser, SignOutButton } from '@/lib/mock-auth';
 
 // Constants
@@ -31,7 +31,7 @@ function Header() {
   React.useEffect(() => setIsMounted(true), []);
   const { user } = useUser();
   const router = useRouter();
-  const currentPage = useCurrentPageOrFailFast();
+  const currentPage = useCurrentPage();
 
   const IconComponent =
     currentPage.icon !== undefined ? Icons[currentPage.icon] : Icons.dashboard;

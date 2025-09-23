@@ -5,20 +5,16 @@ import { usePathname } from 'next/navigation';
 import { navItems } from '@/mfes/lib/build-helpers';
 import { NavItem } from '@/types/navigation';
 
-export function useCurrentPage(): NavItem | 'unknown-page' {
+export function useCurrentPage(): NavItem {
   const pathname = usePathname();
 
   const currentPage = navItems.find((item) => item.url === pathname) ?? null;
 
-  return currentPage ?? 'unknown-page';
-}
-
-export function useCurrentPageOrFailFast(): NavItem {
-  const currentPage = useCurrentPage();
-
-  if (currentPage === 'unknown-page') {
-    throw new Error('Current page is unknown, this should never happen');
-  }
-
-  return currentPage;
+  return (
+    currentPage ?? {
+      title: 'Unknown Page',
+      url: pathname,
+      icon: 'question'
+    }
+  );
 }
