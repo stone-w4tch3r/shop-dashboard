@@ -1,7 +1,6 @@
 import type { NavItem } from '@/types/navigation';
 
 import { editionConfigurations, microFrontendDefinitions } from '../config';
-import { PathPrefix } from './types';
 
 import type {
   EditionConfig,
@@ -9,6 +8,8 @@ import type {
   MicroFrontendEdition,
   MicroFrontendKey
 } from '../config';
+
+export { validPathPrefix } from './path-prefix-helper';
 
 const microFrontendMap = new Map<MicroFrontendKey, MicroFrontendDefinition>(
   microFrontendDefinitions.map((definition) => [definition.key, definition])
@@ -53,27 +54,4 @@ export function buildNavItems(edition: MicroFrontendEdition): NavItem[] {
     url: definition.pathPrefix,
     icon: definition.icon
   }));
-}
-
-/**
- * Compile-time checker for path validity
- * */
-
-export function validPathPrefix<T extends `/${string}`>(
-  s: T & (T extends `${string}/` ? never : unknown)
-): T & PathPrefix {
-  if (process.env.NODE_ENV !== 'production') {
-    if (!s.startsWith('/')) {
-      throw new Error(
-        `validPathPrefix expected value to start with '/'. Received: "${s}"`
-      );
-    }
-    if (s.length > 1 && s.endsWith('/')) {
-      throw new Error(
-        `validPathPrefix expected value without trailing '/'. Received: "${s}"`
-      );
-    }
-  }
-
-  return s as unknown as T & PathPrefix;
 }
