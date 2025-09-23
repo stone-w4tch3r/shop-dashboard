@@ -2,6 +2,8 @@ import React from 'react';
 import * as ReactDOMClient from 'react-dom/client';
 import singleSpaReact from 'single-spa-react';
 
+import { reportMfeRuntimeError } from '../shared/mfe-runtime-error-store';
+
 import type { AppProps, LifeCycles } from 'single-spa';
 
 interface CreateReactMfeOptions<TProps> {
@@ -32,6 +34,10 @@ export function createReactMfe<TProps>({
       element.id = containerId;
       document.body.appendChild(element);
       return element;
+    },
+    errorBoundary: (error) => {
+      reportMfeRuntimeError(name, error);
+      return <></>;
     }
   });
 }

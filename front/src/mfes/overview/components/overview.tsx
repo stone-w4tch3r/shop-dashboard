@@ -19,8 +19,6 @@ import { PieGraph } from './pie-graph';
 import { RecentSales } from './recent-sales';
 
 export default function OverViewPage() {
-  throw new Error('test');
-
   return (
     <PageContainer>
       <div className='flex flex-1 flex-col space-y-2'>

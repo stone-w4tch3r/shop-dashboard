@@ -14,7 +14,7 @@ import {
   SidebarRail,
   useSidebar
 } from '@/components/ui/sidebar';
-import { useCurrentPage } from '@/hooks/use-current-page';
+import { useCurrentPageOrFailFast } from '@/hooks/use-current-page';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { navItems } from '@/mfes/lib/build-helpers';
 
@@ -28,7 +28,7 @@ export const company = {
 };
 
 function AppSidebar() {
-  const currentPage = useCurrentPage();
+  const currentPage = useCurrentPageOrFailFast();
   const { isOpen } = useMediaQuery();
   const { toggleSidebar, open } = useSidebar();
 

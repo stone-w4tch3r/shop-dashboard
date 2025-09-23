@@ -17,3 +17,6 @@
 - [ ] unify constants/configs
 - [ ] unify imports relative vs @/
 - [ ] prefer explicit type declarations over `as`
+- [ ] in docs specify, that code should be commented, but not excessively
+- [ ] fail fast example: useCurrentPage() hook returns 'unknown-page' instead of fallback page object with 'unknown' title. Pattern example: useCurrentPage(): NavItem | 'unknown-page' + useCurrentPageOrFailFast(): NavItem that throws
+- [ ] throw exceptions only if this is completely unexpected app state (this should never happen). If it is recoverable, use result (fail)

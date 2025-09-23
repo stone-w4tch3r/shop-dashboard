@@ -5,37 +5,20 @@ import { usePathname } from 'next/navigation';
 import { navItems } from '@/mfes/lib/build-helpers';
 import { NavItem } from '@/types/navigation';
 
-export function useCurrentPage():
-  | NavItem
-  | {
-      title: string;
-      icon: keyof typeof import('@/components/icons').Icons;
-      url: string;
-    } {
+export function useCurrentPage(): NavItem | 'unknown-page' {
   const pathname = usePathname();
 
   const currentPage = navItems.find((item) => item.url === pathname) ?? null;
 
-  // Fallback for pages not in navItems
-  const getPageInfoFromPath = (path: string) => {
-    const segments = path.split('/').filter(Boolean);
-    const lastSegment = segments[segments.length - 1];
+  return currentPage ?? 'unknown-page';
+}
 
-    // Capitalize and format the last segment
-    const title =
-      lastSegment !== undefined && lastSegment !== ''
-        ? lastSegment
-            .split('-')
-            .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-            .join(' ')
-        : 'Unknown';
+export function useCurrentPageOrFailFast(): NavItem {
+  const currentPage = useCurrentPage();
 
-    return {
-      title,
-      icon: 'question' as keyof typeof import('@/components/icons').Icons,
-      url: path
-    };
-  };
+  if (currentPage === 'unknown-page') {
+    throw new Error('Current page is unknown, this should never happen');
+  }
 
-  return currentPage ?? getPageInfoFromPath(pathname);
+  return currentPage;
 }
