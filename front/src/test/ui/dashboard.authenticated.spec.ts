@@ -97,6 +97,15 @@ test.describe('Dashboard Functionality Tests', () => {
   });
 
   test('should display correct page titles', async ({ page }) => {
+    // Default page
+    await page.goto('/');
+    await page.waitForLoadState('networkidle');
+    await expect(page).toHaveURL(/\/dashboard\/overview/);
+    await page.goto('/dashboard');
+    await page.waitForLoadState('networkidle');
+    await expect(page).toHaveURL(/\/dashboard\/overview/);
+
+    // Navigate to overview and check title
     await page.goto('/dashboard/overview');
     await page.waitForLoadState('networkidle');
     await expect(page).toHaveURL(/\/dashboard\/overview/);
