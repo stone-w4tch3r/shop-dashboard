@@ -39,6 +39,14 @@ export const microFrontendDefinitions: readonly MicroFrontendDefinitionInput[] =
       pathPrefix: validPathPrefix('/dashboard/profile'),
       containerId: 'mfe-dashboard-profile-container',
       loader: () => import('./profile')
+    },
+    {
+      key: 'template',
+      title: 'Template',
+      icon: 'sun',
+      pathPrefix: validPathPrefix('/dashboard/template'),
+      containerId: 'mfe-dashboard-template-container',
+      loader: () => import('./template')
     }
   ];
 
@@ -47,13 +55,13 @@ export const editionConfigurations: readonly EditionConfigInput[] = [
     key: 'default',
     label: 'Default',
     description: 'Full dashboard experience',
-    mfes: ['overview', 'storyboard', 'product', 'profile']
+    mfes: ['overview', 'storyboard', 'product', 'profile', 'template']
   },
   {
     key: 'v1',
     label: 'Edition V1',
     description: 'Targeting operations-focused users',
-    mfes: ['overview', 'product']
+    mfes: ['overview', 'product', 'template']
   },
   {
     key: 'v2',
