@@ -1,81 +1,79 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import React from 'react';
+import { render, screen } from '@/test/test-utils';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-// Mock next/navigation with proper hoisting
-const mockRedirect = vi.fn();
+const redirectMock = vi.fn();
+const notFoundMock = vi.fn();
+
 vi.mock('next/navigation', () => ({
-  useRouter: () => ({
-    push: vi.fn(),
-    replace: vi.fn(),
-    refresh: vi.fn()
-  }),
-  redirect: mockRedirect,
-  usePathname: () => '/dashboard',
-  useSearchParams: () => new URLSearchParams(),
-  useParams: () => ({})
+  redirect: redirectMock,
+  notFound: notFoundMock
 }));
 
-// Mock server auth
-const mockAuth = vi.fn().mockResolvedValue({ userId: 'test-user-id' });
-vi.mock('@/lib/mock-auth-server', () => ({
-  auth: mockAuth
+vi.mock('../../../mfes/lib/mfe-host-boundary', () => ({
+  WithMfeHostBoundary: ({ children }: { children: React.ReactNode }) => (
+    <div data-testid='host-boundary'>{children}</div>
+  ),
+  default: ({ children }: { children: React.ReactNode }) => (
+    <div data-testid='host-boundary'>{children}</div>
+  )
 }));
 
-// Import after mocks are set up
-const DashboardPage = await import('../page').then((m) => m.default);
+vi.mock('../../../mfes/lib/single-spa-root', () => ({
+  default: () => <div data-testid='single-spa-root' />
+}));
 
-describe('DashboardPage', () => {
+const dashboardModule = await import('../[[...slug]]/page');
+const DashboardMicroFrontendPage = dashboardModule.default;
+const { generateMetadata } = dashboardModule;
+
+describe('DashboardMicroFrontendPage', () => {
   beforeEach(() => {
-    mockRedirect.mockClear();
-    mockAuth.mockClear();
-    mockAuth.mockResolvedValue({ userId: 'test-user-id' });
+    redirectMock.mockReset();
+    notFoundMock.mockReset();
   });
 
-  it('redirects to overview when user is authenticated', async () => {
-    await DashboardPage();
-    expect(mockRedirect).toHaveBeenCalledWith('/dashboard/overview');
+  it('redirects to overview when no slug is provided', async () => {
+    await DashboardMicroFrontendPage({ params: Promise.resolve({}) });
+    expect(redirectMock).toHaveBeenCalledWith('/dashboard/overview');
   });
 
-  it('redirects to sign-in when user is not authenticated', async () => {
-    // Mock auth to return no userId
-    mockAuth.mockResolvedValueOnce({ userId: null });
+  it('calls notFound for unknown micro frontend path', async () => {
+    await DashboardMicroFrontendPage({
+      params: Promise.resolve({ slug: ['unknown'] })
+    });
 
-    await DashboardPage();
-    expect(mockRedirect).toHaveBeenCalledWith('/auth/sign-in');
+    expect(notFoundMock).toHaveBeenCalled();
   });
 
-  it('handles auth check correctly', async () => {
-    await DashboardPage();
-    expect(mockAuth).toHaveBeenCalled();
+  it('renders the single-spa host for known routes', async () => {
+    const element = await DashboardMicroFrontendPage({
+      params: Promise.resolve({ slug: ['overview'] })
+    });
+
+    render(element);
+
+    expect(screen.getByTestId('host-boundary')).toBeInTheDocument();
+    expect(screen.getByTestId('single-spa-root')).toBeInTheDocument();
+    expect(redirectMock).not.toHaveBeenCalled();
+    expect(notFoundMock).not.toHaveBeenCalled();
+  });
+});
+
+describe('generateMetadata', () => {
+  it('returns a title for the matched micro frontend', async () => {
+    const metadata = await generateMetadata({
+      params: Promise.resolve({ slug: ['product'] })
+    });
+
+    expect(metadata.title).toContain('Product');
   });
 
-  it('does not render any content - just redirects', async () => {
-    // Since the page immediately redirects, it shouldn't render any content
-    const result = await DashboardPage();
-    expect(result).toBeUndefined(); // redirect() doesn't return JSX
-  });
+  it('falls back to Dashboard when no match is found', async () => {
+    const metadata = await generateMetadata({
+      params: Promise.resolve({ slug: ['not-real'] })
+    });
 
-  it('handles authentication flow properly', async () => {
-    await DashboardPage();
-    // Should redirect to overview for authenticated user
-    expect(mockRedirect).toHaveBeenCalledWith('/dashboard/overview');
-  });
-
-  it('maintains proper async behavior', async () => {
-    const start = Date.now();
-    await DashboardPage();
-    const end = Date.now();
-
-    // Should complete quickly (no actual rendering)
-    expect(end - start).toBeLessThan(100);
-    expect(mockRedirect).toHaveBeenCalled();
-  });
-
-  it('does not throw console errors', async () => {
-    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-
-    await DashboardPage();
-
-    expect(consoleSpy).not.toHaveBeenCalled();
-    consoleSpy.mockRestore();
+    expect(metadata.title).toContain('Dashboard');
   });
 });

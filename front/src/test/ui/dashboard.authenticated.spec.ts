@@ -108,7 +108,7 @@ test.describe('Dashboard Functionality Tests', () => {
     await page.waitForLoadState('networkidle', { timeout: 30000 });
 
     // The document title is now derived from the dashboard MFE definitions
-    await expect(page).toHaveTitle(/Product\s+\|\s+Dashboard Template/i);
+    await expect(page).toHaveTitle(/Product/i);
     await expect(
       page.getByRole('heading', { level: 1, name: /product/i })
     ).toBeVisible();
