@@ -18,9 +18,10 @@ This is a comprehensive Next.js dashboard template featuring modern UI component
 
 ### Frontend Architecture Pattern
 
-**Primary Pattern**: Feature-Based Modular Architecture
+**Primary Pattern**: Microfrontend-Based Modular Architecture
 
-- **Feature-based organization**: Business domains in separate modules (`/features`)
+- **Microfrontend-based organization**: Business domains in separate mfes (`/mfes`)
+- **Next.js shell**: Layout in `/app` and code in `features`
 - **Component-based UI**: Reusable components in `/components`
 - **Shared utilities**: Common logic in `/lib`, `/hooks`
 - **Flexible imports**: No strict layered dependency rules
@@ -31,13 +32,23 @@ This is a comprehensive Next.js dashboard template featuring modern UI component
 
 ```
 src/
-├── app/              # Next.js App Router (routing & pages)
-├── features/         # Business domain modules
-├── components/       # Shared UI components
-├── lib/              # Shared utilities & configuration
-├── hooks/            # Custom React hooks
-├── types/            # TypeScript type definitions
-└── constants/        # Static data & configuration
+├─ app/                   # Next.js routes, layouts, metadata
+│  ├─ auth/               # Mock auth pages
+│  └─ dashboard/[[...slug]]/page.tsx  # MFE host route
+├─ components/
+│  ├─ layout/             # App shell, sidebar, header, shared page wrappers
+│  ├─ ui/                 # shadcn-generated primitives
+│  └─ edition-switcher.tsx# Dev-only edition picker
+├─ hooks/                 # Navigation + edition utilities
+├─ lib/                   # Auth mock, formatting, search params, etc.
+├─ backend/               # Demo data + mock API helpers
+├─ mfes/                  # Microfrontend runtime + feature apps (see doc inside)
+│  ├─ config.ts           # Registry of MFEs + edition definitions
+│  ├─ lib/                # Runtime helpers (single-spa root, error store, etc.)
+│  └─ <mfe-key>/          # Individual React applications
+├─ features/              # Legacy/hosted feature modules (currently auth only)
+├─ test/                  # E2E harness and utilities
+└─ types/                 # Shared TypeScript types
 ```
 
 ## State Management Strategy

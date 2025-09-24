@@ -176,13 +176,11 @@ export function EditionSwitcher() {
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant='secondary' size='sm' className='shadow-lg'>
-            {activeEdition
-              ? `Edition: ${activeEdition.label}`
-              : 'Select Edition'}
+            Edition: {activeEdition ? activeEdition.label : 'Select '}
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent side='bottom' align='start' className='w-56'>
-          <DropdownMenuLabel>Edition</DropdownMenuLabel>
+          <DropdownMenuLabel>Dev Edition Switcher</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuRadioGroup value={edition} onValueChange={changeEdition}>
             {editions.map((item) => (
