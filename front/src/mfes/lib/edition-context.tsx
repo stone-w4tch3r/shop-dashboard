@@ -28,18 +28,40 @@ function isValidEdition(value: string): value is MicroFrontendEdition {
   return editionConfigurations.some((config) => config.key === value);
 }
 
+export function resolveEditionFromEnv(
+  rawValue = process.env.NEXT_PUBLIC_DASHBOARD_EDITION
+): MicroFrontendEdition {
+  if (typeof rawValue === 'string' && rawValue.length > 0) {
+    if (isValidEdition(rawValue)) {
+      return rawValue;
+    }
+    // eslint-disable-next-line no-console -- surface misconfiguration to developers
+    console.warn(
+      `Invalid NEXT_PUBLIC_DASHBOARD_EDITION value "${rawValue}". Falling back to "${DEFAULT_EDITION}".`
+    );
+  }
+
+  return DEFAULT_EDITION;
+}
+
+const ENV_CONFIGURED_EDITION = resolveEditionFromEnv();
+
 export function EditionProvider({ children }: { children: React.ReactNode }) {
   const [edition, setEditionState] = useState<MicroFrontendEdition>(() => {
     if (!IS_DEV || typeof window === 'undefined') {
-      return DEFAULT_EDITION;
+      return ENV_CONFIGURED_EDITION;
     }
 
     const stored = window.localStorage.getItem(STORAGE_KEY);
-    if (stored !== null && isValidEdition(stored)) {
-      return stored;
+    if (stored !== null) {
+      if (isValidEdition(stored)) {
+        return stored;
+      }
+
+      window.localStorage.removeItem(STORAGE_KEY);
     }
 
-    return DEFAULT_EDITION;
+    return ENV_CONFIGURED_EDITION;
   });
 
   useEffect(() => {

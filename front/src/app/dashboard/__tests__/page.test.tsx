@@ -41,24 +41,35 @@ describe('DashboardMicroFrontendPage', () => {
     notFoundMock.mockClear();
   });
 
-  it('redirects to overview when no slug is provided', async () => {
+  it('redirects /dashboard to /dashboard/overview', async () => {
     await expect(
       DashboardMicroFrontendPage({ params: Promise.resolve({}) })
     ).rejects.toMatchObject({ digest: 'NEXT_REDIRECT' });
+
     expect(redirectMock).toHaveBeenCalledWith('/dashboard/overview');
   });
 
-  it('calls notFound for unknown micro frontend path', async () => {
+  it('calls notFound for routes that are not registered MFEs', async () => {
     await expect(
       DashboardMicroFrontendPage({
-        params: Promise.resolve({ slug: ['unknown'] })
+        params: Promise.resolve({ slug: ['xxx'] })
       })
     ).rejects.toMatchObject({ digest: 'NEXT_NOT_FOUND' });
 
     expect(notFoundMock).toHaveBeenCalled();
   });
 
-  it('renders the single-spa host for known routes', async () => {
+  it('rejects prefixes that only partially match an MFE', async () => {
+    await expect(
+      DashboardMicroFrontendPage({
+        params: Promise.resolve({ slug: ['overviewxxx'] })
+      })
+    ).rejects.toMatchObject({ digest: 'NEXT_NOT_FOUND' });
+
+    expect(notFoundMock).toHaveBeenCalled();
+  });
+
+  it('renders the single-spa host for a registered MFE prefix', async () => {
     const element = await DashboardMicroFrontendPage({
       params: Promise.resolve({ slug: ['overview'] })
     });
@@ -68,6 +79,17 @@ describe('DashboardMicroFrontendPage', () => {
     expect(screen.getByTestId('host-boundary')).toBeInTheDocument();
     expect(screen.getByTestId('single-spa-root')).toBeInTheDocument();
     expect(redirectMock).not.toHaveBeenCalled();
+    expect(notFoundMock).not.toHaveBeenCalled();
+  });
+
+  it('keeps rendering the host for nested MFE routes', async () => {
+    const element = await DashboardMicroFrontendPage({
+      params: Promise.resolve({ slug: ['overview', 'details'] })
+    });
+
+    render(element);
+
+    expect(screen.getByTestId('host-boundary')).toBeInTheDocument();
     expect(notFoundMock).not.toHaveBeenCalled();
   });
 });
@@ -85,6 +107,12 @@ describe('generateMetadata', () => {
     const metadata = await generateMetadata({
       params: Promise.resolve({ slug: ['not-real'] })
     });
+
+    expect(metadata.title).toContain('Dashboard');
+  });
+
+  it('returns dashboard metadata when the base route is requested', async () => {
+    const metadata = await generateMetadata({ params: Promise.resolve({}) });
 
     expect(metadata.title).toContain('Dashboard');
   });

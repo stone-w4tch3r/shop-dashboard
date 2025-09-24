@@ -142,3 +142,41 @@ Object.defineProperty(window, 'location', {
   },
   writable: true
 });
+
+// JSDOM reports zero width/height for elements which causes recharts to warn.
+// Provide a deterministic fallback size so chart components render without noise.
+const originalGetBoundingClientRect = Element.prototype.getBoundingClientRect;
+Element.prototype.getBoundingClientRect =
+  function getBoundingClientRectOverride() {
+    if (this instanceof HTMLElement) {
+      const width = Number(this.getAttribute('data-test-width')) || 1024;
+      const height = Number(this.getAttribute('data-test-height')) || 768;
+
+      const rect = {
+        width,
+        height,
+        top: 0,
+        left: 0,
+        right: width,
+        bottom: height,
+        x: 0,
+        y: 0,
+        toJSON() {
+          return {
+            width,
+            height,
+            top: 0,
+            left: 0,
+            right: width,
+            bottom: height,
+            x: 0,
+            y: 0
+          };
+        }
+      };
+
+      return rect as DOMRect;
+    }
+
+    return originalGetBoundingClientRect.call(this);
+  };
