@@ -44,6 +44,9 @@ describe('SingleSpaRoot', () => {
     startMock.mockClear();
     getAppNamesMock.mockClear();
     clearMfeRuntimeErrorMock.mockClear();
+    reportMfeRuntimeErrorMock.mockClear();
+    addErrorHandlerMock.mockClear();
+    removeErrorHandlerMock.mockClear();
     useEditionMock.mockReturnValue({ edition: 'default', setEdition: vi.fn() });
   });
 
@@ -98,5 +101,32 @@ describe('SingleSpaRoot', () => {
     );
 
     expect(registeredNames).toEqual(expectedDefinitions.map((def) => def.key));
+  });
+
+  it('forwards single-spa runtime errors to the error store', () => {
+    render(<SingleSpaRoot />);
+
+    expect(addErrorHandlerMock).toHaveBeenCalledTimes(1);
+    const handler = addErrorHandlerMock.mock.calls[0][0];
+
+    const originalError = new Error('mount failure');
+    handler({ appOrParcelName: 'product', originalError });
+
+    expect(reportMfeRuntimeErrorMock).toHaveBeenCalledWith(
+      'product',
+      originalError
+    );
+  });
+
+  it('clears runtime errors when the active edition changes', () => {
+    const { rerender } = render(<SingleSpaRoot edition='default' />);
+
+    // initial mount triggers a clear
+    expect(clearMfeRuntimeErrorMock).toHaveBeenCalledTimes(1);
+    clearMfeRuntimeErrorMock.mockClear();
+
+    rerender(<SingleSpaRoot edition='v1' />);
+
+    expect(clearMfeRuntimeErrorMock).toHaveBeenCalledTimes(1);
   });
 });
