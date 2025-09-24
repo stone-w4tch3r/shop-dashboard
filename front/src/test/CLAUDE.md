@@ -33,9 +33,9 @@ test('renders button with text', () => {
 - **Features**: Store integration, API calls, state management
 - **Configuration**: Auto-configured in `src/test/setup.ts`
 
-### 3. E2E Tests (Playwright)
+### 3. UI Tests (Playwright)
 
-**Location**: `src/test/e2e/*.spec.ts` | **Command**: `pnpm test:e2e`
+**Location**: `src/test/ui/*.spec.ts` | **Command**: `pnpm test:ui`
 
 - **Purpose**: Full user journeys with mock authentication
 - **Framework**: Playwright with multi-browser support
@@ -43,7 +43,7 @@ test('renders button with text', () => {
 - **Configuration**: Automatic dev server startup with authentication state management
 
 ```ts
-// Example: E2E test with authentication
+// Example: UI test with authentication
 test('dashboard navigation', async ({ page }) => {
   await page.goto('/dashboard');
   await page.getByRole('link', { name: /products/i }).click();
@@ -53,7 +53,7 @@ test('dashboard navigation', async ({ page }) => {
 
 #### **Playwright Projects Architecture**
 
-The E2E tests use **three separate Playwright projects** for different authentication scenarios:
+The UI tests use **three separate Playwright projects** for different authentication scenarios:
 
 | Project             | File Pattern                | Authentication            | Purpose                  |
 | ------------------- | --------------------------- | ------------------------- | ------------------------ |
@@ -94,7 +94,7 @@ projects: [
 ### Core Config
 
 - **`vitest.config.ts`**: Vitest configuration with React plugin
-- **`playwright.config.ts`**: Playwright E2E configuration
+- **`playwright.config.ts`**: Playwright UI configuration
 - **`src/test/setup.ts`**: Global test setup (auth mocks, Next.js mocks, jest-dom)
 - **`src/test/test-utils.tsx`**: Custom render with providers
 
@@ -107,7 +107,7 @@ projects: [
 ```bash
 # Three-Level Testing Pyramid
 pnpm test:unit              # Component & Integration tests (Vitest)
-pnpm test:e2e:headless      # End-to-end tests (Playwright)
+pnpm test:ui:headless      # End-to-end tests (Playwright)
 pnpm test:all               # Complete test suite (both levels)
 
 # Development & Debugging
@@ -139,10 +139,10 @@ touch src/features/products/components/ProductCard.tsx
 # 4. Implement store (integration tests pass)
 touch src/features/products/stores/product-store.ts
 
-# 5. Write E2E test (fails)
-touch src/test/e2e/products.spec.ts
+# 5. Write UI test (fails)
+touch src/test/ui/products.spec.ts
 
-# 6. Connect API integration (E2E passes)
+# 6. Connect API integration (UI passes)
 ```
 
 ## Test File Organization
@@ -151,7 +151,7 @@ touch src/test/e2e/products.spec.ts
 src/test/
 ├── setup.ts                          # Global test configuration & mocks
 ├── test-utils.tsx                    # Custom render with providers
-└── e2e/                              # Playwright end-to-end tests
+└── ui/                              # Playwright end-to-end tests
     ├── global.setup.ts               # Authentication setup
     ├── dashboard.authenticated.spec.ts # 🔐 Authenticated dashboard tests
     ├── public-pages.spec.ts          # 🌐 Public authentication flow
@@ -162,7 +162,7 @@ src/{domain}/__tests__/               # Component & integration tests
 └── *.integration.test.tsx           # Feature integration tests
 ```
 
-### **E2E Test File Naming Convention**
+### **UI Test File Naming Convention**
 
 | Pattern                          | Project         | Authentication       | Example Files                                |
 | -------------------------------- | --------------- | -------------------- | -------------------------------------------- |
@@ -185,7 +185,7 @@ src/{domain}/__tests__/               # Component & integration tests
 - **Test error scenarios** and loading states
 - **Verify store state changes**
 
-### E2E Testing
+### UI Testing
 
 - **Test critical user paths** only
 - **Use Page Object Model** for complex interactions
@@ -269,9 +269,9 @@ vi.mock('@/lib/mock-auth-server', () => ({
 - Handle async component rendering with `await` pattern
 - Test authentication flow and redirect logic
 
-### ✅ E2E Testing Strategy
+### ✅ UI Testing Strategy
 
-**Approach**: **Project-based E2E testing** with automatic authentication state management.
+**Approach**: **Project-based UI testing** with automatic authentication state management.
 
 **Authentication Flow**:
 
@@ -283,7 +283,7 @@ vi.mock('@/lib/mock-auth-server', () => ({
 
 - **Mock auth integration**: Simple form-based authentication
 - **State persistence**: Saves auth state to `.test-data/mock-auth/user.json`
-- **Global setup**: `src/test/e2e/global.setup.ts` handles mock auth configuration
+- **Global setup**: `src/test/ui/global.setup.ts` handles mock auth configuration
 - **Automatic classification**: File naming determines authentication level
 
 **Authentication State Flow**:
@@ -310,11 +310,11 @@ graph TD
 - **Coverage**: All UI components with mock authentication
 - **Command**: `pnpm test`
 
-#### E2E Tests ✅
+#### UI Tests ✅
 
 - **Coverage**: Critical paths including dashboard functionality
 - **Projects**: 3 separate playwright projects (global setup, authenticated, auth-less)
-- **Command**: `pnpm test:e2e`
+- **Command**: `pnpm test:ui`
 
 ## Development Integration
 
@@ -337,7 +337,7 @@ cd front && pnpm run build
 - name: Run Tests
   run: |
     pnpm test:unit:coverage
-    pnpm test:e2e:headless
+    pnpm test:ui:headless
 ```
 
 This testing infrastructure ensures **high code quality**, **fast feedback loops**, and **confidence in deployments** through comprehensive test coverage at all levels.

@@ -7,7 +7,7 @@ setup.describe.configure({ mode: 'serial' });
 
 setup('global setup', async ({}) => {
   // Mock auth setup - no external services needed
-  console.log('Setting up mock authentication for E2E tests');
+  console.log('Setting up mock authentication for UI tests');
 });
 
 // Define the path to the storage file for authenticated tests

@@ -18,9 +18,9 @@
     "format": "prettier --write . --log-level warn",
     "format:husky-pre-commit": "prettier --write --log-level warn",
     "test:unit": "vitest --run",
-    "test:e2e:headless": "playwright test",
-    "test:e2e:headed": "playwright test --headed",
-    "test:all": "pnpm test:unit && pnpm test:e2e:headless"
+    "test:ui:headless": "playwright test",
+    "test:ui:headed": "playwright test --headed",
+    "test:all": "pnpm test:unit && pnpm test:ui:headless"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",

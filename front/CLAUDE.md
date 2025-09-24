@@ -47,7 +47,7 @@ src/
 │  ├─ lib/                # Runtime helpers (single-spa root, error store, etc.)
 │  └─ <mfe-key>/          # Individual React applications
 ├─ features/              # Legacy/hosted feature modules (currently auth only)
-├─ test/                  # E2E harness and utilities
+├─ test/                  # UI harness and utilities
 └─ types/                 # Shared TypeScript types
 ```
 
@@ -1273,7 +1273,7 @@ pnpm run build
 ```bash
 # Three-Level Testing Pyramid
 pnpm test:unit              # Component & Integration tests (Vitest)
-pnpm test:e2e:headless      # End-to-end tests (Playwright)
+pnpm test:ui:headless      # End-to-end tests (Playwright)
 pnpm test:all               # Complete test suite (both levels)
 ```
 
@@ -1292,7 +1292,7 @@ pnpm test:all               # Complete test suite (both levels)
    - Feature workflows with mocked backend
    - Store integration and state management
 
-3. **E2E Tests** (Playwright)
+3. **UI Tests** (Playwright)
    - Full user journey testing
    - Real browser automation
    - Authentication flow validation
@@ -1303,7 +1303,7 @@ pnpm test:all               # Complete test suite (both levels)
 src/test/
 ├── setup.ts                # Global test configuration
 ├── test-utils.tsx          # Custom render with providers
-└── e2e/
+└── ui/
     └── *.spec.ts           # Playwright end-to-end tests
 
 src/features/{domain}/
@@ -1314,7 +1314,7 @@ src/features/{domain}/
 
 ### TDD Workflow (Red-Green-Refactor)
 
-1. **🔴 Write failing test** first (component, integration, or e2e)
+1. **🔴 Write failing test** first (component, integration, or ui)
 2. **🟢 Write minimal code** to pass the test
 3. **🔵 Refactor** while keeping tests green
 4. **🔄 Repeat** for next feature
@@ -1323,8 +1323,8 @@ src/features/{domain}/
 
 - **Custom Test Utils**: Pre-configured render with all providers
 - **Global Mocks**: matchMedia, IntersectionObserver, ResizeObserver
-- **Multi-browser E2E**: Chromium, Firefox, Safari support
-- **Auto Dev Server**: E2E tests automatically start/stop dev server
+- **Multi-browser UI**: Chromium, Firefox, Safari support
+- **Auto Dev Server**: UI tests automatically start/stop server
 
 ## Implementation Strategy
 
