@@ -17,6 +17,105 @@ import {
   reportMfeRuntimeError
 } from '@/mfes/lib/mfe-runtime-error-store';
 
+type MfeTestErrorDetail = {
+  mfeKey: string;
+  message?: string;
+};
+
+declare global {
+  interface Window {
+    __mfeTestUtils?: {
+      injectError: (mfeKey: string, message?: string) => void;
+      getLastError: () => MfeTestErrorDetail | null;
+      clearLastError: () => void;
+    };
+  }
+}
+
+const TEST_MODE_ENABLED = process.env.NEXT_PUBLIC_TEST_MODE === 'true';
+
+let testHarnessInstalled = false;
+let testHarnessLastError: MfeTestErrorDetail | null = null;
+let testHarnessHandler: ((event: Event) => void) | null = null;
+
+export function installTestHarnessIfNeeded() {
+  if (
+    testHarnessInstalled ||
+    typeof window === 'undefined' ||
+    !TEST_MODE_ENABLED
+  ) {
+    return;
+  }
+
+  const setActiveError = (detail: MfeTestErrorDetail) => {
+    testHarnessLastError = detail;
+    if (typeof document !== 'undefined') {
+      document.body.setAttribute('data-mfe-active-error', detail.mfeKey);
+    }
+  };
+
+  const clearActiveError = () => {
+    testHarnessLastError = null;
+    if (typeof document !== 'undefined') {
+      document.body.removeAttribute('data-mfe-active-error');
+    }
+  };
+
+  const handler = (event: Event) => {
+    const customEvent = event as CustomEvent<MfeTestErrorDetail | undefined>;
+    const detail = customEvent.detail;
+
+    if (!detail || typeof detail.mfeKey !== 'string') {
+      return;
+    }
+
+    const error = new Error(detail.message ?? 'Injected micro-frontend error');
+    setActiveError({ mfeKey: detail.mfeKey, message: error.message });
+    reportMfeRuntimeError(detail.mfeKey, error);
+  };
+
+  window.addEventListener('mfe:test:error', handler as EventListener);
+
+  window.__mfeTestUtils = {
+    injectError: (mfeKey: string, message?: string) => {
+      window.dispatchEvent(
+        new CustomEvent<MfeTestErrorDetail>('mfe:test:error', {
+          detail: { mfeKey, message }
+        })
+      );
+    },
+    getLastError: () => testHarnessLastError,
+    clearLastError: () => {
+      clearActiveError();
+    }
+  };
+
+  testHarnessHandler = handler;
+  testHarnessInstalled = true;
+}
+
+if (typeof window !== 'undefined') {
+  installTestHarnessIfNeeded();
+}
+
+export function __resetMfeTestHarnessForTesting() {
+  testHarnessInstalled = false;
+  testHarnessLastError = null;
+  if (typeof document !== 'undefined') {
+    document.body.removeAttribute('data-mfe-active-error');
+  }
+  if (typeof window !== 'undefined') {
+    if (testHarnessHandler) {
+      window.removeEventListener(
+        'mfe:test:error',
+        testHarnessHandler as EventListener
+      );
+    }
+    delete window.__mfeTestUtils;
+  }
+  testHarnessHandler = null;
+}
+
 let singleSpaStarted = false;
 let errorHandlerRegistered = false;
 
@@ -96,6 +195,9 @@ export function SingleSpaRoot({ edition }: SingleSpaRootProps) {
 
   useEffect(() => {
     clearMfeRuntimeError();
+    if (TEST_MODE_ENABLED && typeof window !== 'undefined') {
+      window.__mfeTestUtils?.clearLastError();
+    }
   }, [activeEdition]);
 
   return (

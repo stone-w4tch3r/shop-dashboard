@@ -98,27 +98,24 @@ test.describe('Dashboard Functionality Tests', () => {
 
   test('should display correct page titles', async ({ page }) => {
     // Default page
-    await page.goto('/');
-    await page.waitForLoadState('networkidle');
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
     await expect(page).toHaveURL(/\/dashboard\/overview/);
+
     await page.goto('/dashboard');
-    await page.waitForLoadState('networkidle');
     await expect(page).toHaveURL(/\/dashboard\/overview/);
 
     // Navigate to overview and check title
     await page.goto('/dashboard/overview');
-    await page.waitForLoadState('networkidle');
     await expect(page).toHaveURL(/\/dashboard\/overview/);
 
     // Navigate to products and check title
-    await page.goto('/dashboard/product', { timeout: 30000 });
-    await page.waitForLoadState('networkidle', { timeout: 30000 });
+    await page.goto('/dashboard/product');
 
     // The document title is now derived from the dashboard MFE definitions
     await expect(page).toHaveTitle(/Product/i);
     await expect(
       page.getByRole('heading', { level: 1, name: /product/i })
-    ).toBeVisible();
+    ).toBeVisible({ timeout: 30000 });
   });
 
   test('should have responsive design when authenticated', async ({ page }) => {
