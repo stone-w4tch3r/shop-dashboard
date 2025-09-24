@@ -2,8 +2,16 @@ import React from 'react';
 import { render, screen } from '@/test/test-utils';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const redirectMock = vi.fn();
-const notFoundMock = vi.fn();
+const redirectMock = vi.fn((url: string) => {
+  const error = new Error('NEXT_REDIRECT');
+  (error as Error & { digest?: string }).digest = 'NEXT_REDIRECT';
+  throw error;
+});
+const notFoundMock = vi.fn(() => {
+  const error = new Error('NEXT_NOT_FOUND');
+  (error as Error & { digest?: string }).digest = 'NEXT_NOT_FOUND';
+  throw error;
+});
 
 vi.mock('next/navigation', () => ({
   redirect: redirectMock,
@@ -29,19 +37,23 @@ const { generateMetadata } = dashboardModule;
 
 describe('DashboardMicroFrontendPage', () => {
   beforeEach(() => {
-    redirectMock.mockReset();
-    notFoundMock.mockReset();
+    redirectMock.mockClear();
+    notFoundMock.mockClear();
   });
 
   it('redirects to overview when no slug is provided', async () => {
-    await DashboardMicroFrontendPage({ params: Promise.resolve({}) });
+    await expect(
+      DashboardMicroFrontendPage({ params: Promise.resolve({}) })
+    ).rejects.toMatchObject({ digest: 'NEXT_REDIRECT' });
     expect(redirectMock).toHaveBeenCalledWith('/dashboard/overview');
   });
 
   it('calls notFound for unknown micro frontend path', async () => {
-    await DashboardMicroFrontendPage({
-      params: Promise.resolve({ slug: ['unknown'] })
-    });
+    await expect(
+      DashboardMicroFrontendPage({
+        params: Promise.resolve({ slug: ['unknown'] })
+      })
+    ).rejects.toMatchObject({ digest: 'NEXT_NOT_FOUND' });
 
     expect(notFoundMock).toHaveBeenCalled();
   });

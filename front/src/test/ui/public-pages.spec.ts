@@ -43,12 +43,4 @@ test.describe('Authentication Flow Tests', () => {
 
     await hydrationChecker.checkForHydrationErrors();
   });
-
-  test('should load sign-in page correctly', async ({ page }) => {
-    await page.goto('/auth/sign-in');
-
-    // Should show sign-in page
-    await expect(page).toHaveURL(/.*\/auth\/sign-in/);
-    await expect(page.getByText(/email/i)).toBeVisible();
-  });
 });

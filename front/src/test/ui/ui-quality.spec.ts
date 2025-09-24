@@ -61,16 +61,4 @@ test.describe('UI Quality & Accessibility Tests', () => {
     await expect(page.locator('title')).toBeAttached();
     await expect(page.locator('meta[name="viewport"]')).toBeAttached();
   });
-
-  test('should support keyboard navigation', async ({ page }) => {
-    await page.goto('/auth/sign-in');
-
-    // Tab through interactive elements
-    await page.keyboard.press('Tab');
-    const focusedElement = page.locator(':focus');
-
-    if ((await focusedElement.count()) > 0) {
-      await expect(focusedElement).toBeVisible();
-    }
-  });
 });

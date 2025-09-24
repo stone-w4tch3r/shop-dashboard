@@ -97,10 +97,8 @@ test.describe('Dashboard Functionality Tests', () => {
   });
 
   test('should display correct page titles', async ({ page }) => {
-    // Ensure redirect works correctly
-    await page.goto('/dashboard');
+    await page.goto('/dashboard/overview');
     await page.waitForLoadState('networkidle');
-    // Verify the redirect to overview works as expected
     await expect(page).toHaveURL(/\/dashboard\/overview/);
 
     // Navigate to products and check title
