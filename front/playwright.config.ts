@@ -64,7 +64,7 @@ export default defineConfig({
     command: 'pnpm build && PORT=3100 pnpm start',
     url: 'http://localhost:3100',
     reuseExistingServer: !process.env.CI,
-    timeout: 60000, // very long wait until app loads
+    timeout: 100000, // allow slower first production build when booting test server
     env: {
       NEXT_PUBLIC_TEST_MODE: 'true'
     }

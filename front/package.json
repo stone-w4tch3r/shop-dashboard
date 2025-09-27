@@ -13,7 +13,7 @@
     "build": "next build --turbopack",
     "build:analyze": "ANALYZE=true next build --turbopack",
     "start": "next start",
-    "lint": "tsc --noEmit && eslint src --fix --cache && pnpm format",
+    "lint": "tsc --noEmit && eslint . --fix --cache && pnpm format",
     "lint:husky-pre-commit": "eslint --fix --cache",
     "format": "prettier --write . --log-level warn",
     "format:husky-pre-commit": "prettier --write --log-level warn",

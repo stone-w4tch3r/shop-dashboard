@@ -34,7 +34,8 @@ const config: Linter.Config[] = [
       'playwright.config.ts',
       'vitest.config.ts',
       'next.config.ts',
-      'postcss.config.js'
+      'postcss.config.js',
+      '**/.cache/**'
     ]
   },
 

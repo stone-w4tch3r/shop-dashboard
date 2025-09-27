@@ -1,8 +1,13 @@
-import fs from 'node:fs';
-import path from 'node:path';
-import os from 'node:os';
 import { spawnSync } from 'node:child_process';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+
+type TryCommand = {
+  cmd: string;
+  args: string[];
+};
 
 /**
  * Ensure Chrome (for Testing) is available via @puppeteer/browsers and return its executable path.
@@ -10,8 +15,14 @@ import { fileURLToPath } from 'node:url';
  * - Installs into project-local cache: front/.cache/puppeteer-browsers
  */
 export function resolveChromeExecutable(): string {
-  if (process.env.CHROME_PATH && fs.existsSync(process.env.CHROME_PATH)) {
-    return process.env.CHROME_PATH;
+  const chromePath = process.env.CHROME_PATH;
+
+  if (
+    chromePath !== undefined &&
+    chromePath !== '' &&
+    fs.existsSync(chromePath)
+  ) {
+    return chromePath;
   }
 
   // In ESM, __dirname is not defined. Derive it from import.meta.url.
@@ -28,7 +39,7 @@ export function resolveChromeExecutable(): string {
     fs.mkdirSync(cacheDir, { recursive: true });
 
     // Prefer invoking npx directly; fallback to node + npx if available next to node.
-    const tryCommands: Array<{ cmd: string; args: string[] }> = [
+    const tryCommands: TryCommand[] = [
       {
         cmd: 'npx',
         args: [
@@ -54,14 +65,10 @@ export function resolveChromeExecutable(): string {
       }
     ];
 
-    let success = false;
-    for (const { cmd, args } of tryCommands) {
-      const res = spawnSync(cmd, args, { stdio: 'inherit' });
-      if (res.status === 0) {
-        success = true;
-        break;
-      }
-    }
+    const success = tryCommands.some(({ cmd, args }) => {
+      const { status } = spawnSync(cmd, args, { stdio: 'inherit' });
+      return status === 0;
+    });
     if (!success) {
       throw new Error('Failed to install Chrome via @puppeteer/browsers');
     }
@@ -76,7 +83,7 @@ export function resolveChromeExecutable(): string {
       ? ['Google Chrome for Testing', 'Chromium']
       : ['chrome', 'chromium'];
 
-  function walk(dir: string) {
+  const collectCandidates = (dir: string): void => {
     for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
       const full = path.join(dir, entry.name);
       if (entry.isDirectory()) {
@@ -88,7 +95,7 @@ export function resolveChromeExecutable(): string {
           ];
           for (const p of macExecs) if (fs.existsSync(p)) candidates.push(p);
         }
-        walk(full);
+        collectCandidates(full);
       } else {
         for (const base of names) {
           for (const ext of exts) {
@@ -97,9 +104,9 @@ export function resolveChromeExecutable(): string {
         }
       }
     }
-  }
+  };
 
-  walk(cacheDir);
+  collectCandidates(cacheDir);
 
   const preferred = candidates.sort((a, b) => {
     const score = (p: string) =>
@@ -112,7 +119,8 @@ export function resolveChromeExecutable(): string {
   });
 
   const found = preferred.find((p) => fs.existsSync(p));
-  if (!found) {
+
+  if (found === undefined) {
     throw new Error(
       'Chrome executable not found after installation in ' + cacheDir
     );
